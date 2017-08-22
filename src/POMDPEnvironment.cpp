@@ -1,4 +1,4 @@
-#include "POMDPEnvironment.h"
+#include "POMDPs/POMDPEnvironment.h"
 
 POMDPEnvironment::POMDPEnvironment(char * fName){
   // WARNING! SERIOUSLY HARD CODED TO EXPECT STRICT ORDERING IN .POMDP FILE

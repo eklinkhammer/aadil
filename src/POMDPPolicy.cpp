@@ -1,4 +1,4 @@
-#include "POMDPPolicy.h"
+#include "POMDPs/POMDPPolicy.h"
 
 POMDPPolicy::POMDPPolicy(char * fName){
   // Filename to write to stored in fName
