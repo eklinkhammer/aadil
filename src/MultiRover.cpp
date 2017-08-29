@@ -159,9 +159,35 @@ void MultiRover::SimulateEpoch(bool train){
     }
     // Compute overall team performance
     double eval = 0.0 ;
-    for (size_t j = 0; j < nPOIs; j++){
-      eval += POIs[j].IsObserved() ? (POIs[j].GetValue()/max(POIs[j].GetNearestObs(),1.0)) : 0.0 ;
-      POIs[j].ResetTarget() ;
+
+    // If team evaluation function, the score is the sum of 1 over the minimum distance
+    // to another agent, for all agents (preliminary change for harcoded teams of 2).
+    // Score for single agent is 1 / DBL_MAX, effectively 0. 
+    if (evaluationFunction == "T") {
+      for (size_t roverJ = 0; roverJ < nRovers; roverJ++) {
+        //size_t closestRoverI = roverJ;
+	double distance = DBL_MAX;
+
+        Vector2d roverJLoc = roverTeam[roverJ]->getCurrentXY();
+        for (size_t roverI = 0; roverI < nRovers; roverI++) {
+          if (roverJ != roverI) {
+            Vector2d roverILoc = roverTeam[roverI]->getCurrentXY();
+            Vector2d vectorDistance = roverJLoc - roverILoc;
+            double diffMagnitude = vectorDistance.norm();
+            if (diffMagnitude < distance) {
+              //closestRoverI = roverI;
+              distance = diffMagnitude;
+            }
+          }
+        }
+
+        eval += (1.0 / distance);
+      }	
+    } else { // For POI based evaluation functions	
+      for (size_t j = 0; j < nPOIs; j++){
+        eval += POIs[j].IsObserved() ? (POIs[j].GetValue()/max(POIs[j].GetNearestObs(),1.0)) : 0.0 ;
+        POIs[j].ResetTarget() ;
+      }
     }
     
     // Store maximum team performance
