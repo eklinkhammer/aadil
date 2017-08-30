@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Learning/NeuroEvo.h"
+#include "NeuroEvo.h"
 
 // Constructor: Initialises all NN in population, given NN layer sizes and population size, also sets SurvivalFunction
 NeuroEvo::NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize): numIn(nIn), numOut(nOut), numHidden(nHidden), populationSize(pSize){
@@ -10,7 +10,7 @@ NeuroEvo::NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize): numIn
 
 // Destructor: Deletes all NN objects from population
 NeuroEvo::~NeuroEvo(){
-  for (size_t i = 0; i < populationNN.size(); i++){
+  for (size_t i = 0; i < populationSize; i++){
     delete(populationNN[i]) ;
     populationNN[i] = 0 ;
   }
@@ -27,7 +27,7 @@ void NeuroEvo::MutatePopulation(){
 }
 
 // Evolve population according to evaluation signal and survival function
-void NeuroEvo::EvolvePopulation(vector<double> evaluation){
+void NeuroEvo::EvolvePopulation(matrix1d evaluation){
   for (size_t i = 0; i < 2*populationSize; i++)
     populationNN[i]->SetEvaluation(evaluation[i]) ;
   
@@ -40,7 +40,7 @@ void NeuroEvo::EvolvePopulation(vector<double> evaluation){
 
 // Binary tournament for survival, head to head competition between random pairs of NNs
 void NeuroEvo::BinaryTournament(){
-  vector<size_t> toErase ;
+  matrix1d toErase ;
   for (size_t i = 0; i < populationSize; i++){
     size_t j = i + populationSize ;
     if (populationNN[i]->GetEvaluation() >= populationNN[j]->GetEvaluation()){
@@ -81,8 +81,8 @@ void NeuroEvo::RetainBestHalf(){
 }
 
 // Return evaluations of all current NNs in population (used for debugging)
-vector<double> NeuroEvo::GetAllEvaluations(){
-  vector<double> evals ;
+matrix1d NeuroEvo::GetAllEvaluations(){
+  matrix1d evals ;
   for (size_t i = 0 ; i < populationNN.size(); i++)
     evals.push_back(populationNN[i]->GetEvaluation()) ;
   return evals ;

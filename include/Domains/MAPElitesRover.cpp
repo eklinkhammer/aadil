@@ -1,4 +1,4 @@
-#include "Learning/MAPElitesRover.h"
+#include "MAPElitesRover.h"
 
 MAPElitesRover::MAPElitesRover(vector<double> wLims, size_t nPOIs, size_t n, MatrixXd bins): worldLimits(wLims), numPOIs(nPOIs), nSteps(n), outputTraj(false){
   input_size = 4 ; // hard coded for 4 element input (body frame quadrant decomposition)

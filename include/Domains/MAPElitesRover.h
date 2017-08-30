@@ -6,7 +6,7 @@
 #include <math.h>
 #include <Eigen/Eigen>
 #include "Learning/MAPElites.h"
-#include "Domains/Target.h"
+#include "Target.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846264338328

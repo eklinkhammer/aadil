@@ -1,4 +1,4 @@
-#include "POMDPs/POMDP.h"
+#include "POMDP.h"
 
 POMDP::POMDP(char * env, char * policy, VectorXd b){
   pomdpEnv = new POMDPEnvironment(env) ;

@@ -1,22 +1,34 @@
-cmake_minimum_required(VERSION 3.7.1)
-project (AADIL)
+cmake_minimum_required(VERSION 2.8)
+project(multirover)
 
-enable_language(CXX)
+include_directories(include)
 
-set (CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -I /usr/local/Cellar/eigen/3.3.4/include/eigen3")
-set (CMAKE_MACOSX_RPATH 1)
-#set (CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
+set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -I ~/resources/eigen")
+add_subdirectory(include)
 
-set (AADIL_LIB aadil)
-set (INCLUDE_DIRS include)
+set( LIBS_TO_LINK Utilities Learning Domains Agents POMDPs)
 
-file(GLOB LIB_SRC
-     "src/*.cpp"
-)
+## Create executable
+add_executable(generateMultiRoverExperts generateMultiRoverExperts.cpp)
+target_link_libraries( generateMultiRoverExperts ${LIBS_TO_LINK} )
 
-add_library(${AADIL_LIB} ${LIB_SRC})
-target_include_directories (${AADIL_LIB} PUBLIC ${CMAKE_CURRENT_SOURCE_DIRS} ${INCLUDE_DIRS})
-set_target_properties(${AADIL_LIB}
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "../lib"
-)
+## Create library
+add_library(lib_name SHARED dummy.cpp)
+target_link_libraries(lib_name ${LIBS_TO_LINK})
+
+## Google Test Setup
+configure_file(CMakeLists.txt.in
+               googletest-download/CMakeLists.txt)
+execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
+ 
+add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
+                 ${CMAKE_BINARY_DIR}/googletest-build)
+
+## Create Test Executable
+enable_testing()
+add_executable(test_exec test/dummy_test.cpp)
+target_link_libraries(test_exec gtest gtest_main lib_name)
+add_test(NAME gtest-lib_name COMMAND test_exec)

@@ -1,4 +1,4 @@
-#include "Learning/NeuralNet.h"
+#include "NeuralNet.h"
 
 // Constructor: Initialises NN given layer sizes, also initialises NN activation function, currently has hardcoded mutation rates, mutation value std and bias node value
 NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afType, nnOut bOut){

@@ -1,4 +1,4 @@
-#include "Learning/MAPElites.h"
+#include "MAPElites.h"
 
 // Constructor requires matrix of behaviour bin limits and size specifications of NN controllers. Initialises the vector storing the best performance evaluations and allocates memory on the heap to store the controllers.
 MAPElites::MAPElites(MatrixXd bins, size_t nIn, size_t nOut, size_t nHid): binLimits(bins){

@@ -4,25 +4,26 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <iostream>
 #include <math.h>
-#include <Eigen/Eigen>
 #include "Learning/NeuroEvo.h"
-#include "Utilities/Utilities.h"
+#include "Utilities/MatrixTypes.h"
+#include "Utilities/UtilFunctions.h"
 #include "Target.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846264338328
 #endif
 
-using easymath::rand_interval ;
+using easymath::rand ;
+using easymath::unit_vector ;
+using easymath::L2_norm ;
 using easymath::pi_2_pi ;
 using std::max ;
 
 class SingleRover{
   public:
-    SingleRover(vector<double>, size_t, size_t, size_t) ;
+    SingleRover(matrix1d, size_t, size_t, size_t) ;
     ~SingleRover() ;
     
     void ExecuteLearning(size_t) ;
@@ -30,25 +31,20 @@ class SingleRover{
     void InitialiseNewLearningEpoch() ;
     void SimulateEpoch(bool write=false) ;
     
-    void ExecutePolicy(char * readFile, char * storeTraj, char * storePOI, size_t numIn, size_t numOut, size_t numHidden) ; // read in control policy and execute in random world, store trajectory and POI results in second and third inputs, fourth-sizth inputs define NN structure, final input indicates if readFile is a binary file
-    
     void OutputPerformance(char *) ; // write epoch evaluations to file
     void OutputTrajectories(char *, char *) ; // write final trajectories and POIs to file
-    void OutputNNs(char *) ; // write final control policies to file
   private:
-    vector<double> worldLimits ;
+    matrix1d worldLimits ;
     size_t numPOIs ;
     size_t nSteps ;
-    size_t numIn ;
-    size_t numOut ;
-    size_t numHidden ;
     
     vector<Target> POIs ;
-    Vector2d initialXY ;
+    matrix1d initialXY ;
     double initialPsi ;
+    matrix1d action ;
     
     double maxPossibleEval ;
-    vector<double> epochEvals ;
+    matrix1d epochEvals ;
     NeuroEvo * RoverNE ;
     
     bool outputEval ;
@@ -58,10 +54,7 @@ class SingleRover{
     std::ofstream trajFile ;
     std::ofstream POIFile ;
     
-    bool outputNNs ;
-    std::ofstream NNFile ;
-    
-    VectorXd ComputeNNInput(Vector2d, double) ;
-    Matrix2d RotationMatrix(double) ;
+    matrix1d ComputeNNInput(matrix1d, double) ;
+    matrix2d RotationMatrix(double) ;
 } ;
 #endif // SINGLE_ROVER_H_

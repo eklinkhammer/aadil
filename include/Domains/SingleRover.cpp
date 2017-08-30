@@ -1,4 +1,4 @@
-#include "Domains/SingleRover.h"
+#include "SingleRover.h"
 #include <iostream>
 
 // Constructor: Initialises physical properties of domain given size of the grid world and number of POIs. Currenly hard coded for 4 input 2 output NN control policies. Also initialises simulation properties given number of timesteps per learning epoch and toggles boolean for writing NN evaluations to file. 

@@ -37,13 +37,6 @@ class MultiRover{
     void OutputQueries(char *) ;
     void OutputBeliefs(char *) ;
     void OutputAverageStepwise(char *) ;
-
-    void setEval(string newEval) { 
-      evaluationFunction = newEval;
-      for (size_t i = 0; i < nRovers; i++) {
-        roverTeam[i]->setEvalFunc(newEval);
-      }
-    }
     
     void ExecutePolicies(char * readFile, char * storeTraj, char * storePOI, char * storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
     

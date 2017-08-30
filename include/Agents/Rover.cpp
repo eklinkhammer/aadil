@@ -1,4 +1,4 @@
-#include "Agents/Rover.h"
+#include "Rover.h"
 
 Rover::Rover(size_t n, size_t nPop, string evalFunc): nSteps(n), popSize(nPop){
   numIn = 8 ; // hard coded for 4 element input (body frame quadrant decomposition)

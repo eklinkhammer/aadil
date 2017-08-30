@@ -51,13 +51,7 @@ class Rover{
     size_t ComputePOMDPAction() ;
     void UpdateNNStateInputCalculation(bool, size_t) ;
     bool IsStateObsUpdated(){return stateObsUpdate ;}
-
-    void setEvalFunc (string eval) {
-      if (eval == "D") {
-        isD = true;
-      }
-    };    
-    Vector2d getCurrentXY() { return currentXY; }
+    
     double GetAverageR() ;
   private:
     size_t nSteps ;

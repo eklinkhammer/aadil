@@ -1,5 +1,5 @@
 // Copyright 2016 Carrie Rebhuhn
-#include "Utilities/MatrixTypes.h"
+#include "MatrixTypes.h"
 
 double easymath::normalize(double val, double min, double max) {
     return (val - min) / (max - min);
