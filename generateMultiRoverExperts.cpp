@@ -16,9 +16,9 @@ int main(){
   world.push_back(0.0) ; 
   world.push_back(30.0) ;   // Dimensions of testing arena [xmin, xmax, ymin, ymax]
   
-  size_t rovs = 10 ;        // Number of rovers
-  size_t nPOIs = 12 ;       // Number of POIs
-  int coupling = 2 ;        // Number of simultaneous observations required
+  size_t rovs = 1;        // Number of rovers
+  size_t nPOIs = 1;       // Number of POIs
+  int coupling = 1;        // Number of simultaneous observations required
   
   size_t nSteps = 30 ;      // Number of timesteps in each learning epoch
   size_t nEps = 1000 ;      // Number of learning epochs

@@ -3,6 +3,9 @@ project(multirover)
 
 include_directories(include)
 
+set (LIB_NAME aadil)
+set (TEST_EXEC runTests)
+
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -I ~/resources/eigen")
 add_subdirectory(include)
 
@@ -13,8 +16,8 @@ add_executable(generateMultiRoverExperts generateMultiRoverExperts.cpp)
 target_link_libraries( generateMultiRoverExperts ${LIBS_TO_LINK} )
 
 ## Create library
-add_library(lib_name SHARED dummy.cpp)
-target_link_libraries(lib_name ${LIBS_TO_LINK})
+add_library(${LIB_NAME} SHARED dummy.cpp)
+target_link_libraries(${LIB_NAME} ${LIBS_TO_LINK})
 
 ## Google Test Setup
 configure_file(CMakeLists.txt.in
@@ -28,7 +31,12 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
                  ${CMAKE_BINARY_DIR}/googletest-build)
 
 ## Create Test Executable
+
+file(GLOB_RECURSE TEST_SRC
+  "test/*.cpp"
+)
+
 enable_testing()
-add_executable(test_exec test/dummy_test.cpp)
-target_link_libraries(test_exec gtest gtest_main lib_name)
-add_test(NAME gtest-lib_name COMMAND test_exec)
+add_executable(${TEST_EXEC} ${TEST_SRC})
+target_link_libraries(${TEST_EXEC} gtest gtest_main ${LIB_NAME})
+add_test(NAME gtest-lib_name COMMAND ${TEST_EXEC})
