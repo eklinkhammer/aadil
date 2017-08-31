@@ -28,46 +28,192 @@ SOFTWARE.
 
 #include "Domains/Target.h"
 
+#include <iostream>
+
 class TargetTest : public::testing::Test {};
-
-// TEST_F(TargetTest, testDefaults) {
-//   Vector2d xy; xy(0) = 1; xy(1) = 2;
-//   Target t(xy, 2.5);
-
-  
-//   EXPECT_EQ(1,1);
-// }
 
 TEST_F(TargetTest, testFirstObservationNoCoupling) {
   Vector2d pos; pos(0) = 0; pos(1) = 0;
   Vector2d xy; xy(0) = 4; xy(1) = 0;
 
   // Default obs radius is 4.0
-  Target t(xy, 3.0);
+  Target t(pos, 3.0);
   t.ObserveTarget(xy);
   
   double expected_nearest = (pos - xy).norm();
   double nearest = t.GetNearestObs();
-  
+
   EXPECT_TRUE(t.IsObserved());
   EXPECT_DOUBLE_EQ(expected_nearest, nearest);
 }
-// Test_F(TargetTest,) {
-//   EXPECT_EQ(1,1);
-// }
 
-// TEST_F(TargetTest, testWorseObservationNoCoupling) {
+TEST_F(TargetTest, testFirstObservationTooFarNoCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 2;
 
-// }
+  Target t(pos, 3.0, 1, 4, false);
+  t.ObserveTarget(xy);
+  
+  EXPECT_FALSE(t.IsObserved());
+}
 
-// TEST_F(TargetTest, testBetterObservationNoCoupling) {
+TEST_F(TargetTest, testWorseObservationNoCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
 
-// }
+  Target t(pos, 3.0, 1, 5, false);
+  t.ObserveTarget(xy);
 
-// TEST_F(TargetTest, testFirstObservationsCoupling) {}
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4, t.GetNearestObs());
 
-// TEST_F(TargetTest, testInsufficientObservationsCoupling) {}
+  t.ObserveTarget(xy2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4, t.GetNearestObs());
+}
 
-// TEST_F(TargetTest, testSufficientObservationsCoupling) {}
-// TEST_F(TargetTest, testBetterObservationCoupling) {}
-// TEST_F(TargetTest, testWorseObservationsCoupling) {}
+TEST_F(TargetTest, testBetterObservationNoCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+
+  Target t(pos, 3.0, 1, 5, false);
+  t.ObserveTarget(xy2);
+
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4.5, t.GetNearestObs());
+
+  t.ObserveTarget(xy);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testFirstObservationsCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy);
+  t.ObserveTarget(xy2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4.25, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testInsufficientObservationsCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy);
+  EXPECT_FALSE(t.IsObserved());
+}
+
+TEST_F(TargetTest, testBetterObservationCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+  Vector2d xy3; xy3(0) = 0; xy3(1) = 3;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy);
+  t.ObserveTarget(xy2);
+  t.ObserveTarget(xy3);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(3.5, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testWorseObservationsCoupling) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+  Vector2d xy3; xy3(0) = 0; xy3(1) = 3;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy3);
+  t.ObserveTarget(xy);
+  t.ObserveTarget(xy2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(3.5, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testWorseObservationWithTime) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+
+  Target t(pos, 3.0, 1, 5, false);
+  t.ObserveTarget(xy, 1);
+
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4, t.GetNearestObs());
+
+  t.ObserveTarget(xy2, 2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testBetterObservationWithTime) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+
+  Target t(pos, 3.0, 1, 5, false);
+  t.ObserveTarget(xy2, 1);
+
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4.5, t.GetNearestObs());
+
+  t.ObserveTarget(xy, 2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testObserveWithTimeCouplingInsufficentAtTime) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy, 1);
+  t.ObserveTarget(xy2, 2);
+  EXPECT_FALSE(t.IsObserved());
+}
+
+TEST_F(TargetTest, testObserveWithTimeCouplingSufficentAtTime) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy, 2);
+  t.ObserveTarget(xy2, 2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4.25, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testObserveWithTimeCouplingSufficentAtTimeThenNewTime) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+  Vector2d xy2; xy2(0) = 0; xy2(1) = 4.5;
+  Vector2d xy3; xy3(0) = 0; xy3(1) = 3;
+
+  Target t(pos, 3.0, 2, 5, false);
+  t.ObserveTarget(xy, 1);
+  t.ObserveTarget(xy2, 1);
+  t.ObserveTarget(xy3, 2);
+  EXPECT_TRUE(t.IsObserved());
+  EXPECT_DOUBLE_EQ(4.25, t.GetNearestObs());
+}
+
+TEST_F(TargetTest, testObserveThenReset) {
+  Vector2d pos; pos(0) = 0; pos(1) = 0;
+  Vector2d xy; xy(0) = 4; xy(1) = 0;
+
+  Target t(pos, 3.0);
+  t.ObserveTarget(xy, 1);
+  t.ResetTarget();
+
+  EXPECT_FALSE(t.IsObserved());
+}
