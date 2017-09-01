@@ -19,7 +19,7 @@ MultiRover::~MultiRover(){
   }
   if (outputEvals)
     evalFile.close() ;
-  if (outputTrajs){
+  if (outputTrajs) {
     trajFile.close() ;
     POIFile.close() ;
   }
@@ -549,7 +549,7 @@ void MultiRover::ExecutePolicies(char * readFile, char * storeTraj, char * store
 
 void MultiRover::ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden){
   // Filename to read expert NN control policies
-	std::stringstream expFileName ;
+  std::stringstream expFileName ;
   expFileName << expFile ;
   std::ifstream expNNFile ;
   

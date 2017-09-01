@@ -1,0 +1,23 @@
+domain:
+  world:
+    xmin: 0.0
+    xmax: 30.0
+    ymin: 0.0
+    ymax: 30.0
+  rovers: 1
+  pois: 1
+  coupling: 1
+
+scenario:
+  nSteps: 30
+  nEps: 10
+  staticOrRandom: 1
+  evalFunc: G
+
+learning:
+  ccea:
+    nPop: 15
+  network:
+    nInputs: 8
+    nHidden: 16
+    nOutputs: 2
