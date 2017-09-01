@@ -22,8 +22,8 @@ Rover::Rover(size_t n, size_t nPop, string evalFunc): nSteps(n), popSize(nPop){
 }
 
 Rover::~Rover(){
-  delete(RoverNE) ;
-  RoverNE = 0 ;
+  delete(RoverNE);
+  RoverNE = 0;
 }
   
 void Rover::ResetEpochEvals(){
@@ -109,12 +109,9 @@ void Rover::EvolvePolicies(bool init){
   RoverNE->MutatePopulation() ;
 }
 
-void Rover::OutputNNs(char * A){
-  // Filename to write to stored in A
-  std::stringstream fileName ;
-  fileName << A ;
-  std::ofstream NNFile ;
-  NNFile.open(fileName.str().c_str(),std::ios::app) ;
+void Rover::OutputNNs(std::string nnFile) {
+  std::ofstream NNFile;
+  NNFile.open(nnFile.c_str(),std::ios::app) ;
   
   // Only write in non-mutated (competitive) policies
   for (size_t i = 0; i < popSize; i++){

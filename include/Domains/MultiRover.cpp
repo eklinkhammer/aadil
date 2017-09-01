@@ -1,16 +1,36 @@
 #include "MultiRover.h"
 
-MultiRover::MultiRover(vector<double> wLims, size_t numSteps, size_t numPop, size_t numPOIs, string evalFunc, size_t rovs, int c): world(wLims), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), evaluationFunction(evalFunc), nRovers(rovs), coupling(c){
-  for (size_t i = 0; i < nRovers; i++){
-    Rover * newRover = new Rover(nSteps, nPop, evaluationFunction) ;
-    roverTeam.push_back(newRover) ;
+// MultiRover::MultiRover(vector<double> wLims, size_t numSteps, size_t numPop, size_t numPOIs, string evalFunc, size_t rovs, int c): world(wLims), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), evaluationFunction(evalFunc), nRovers(rovs), coupling(c){
+//   for (size_t i = 0; i < nRovers; i++){
+//     Rover * newRover = new Rover(nSteps, nPop, evaluationFunction) ;
+//     roverTeam.push_back(newRover) ;
+//   }
+//   outputEvals = false ;
+//   outputTrajs = false ;
+//   outputQury = false ;
+//   outputBlf = false ;
+//   gPOIObs = false ; // true if goal POI is observed
+// }
+
+MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop,
+		       size_t numPOIs, Fitness f, size_t rovs, int c,
+		       size_t nInput, size_t nHidden, size_t nOutput)
+  : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
+    coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
+    outputQury(false), outputBlf(false), gPOIObs(false) {
+
+  if (fitness == Fitness::G) {
+    evaluationFunction = "G";
+  } else {
+    evaluationFunction = "D";
   }
-  outputEvals = false ;
-  outputTrajs = false ;
-  outputQury = false ;
-  outputBlf = false ;
-  gPOIObs = false ; // true if goal POI is observed
+  
+  for (size_t i = 0; i < nRovers; i++) {
+    Rover* newR = new Rover(nSteps, nPop, evaluationFunction);
+    roverTeam.push_back(newR);
+  }
 }
+									
 
 MultiRover::~MultiRover(){
   for (size_t i = 0; i < nRovers; i++){
@@ -340,40 +360,34 @@ void MultiRover::ResetEpochEvals(){
 }
 
 // Wrapper for writing epoch evaluations to specified files
-void MultiRover::OutputPerformance(char * A){
-	// Filename to write to stored in A
-	std::stringstream fileName ;
-  fileName << A ;
+void MultiRover::OutputPerformance(std::string fileName){
   if (evalFile.is_open())
     evalFile.close() ;
-  evalFile.open(fileName.str().c_str(),std::ios::app) ;
+  evalFile.open(fileName.c_str(),std::ios::app);
   
-  outputEvals = true ;
+  outputEvals = true;
 }
 
 // Wrapper for writing final trajectories to specified files
-void MultiRover::OutputTrajectories(char * A, char * B){
-	// Filename to write trajectories to stored in A
-	std::stringstream tfileName ;
-  tfileName << A ;
-  if (trajFile.is_open())
-    trajFile.close() ;
-  trajFile.open(tfileName.str().c_str(),std::ios::app) ;
+void MultiRover::OutputTrajectories(std::string tFile, std::string poiFile) {
+  if (trajFile.is_open()) {
+    trajFile.close();
+  }
+  trajFile.open(tFile.c_str(),std::ios::app) ;
   
-  // Filename to write POIs to stored in B
-	std::stringstream pfileName ;
-  pfileName << B ;
-  if (POIFile.is_open())
-    POIFile.close() ;
-  POIFile.open(pfileName.str().c_str(),std::ios::app) ;
+  if (POIFile.is_open()) {
+    POIFile.close();
+  }
+  POIFile.open(poiFile.c_str(),std::ios::app) ;
   
   outputTrajs = true ;
 }
 
 // Wrapper for writing final control policies to specified file
-void MultiRover::OutputControlPolicies(char * A){
-  for (size_t i = 0; i < nRovers; i++)
-    roverTeam[i]->OutputNNs(A) ;
+void MultiRover::OutputControlPolicies(std::string nnFile) {
+  for (auto const& rover : roverTeam) {
+    rover->OutputNNs(nnFile);
+  }
 }
 
 // Wrapper for writing POMDP actions to specified file

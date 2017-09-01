@@ -9,7 +9,7 @@ set (TEST_EXEC runTests)
 set (YAML_INCLUDE ~/resources/yaml-cpp/include)
 set (INCLUDE_DIRS include ${YAML_INCLUDE})
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -I ~/resources/eigen")
+set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -Wno-reorder -I ~/resources/eigen")
 add_subdirectory(include)
 
 set( LIBS_TO_LINK Utilities Learning Domains Agents POMDPs)

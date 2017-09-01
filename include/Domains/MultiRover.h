@@ -21,8 +21,14 @@ using namespace Eigen ;
 
 class MultiRover{
   public:
-    MultiRover(vector<double>, size_t, size_t, size_t, string, size_t, int c = 1) ;
-    ~MultiRover() ;
+ MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
+	    string evalFunc, size_t rovs, int c = 1)
+   : MultiRover(w, numSteps, numPop, numPOIs, Fitness::G, rovs, c, 8, 16, 2) {};
+  
+    MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
+	       numPOIs, Fitness f, size_t rovs, int c, size_t nInput, size_t
+	       nHidden, size_t nOutput);
+    ~MultiRover();
     
     void InitialiseEpoch() ;
     
@@ -31,9 +37,9 @@ class MultiRover{
     void EvolvePolicies(bool init = false) ;
     void ResetEpochEvals() ;
     
-    void OutputPerformance(char *) ;
-    void OutputTrajectories(char *, char *) ;
-    void OutputControlPolicies(char *) ;
+    void OutputPerformance(std::string) ;
+    void OutputTrajectories(std::string, std::string) ;
+    void OutputControlPolicies(std::string) ;
     void OutputQueries(char *) ;
     void OutputBeliefs(char *) ;
     void OutputAverageStepwise(char *) ;
@@ -44,6 +50,8 @@ class MultiRover{
     
     void ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in expert and novice control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
   private:
+    Fitness fitness;
+    
     vector<double> world ;
     size_t nSteps ;
     size_t nPop ;

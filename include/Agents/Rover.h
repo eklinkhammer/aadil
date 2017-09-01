@@ -26,9 +26,13 @@ using std::list ;
 using std::max ;
 using easymath::pi_2_pi ;
 
+enum class Fitness {T, G, D};
+
 class Rover{
   public:
-    Rover(size_t n, size_t nPop, string evalFunc) ;
+    Rover(size_t n, size_t nPop, string evalFunc);
+    Rover(size_t n, size_t nPop, Fitness f, size_t nInput, size_t nHidden,
+	    size_t nOutput);
     ~Rover() ;
     
     void ResetEpochEvals() ;
@@ -42,7 +46,7 @@ class Rover{
     
     void EvolvePolicies(bool init = false) ;
     
-    void OutputNNs(char *) ;
+    void OutputNNs(std::string) ;
     NeuroEvo * GetNEPopulation(){return RoverNE ;}
     
     void SetPOMDPPolicy(POMDP * pomdp) ;
