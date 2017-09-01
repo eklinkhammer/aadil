@@ -87,8 +87,8 @@ class Target{
   //   observed by any observer. Its current list of observations is empty. It
   //   has no nearest observation.
   void ResetTarget();
-      
-
+  friend std::ostream& operator<<(std::ostream&, const Target&);
+  
  private:
     Vector2d loc ;
     double val ;
@@ -101,6 +101,7 @@ class Target{
     std::vector<double> nearestObsVector;
 
     void resetNearestObs();
+
 };
 
 #endif // TARGET_H_

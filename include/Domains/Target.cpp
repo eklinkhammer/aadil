@@ -95,3 +95,7 @@ void Target::resetNearestObs() {
     nearestObsVector[i] = DBL_MAX;
   }
 }
+
+std::ostream& operator<<(std::ostream &strm, const Target &t) {
+  return strm << "(" << t.loc(0) << ", " << t.loc(1) << ") Val: " << t.val;
+}

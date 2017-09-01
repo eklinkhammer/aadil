@@ -86,10 +86,12 @@ void MultiRover::SimulateEpoch(bool train){
     teamSize = nPop ;
   
   vector< vector<size_t> > teams = RandomiseTeams(teamSize) ; // each row is the population for a single agent
-  
-  if (outputTrajs)
-    for (size_t i = 0; i < nPOIs; i++)
-      POIFile << POIs[i].GetLocation()(0) << "," << POIs[i].GetLocation()(1) << "," << POIs[i].GetValue() << "\n" ;
+
+  if (outputTrajs) {
+    for (auto const& poi : POIs) {
+      POIFile << poi << std::endl;
+    }
+  }
   
   double maxEval = 0.0 ;
   for (size_t i = 0; i < teamSize; i++){ // looping across the columns of 'teams'
