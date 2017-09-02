@@ -88,15 +88,35 @@ class Agent {
   // Base functionality is to ignore the first argument.
   virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d xy, double psi);
 
-  virtual void DifferentEvaluationFunction(vector<Vector2d>, double) = 0;
+  virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) = 0;
 
-  vector<Vector2d> substituteCounterfactual(vector<Vector2d>, double);
-  
+  // Returns a jointstate that has the agent's state replaced with a
+  //   counterfactual state. The default is the intial state (ie, if the
+  //   agent had not moved at all).
+  vector<Vector2d> substituteCounterfactual(vector<Vector2d> jointState);
+
+  // Evolves the NeuroEvo, using the epochEvals score. When init is true,
+  //  only mutates the population.
   void EvolvePolicies(bool init = false);
-  void OutputNNs(std::string);
-  void ResetEpochEvals();
-  
 
+  // Writes the neural networks to file
+  void OutputNNs(std::string);
+
+  // Sets the epoch values to 0 (for new scenario)
+  void ResetEpochEvals();
+
+  // Sets the performance for the epoch and position i to either G or stepwise D
+  void SetEpochPerformance(double G, size_t i);
+
+  vector<double> GetEpochEvals(){ return epochEvals; }
+  
+  double getCurrentPsi() { return currentPsi; }
+  double getInitialPsi() { return initialPsi; }
+
+  Vector2d getCurrentXY() { return currentXY; }
+  Vector2d getInitialXY() { return initialXY; }
+
+  NeuroEvo * GetNEPopulation(){ return AgentNE ;}
   
  private:
   size_t nSteps;
@@ -107,7 +127,7 @@ class Agent {
 
   NeuroEvo* AgentNE;
 
-  std::vector<double> epocEvals;
+  std::vector<double> epochEvals;
 
   void ResetStepwiseEval();
   double stepwiseD;
@@ -121,6 +141,8 @@ class Agent {
 
   Vector2d currentXY;
   double currentPsi;
+
+  list<double> runningAvgR;
 };
 
-#endif AGENT_H_
+#endif // AGENT_H_

@@ -14,82 +14,28 @@
 #include "Learning/NeuroEvo.h"
 #include "Utilities/Utilities.h"
 #include "Domains/Target.h"
-#include "POMDPs/POMDP.h"
+#include "Agent.h"
 
-#ifndef PI
-#define PI 3.14159265358979323846264338328
-#endif
+using std::string;
+using std::vector;
+using std::max;
 
-using std::string ;
-using std::vector ;
-using std::list ;
-using std::max ;
-using easymath::pi_2_pi ;
+class Rover : public Agent {
+ public:
+  Rover(size_t n, size_t nPop, string evalFunc);
+  //Rover(size_t n, size_t nPop, Fitness f, size_t nInput, size_t nHidden,
+      //size_t nOutput);
+  ~Rover() {};
 
-enum class Fitness {T, G, D};
+  // Pure Virtual functions
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState);
+  virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
 
-class Rover{
-  public:
-    Rover(size_t n, size_t nPop, string evalFunc);
-    Rover(size_t n, size_t nPop, Fitness f, size_t nInput, size_t nHidden,
-	    size_t nOutput);
-    ~Rover() ;
+  // Overriding
+  virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d, double);
     
-    void ResetEpochEvals() ;
-    void InitialiseNewLearningEpoch(vector<Target>, Vector2d, double) ;
-    void ResetStepwiseEval() ;
-    
-    Vector2d ExecuteNNControlPolicy(size_t , vector<Vector2d>) ; // executes NN_i from current (x,y,psi), outputs new (x,y)
-    void ComputeStepwiseEval(vector<Vector2d>, double) ;
-    void SetEpochPerformance(double G, size_t i) ;
-    vector<double> GetEpochEvals(){return epochEvals ;}
-    
-    void EvolvePolicies(bool init = false) ;
-    
-    void OutputNNs(std::string) ;
-    NeuroEvo * GetNEPopulation(){return RoverNE ;}
-    
-    void SetPOMDPPolicy(POMDP * pomdp) ;
-    POMDP * GetPOMDPPolicy(){return expertisePOMDP ;}
-    VectorXd GetPOMDPBelief(){return belief ;}
-    size_t ComputePOMDPAction() ;
-    void UpdateNNStateInputCalculation(bool, size_t) ;
-    bool IsStateObsUpdated(){return stateObsUpdate ;}
-    
-    double GetAverageR() ;
-  private:
-    size_t nSteps ;
-    size_t popSize ;
-    size_t numIn ;
-    size_t numOut ;
-    size_t numHidden ;
-    
-    Vector2d initialXY ;
-    double initialPsi ;
-    vector<Target> POIs ;
-    Vector2d currentXY ;
-    double currentPsi ;
-    
-    bool isD ;
-    double stepwiseD ;
-    vector<double> epochEvals ;
-    NeuroEvo * RoverNE ;
-    list<double> runningAvgR ;
-    size_t windowSize ;
-    
-    VectorXd ComputeNNInput(vector<Vector2d>) ;
-    Matrix2d RotationMatrix(double) ;
-    
-    size_t pomdpAction ;
-    vector<double> rThreshold ;
-    POMDP * expertisePOMDP ;
-    VectorXd belief ;
-    
-    bool stateObsUpdate ;
-    size_t goalPOI ;
-    
-    void DifferenceEvaluationFunction(vector<Vector2d>, double) ;
-    void UpdatedStateEvaluationFunction(vector<Vector2d>, double) ;
-} ;
+ private:
+  vector<Target> POIs;
+};
 
 #endif // ROVER_H_

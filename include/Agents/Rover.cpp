@@ -21,167 +21,17 @@ Rover::Rover(size_t n, size_t nPop, string evalFunc): nSteps(n), popSize(nPop){
   stateObsUpdate = false ; // true if human assistance has redefined NN control policy state calculation
 }
 
-Rover::~Rover(){
-  delete(RoverNE);
-  RoverNE = 0;
-}
-  
-void Rover::ResetEpochEvals(){
-  // Re-initialise size of evaluations vector
-  vector<double> evals(2*popSize,0) ;
-  epochEvals = evals ;
-}
+// Initial simulation parameters, includes setting initial rover position, POI
+//   positions and values, and clearing the evaluation storage vector
+void Rover::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy,
+				       double psi) {
 
-// Initial simulation parameters, includes setting initial rover position, POI positions and values, and clearing the evaluation storage vector
-void Rover::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy, double psi){
-  // Clear initial world properties
-  initialXY.setZero(initialXY.size(),1) ;
-  POIs.clear() ;
-  
-  ResetStepwiseEval() ;
+  InitialiseNewLearningEpoch(xy, psi);
+  POIs.clear();
   
   for (size_t i = 0; i < pois.size(); i++){
     POIs.push_back(pois[i]) ;
-//    maxPossibleEval += POIs[i].GetValue() ;
   }
-  
-  initialXY(0) = xy(0) ;
-  initialXY(1) = xy(1) ;
-  initialPsi = psi ;
-  
-  currentXY = initialXY ;
-  currentPsi = initialPsi ;
-  
-  // Reinitialise expertise POMDP properties
-  pomdpAction = 0 ;
-  stateObsUpdate = false ;
-}
-
-void Rover::ResetStepwiseEval(){
-  stepwiseD = 0.0 ;
-  runningAvgR.clear() ;
-}
-
-Vector2d Rover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState){
-  // Calculate body frame NN input state
-  VectorXd s ;
-  if (!stateObsUpdate)
-    s = ComputeNNInput(jointState) ;
-  else{
-    vector<Vector2d> tempState ;
-    tempState.clear() ;
-    s = ComputeNNInput(tempState) ;
-  }
-  
-  // Calculate body frame action
-  VectorXd a = RoverNE->GetNNIndex(i)->EvaluateNN(s).normalized() ;
-  
-  // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(currentPsi) ;
-  Vector2d deltaXY = Body2Global*a ;
-  double deltaPsi = atan2(a(1),a(0)) ;
-  
-  // Move
-  currentXY += deltaXY ;
-  currentPsi += deltaPsi ;
-  currentPsi = pi_2_pi(currentPsi) ;
-  
-  return currentXY ;
-}
-
-void Rover::ComputeStepwiseEval(vector<Vector2d> jointState, double G){
-  if (!stateObsUpdate)
-    DifferenceEvaluationFunction(jointState, G) ;
-  else
-    UpdatedStateEvaluationFunction(jointState, G) ;
-}
-
-void Rover::SetEpochPerformance(double G, size_t i){
-  if (isD)
-    epochEvals[i] = stepwiseD ;
-  else
-    epochEvals[i] = G ;
-}
-
-void Rover::EvolvePolicies(bool init){
-  if (!init)
-    RoverNE->EvolvePopulation(epochEvals) ;
-  RoverNE->MutatePopulation() ;
-}
-
-void Rover::OutputNNs(std::string nnFile) {
-  std::ofstream NNFile;
-  NNFile.open(nnFile.c_str(),std::ios::app) ;
-  
-  // Only write in non-mutated (competitive) policies
-  for (size_t i = 0; i < popSize; i++){
-    NeuralNet * NN = RoverNE->GetNNIndex(i) ;
-    MatrixXd NNA = NN->GetWeightsA() ;
-    for (int j = 0; j < NNA.rows(); j++){
-      for (int k = 0; k < NNA.cols(); k++)
-        NNFile << NNA(j,k) << "," ;
-      NNFile << "\n" ;
-    }
-    
-    MatrixXd NNB = NN->GetWeightsB() ;
-    for (int j = 0; j < NNB.rows(); j++){
-      for (int k = 0; k < NNB.cols(); k++)
-        NNFile << NNB(j,k) << "," ;
-      NNFile << "\n" ;
-    }
-  }
-  NNFile.close() ;
-}
-
-void Rover::SetPOMDPPolicy(POMDP * pomdp){
-  expertisePOMDP = pomdp ;
-  belief = expertisePOMDP->GetBelief() ;
-}
-
-size_t Rover::ComputePOMDPAction(){
-  // Wait for sufficient reward observations
-  if (runningAvgR.size() == windowSize){
-    // Calculate reward observation from running average
-    double avgSum = GetAverageR() ;
-    
-    // Convert to discrete observation for POMDP interface
-    size_t obs ;
-    if (avgSum <= rThreshold[0])
-      obs = 0 ;
-    else if (avgSum < rThreshold[1])
-      obs = 1 ;
-    else
-      obs = 2 ;
-    
-    // Updated POMDP with latest observation
-    expertisePOMDP->UpdateBelief(pomdpAction, obs) ;
-    belief = expertisePOMDP->GetBelief() ;
-    
-    // Compute next action
-    pomdpAction = expertisePOMDP->GetBestAction() ;
-  }
-  return pomdpAction ;
-}
-
-double Rover::GetAverageR(){
-  // Calculate reward observation from running average
-  double avgSum = 0.0 ;
-  for (list<double>::iterator it=runningAvgR.begin(); it!=runningAvgR.end(); ++it)
-    avgSum += *it ;
-  
-  avgSum /= windowSize ;
-  return avgSum ;
-}
-
-void Rover::UpdateNNStateInputCalculation(bool update, size_t gID){
-  stateObsUpdate = update ;
-  goalPOI = gID ;
-  vector<Target> newPOIs ;
-  newPOIs.push_back(POIs[gID]) ;
-  POIs.clear() ;
-  POIs.push_back(newPOIs[0]) ; // remove all other POIs from consideration in the state
-  runningAvgR.clear() ; // restart running average calculation window
-  pomdpAction = 0 ; // reset pomdp action
 }
 
 // Compute the NN input state given the rover locations and the POI locations and values in the world
@@ -252,15 +102,6 @@ VectorXd Rover::ComputeNNInput(vector<Vector2d> jointState){
   return s ;
 }
 
-Matrix2d Rover::RotationMatrix(double psi){
-  Matrix2d R ;
-  R(0,0) = cos(psi) ;
-  R(0,1) = -sin(psi) ;
-  R(1,0) = sin(psi) ;
-  R(1,1) = cos(psi) ;
-  return R ;
-}
-
 void Rover::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G){
   double G_hat = 0 ;
   size_t ind = 0 ; // stores agent's index in the joint state
@@ -279,38 +120,6 @@ void Rover::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G){
   for (size_t i = 0; i < jointState.size(); i++)
     for (size_t j = 0; j < POIs.size(); j++)
       POIs[j].ObserveTarget(jointState[i]) ;
-       
-  for (size_t j = 0; j < POIs.size(); j++){
-    G_hat += POIs[j].IsObserved() ? (POIs[j].GetValue()/max(POIs[j].GetNearestObs(),1.0)) : 0.0 ;
-    POIs[j].ResetTarget() ;
-  }
-  
-  stepwiseD += (G-G_hat) ;
-  if (runningAvgR.size() == windowSize)
-    runningAvgR.pop_front() ;
-  runningAvgR.push_back(G) ;
-}
-
-void Rover::UpdatedStateEvaluationFunction(vector<Vector2d> jointState, double G){
-  double G_hat = 0 ;
-  size_t ind = 0 ; // stores agent's index in the joint state
-  double minDiff = DBL_MAX ;
-  for (size_t i = 0; i < jointState.size(); i++){
-    double diff = sqrt(pow(jointState[i](0)-currentXY(0),2)+pow(jointState[i](1)-currentXY(1),2)) ;
-    if (diff < minDiff){
-      minDiff = diff ;
-      ind = i ;
-    }
-  }
-  vector<Vector2d> newState ; // ignore effect of all other agents in state
-  newState.push_back(jointState[ind]) ;
-  
-  // Replace agent state with counterfactual
-  newState[0](0) = initialXY(0) ;
-  newState[0](1) = initialXY(1) ;
-  for (size_t i = 0; i < newState.size(); i++)
-    for (size_t j = 0; j < POIs.size(); j++)
-      POIs[j].ObserveTarget(newState[i]) ;
        
   for (size_t j = 0; j < POIs.size(); j++){
     G_hat += POIs[j].IsObserved() ? (POIs[j].GetValue()/max(POIs[j].GetNearestObs(),1.0)) : 0.0 ;

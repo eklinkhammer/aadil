@@ -40,9 +40,9 @@ Agent::~Agent() {
   AgentNE = 0;
 }
 
-VectorXd Agent::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
+Vector2d Agent::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
   VectorXd inp = ComputeNNInput(jointState);
-  VectorXd out = AgentNE->getNNIndex(i)->EvaluateNN(inp).normalized();
+  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
 
   // Transform to global frame
   Matrix2d Body2Global = RotationMatrix(currentPsi);
@@ -58,7 +58,7 @@ VectorXd Agent::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
 }
 
 void Agent::InitialiseNewLearningEpoch(Vector2d xy, double psi) {
-  initalXY.setZero(initialXY.size(),1);
+  initialXY.setZero(initialXY.size(),1);
   ResetStepwiseEval();
 
   initialXY(0) = xy(0);
@@ -71,4 +71,84 @@ void Agent::InitialiseNewLearningEpoch(Vector2d xy, double psi) {
 
 void Agent::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy, double psi) {
   InitialiseNewLearningEpoch(xy, psi);
+}
+
+vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {
+  size_t ind = 0;
+  double minDiff = DBL_MAX;
+                  
+  for (size_t i = 0; i < jointState.size(); i++) {
+    double diff = sqrt(pow(jointState[i](0) - currentXY(0),2) +
+		       pow(jointState[i](1) - currentXY(1),2));
+    if (diff < minDiff) {
+      minDiff = diff;
+      ind = i;
+    }
+  }
+
+  jointState[ind](0) = initialXY(0);
+  jointState[ind](1) = initialXY(1);
+
+  return jointState;
+}
+
+Matrix2d Agent::RotationMatrix(double psi){
+  Matrix2d R ;
+  R(0,0) = cos(psi) ;
+  R(0,1) = -sin(psi) ;
+  R(1,0) = sin(psi) ;
+  R(1,1) = cos(psi) ;
+  return R ;
+}
+
+void Agent::ResetStepwiseEval(){
+  stepwiseD = 0.0 ;
+  runningAvgR.clear() ;
+}
+
+void Agent::EvolvePolicies(bool init) {
+  if (!init) {
+    AgentNE->EvolvePopulation(epochEvals);
+  }
+  
+  AgentNE->MutatePopulation() ;
+}
+
+void Agent::OutputNNs(std::string nnFile) {
+  std::ofstream NNFile;
+  NNFile.open(nnFile.c_str(),std::ios::app) ;
+  
+  // Only write in non-mutated (competitive) policies
+  for (size_t i = 0; i < popSize; i++){
+    NeuralNet * NN = AgentNE->GetNNIndex(i);
+    
+    MatrixXd NNA = NN->GetWeightsA() ;
+    for (int j = 0; j < NNA.rows(); j++){
+      for (int k = 0; k < NNA.cols(); k++)
+        NNFile << NNA(j,k) << "," ;
+      NNFile << std::endl;
+    }
+    
+    MatrixXd NNB = NN->GetWeightsB() ;
+    for (int j = 0; j < NNB.rows(); j++){
+      for (int k = 0; k < NNB.cols(); k++)
+        NNFile << NNB(j,k) << "," ;
+      NNFile << std::endl;
+    }
+  }
+  NNFile.close() ;
+}
+
+void Agent::ResetEpochEvals(){
+  // Re-initialise size of evaluations vector
+  vector<double> evals(2*popSize,0) ;
+  epochEvals = evals ;
+}
+
+void Agent::SetEpochPerformance(double G, size_t i) {
+  if (fitness == Fitness::D) {
+    epochEvals[i] = stepwiseD;
+  } else if (fitness == Fitness::G) {
+    epochEvals[i] = G;
+  }
 }

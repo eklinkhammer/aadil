@@ -47,6 +47,6 @@ file(GLOB_RECURSE TEST_SRC
 )
 
 enable_testing()
-add_executable(${TEST_EXEC} ${TEST_SRC})
+add_executable(${TEST_EXEC} ${TEST_SRC})# test/Agents/agent_test.cpp)
 target_link_libraries(${TEST_EXEC} gtest gtest_main ${LIB_NAME})
 add_test(NAME gtest-lib_name COMMAND ${TEST_EXEC})
