@@ -73,7 +73,7 @@ void Agent::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy, double 
   InitialiseNewLearningEpoch(xy, psi);
 }
 
-vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {
+size_t Agent::selfIndex(vector<Vector2d> jointState) {
   size_t ind = 0;
   double minDiff = DBL_MAX;
                   
@@ -86,6 +86,10 @@ vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {
     }
   }
 
+  return ind;
+}
+vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {
+  size_t ind = selfIndex(jointState);
   jointState[ind](0) = initialXY(0);
   jointState[ind](1) = initialXY(1);
 
@@ -103,7 +107,6 @@ Matrix2d Agent::RotationMatrix(double psi){
 
 void Agent::ResetStepwiseEval(){
   stepwiseD = 0.0 ;
-  runningAvgR.clear() ;
 }
 
 void Agent::EvolvePolicies(bool init) {

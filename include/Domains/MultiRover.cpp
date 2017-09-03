@@ -1,23 +1,11 @@
 #include "MultiRover.h"
 
-// MultiRover::MultiRover(vector<double> wLims, size_t numSteps, size_t numPop, size_t numPOIs, string evalFunc, size_t rovs, int c): world(wLims), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), evaluationFunction(evalFunc), nRovers(rovs), coupling(c){
-//   for (size_t i = 0; i < nRovers; i++){
-//     Rover * newRover = new Rover(nSteps, nPop, evaluationFunction) ;
-//     roverTeam.push_back(newRover) ;
-//   }
-//   outputEvals = false ;
-//   outputTrajs = false ;
-//   outputQury = false ;
-//   outputBlf = false ;
-//   gPOIObs = false ; // true if goal POI is observed
-// }
-
-MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop,
-		       size_t numPOIs, Fitness f, size_t rovs, int c,
-		       size_t nInput, size_t nHidden, size_t nOutput)
+MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
+		       numPOIs, Fitness f, size_t rovs, int c, size_t nInput,
+		       size_t nHidden, size_t nOutput, AgentType t)
   : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
     coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
-    outputQury(false), outputBlf(false), gPOIObs(false) {
+    outputQury(false), outputBlf(false), gPOIObs(false), type(t) {
 
   if (fitness == Fitness::G) {
     evaluationFunction = "G";
@@ -26,8 +14,10 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop,
   }
   
   for (size_t i = 0; i < nRovers; i++) {
-    Rover* newR = new Rover(nSteps, nPop, evaluationFunction);
-    roverTeam.push_back(newR);
+    if (type == AgentType::R) {
+      Agent* newR = new Rover(nSteps, nPop, fitness);
+      roverTeam.push_back(newR);
+    }
   }
 }
 									
@@ -160,7 +150,7 @@ void MultiRover::SimulateEpoch(bool train){
 
       // Compute stepwiseD
       for (size_t j = 0; j < nRovers; j++)
-        roverTeam[j]->ComputeStepwiseEval(newJointState, G) ;
+        roverTeam[j]->DifferenceEvaluationFunction(newJointState, G) ;
       
       // Increment stored joint state
       jointState.clear() ;
@@ -171,12 +161,6 @@ void MultiRover::SimulateEpoch(bool train){
         for (size_t i = 0; i < jointState.size(); i++)
           trajFile << jointState[i](0) << "," << jointState[i](1) << "," ;
         trajFile << "\n" ;
-      }
-      
-      if (outputAvgStepR){
-        for (size_t j = 0; j < nRovers; j++)
-          avgStepRFile << roverTeam[j]->GetAverageR() << "," ;
-        avgStepRFile << "\n" ;
       }
     }
     // Compute overall team performance
@@ -223,10 +207,7 @@ void MultiRover::SimulateEpoch(size_t goalPOI, char * env, char * policy, Vector
     vector<Vector2d> jointState ;
     for (size_t j = 0; j < nRovers; j++){
       roverTeam[j]->InitialiseNewLearningEpoch(POIs,initialXYs[j],initialPsis[j]) ;
-      jointState.push_back(initialXYs[j]) ;
-      
-      // Create new expertise POMDP
-      roverTeam[j]->SetPOMDPPolicy(new POMDP(env, policy, prior)) ;
+      jointState.push_back(initialXYs[j]);
     }
     if (outputTrajs){
       for (size_t i = 0; i < jointState.size(); i++)
@@ -271,27 +252,12 @@ void MultiRover::SimulateEpoch(size_t goalPOI, char * env, char * policy, Vector
       }
       
       // Compute stepwiseD and output expertise POMDP action
-      for (size_t j = 0; j < nRovers; j++){
-        roverTeam[j]->ComputeStepwiseEval(newJointState, G) ;
-        size_t pomdpAct = roverTeam[j]->ComputePOMDPAction() ; // TODO: commented for testing changes in stepwise G
-//        size_t pomdpAct = 0 ; // TODO: hard-coded for testing changes in stepwise G, use for comparative results
-        
-        if (outputQury)
-          quryFile << pomdpAct << "," ;
-        
-        if (outputBlf)
-          blfFile << roverTeam[j]->GetPOMDPBelief()(0) << "," << roverTeam[j]->GetPOMDPBelief()(1) << "," ;
-        
-        if (pomdpAct == 1) // help requested
-          if (gPOIObs && !(roverTeam[j]->IsStateObsUpdated())) // goal POI has been observed by team and current rover has not updated state
-            roverTeam[j]->UpdateNNStateInputCalculation(gPOIObs,goalPOI) ;
+      for (size_t j = 0; j < nRovers; j++) {
+        roverTeam[j]->DifferenceEvaluationFunction(newJointState, G) ;
       }
       
       if (outputQury)
         quryFile << "\n" ;
-      
-      if (outputBlf)
-        blfFile << "\n" ;
       
       // Increment stored joint state
       jointState.clear() ;
@@ -303,16 +269,6 @@ void MultiRover::SimulateEpoch(size_t goalPOI, char * env, char * policy, Vector
           trajFile << jointState[i](0) << "," << jointState[i](1) << "," ;
         trajFile << "\n" ;
       }
-      
-      if (outputAvgStepR){
-        for (size_t j = 0; j < nRovers; j++)
-          avgStepRFile << roverTeam[j]->GetAverageR() << "," ;
-        avgStepRFile << "\n" ;
-      }
-      
-      // Check if goal POI has been discovered
-      if (!gPOIObs && POIs[goalPOI].IsObserved())
-        gPOIObs = true ;
     }
     // Compute overall team performance. TODO: update such that once goal POI is observed, reward for observing goal POI is cumulative
     double eval = 0.0 ;
@@ -328,7 +284,6 @@ void MultiRover::SimulateEpoch(size_t goalPOI, char * env, char * policy, Vector
     // Assign fitness and reset POMDPs
     for (size_t j = 0; j < nRovers; j++){
       roverTeam[j]->SetEpochPerformance(eval, teams[j][i]) ;
-      delete roverTeam[j]->GetPOMDPPolicy() ;
     }
     
     // Output to file

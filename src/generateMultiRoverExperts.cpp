@@ -64,6 +64,7 @@ int main(){
   // Experiment starts here
   std::cout << std::endl << "Writing log files to: " << fileDir << std::endl
 	    << std::endl;
+  
   trainDomain.OutputPerformance(resultFile);
   
   for (size_t n = 0; n < nEps; n++){

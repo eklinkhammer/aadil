@@ -34,15 +34,14 @@ class AgentTest : public::testing::Test {};
 
 class AgentChild : public Agent {
 public:
-  AgentChild (size_t n, size_t nP, size_t nI, size_t nH, size_t nO, Fitness f)
-    : Agent(n, nP, nI, nH, nO, f) {};
+  AgentChild(size_t n, size_t nP, size_t nI, size_t nH, size_t nO,
+		       Fitness f) : Agent(n, nP, nI, nH, nO, f) {}
 
-  VectorXd ComputeNNInput(vector<Vector2d> jointState) {
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) {
     VectorXd s;
     return s;
-  };
-
-  void DifferentEvaluationFunction(vector<Vector2d> jointState, double G) {};
+  }
+  virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) {};
 };
 
 TEST_F(AgentTest, testInitialiseNewLearningEpoch) {

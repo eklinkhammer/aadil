@@ -12,22 +12,24 @@
 #include <iostream>
 
 #include "Agents/Rover.h"
-#include "POMDPs/POMDP.h"
 
 using std::string ;
 using std::vector ;
 using std::shuffle ;
 using namespace Eigen ;
 
+enum class AgentType {A, P, R, M};
+
 class MultiRover{
   public:
  MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
 	    string evalFunc, size_t rovs, int c = 1)
-   : MultiRover(w, numSteps, numPop, numPOIs, Fitness::G, rovs, c, 8, 16, 2) {};
+   : MultiRover(w, numSteps, numPop, numPOIs, Fitness::G, rovs, c, 8, 16, 2,
+		AgentType::R) {};
   
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 	       numPOIs, Fitness f, size_t rovs, int c, size_t nInput, size_t
-	       nHidden, size_t nOutput);
+	       nHidden, size_t nOutput, AgentType);
     ~MultiRover();
     
     void InitialiseEpoch() ;
@@ -51,6 +53,7 @@ class MultiRover{
     void ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in expert and novice control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
   private:
     Fitness fitness;
+    AgentType type;
     
     vector<double> world ;
     size_t nSteps ;
@@ -63,7 +66,7 @@ class MultiRover{
     vector<Vector2d> initialXYs ;
     vector<double> initialPsis ;
     
-    vector<Rover *> roverTeam ;
+    vector<Agent *> roverTeam ;
     vector<Target> POIs ;
     bool gPOIObs ;
     

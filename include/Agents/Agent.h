@@ -52,7 +52,7 @@ using std::list;
 using std::max;
 using easymath::pi_2_pi;
 
-enum class Fitness {T, G, D};
+enum class Fitness {G, D};
 
 class Agent {
  public:
@@ -116,12 +116,12 @@ class Agent {
   Vector2d getCurrentXY() { return currentXY; }
   Vector2d getInitialXY() { return initialXY; }
 
-  NeuroEvo * GetNEPopulation(){ return AgentNE ;}
+  NeuroEvo * GetNEPopulation(){ return AgentNE; }
   
  private:
   size_t nSteps;
   size_t popSize;
-  size_t numIn;
+
   size_t numHidden;
   size_t numOut;
 
@@ -130,7 +130,7 @@ class Agent {
   std::vector<double> epochEvals;
 
   void ResetStepwiseEval();
-  double stepwiseD;
+
 
  protected:
   Matrix2d RotationMatrix(double psi);
@@ -142,7 +142,11 @@ class Agent {
   Vector2d currentXY;
   double currentPsi;
 
-  list<double> runningAvgR;
+  size_t numIn;
+  double stepwiseD;
+
+  // Determines the index of this agent's position in a jointState vector
+  size_t selfIndex(vector<Vector2d> jointState);
 };
 
 #endif // AGENT_H_

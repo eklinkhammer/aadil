@@ -22,9 +22,9 @@ using std::max;
 
 class Rover : public Agent {
  public:
-  Rover(size_t n, size_t nPop, string evalFunc);
-  //Rover(size_t n, size_t nPop, Fitness f, size_t nInput, size_t nHidden,
-      //size_t nOutput);
+  Rover(size_t n, size_t nPop, Fitness f);
+  Rover(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t nOutput,
+	Fitness f);
   ~Rover() {};
 
   // Pure Virtual functions
@@ -34,7 +34,7 @@ class Rover : public Agent {
   // Overriding
   virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d, double);
     
- private:
+ protected:
   vector<Target> POIs;
 };
 
