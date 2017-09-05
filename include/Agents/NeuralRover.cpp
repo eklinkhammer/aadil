@@ -27,9 +27,7 @@ SOFTWARE.
 #include "NeuralRover.h"
 
 NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns)
-  : Rover(n, nPop, f), netsX(ns) {
-  std::cout << "NeuralRover::NeuralRover - START" << std::endl;
-}
+  : Rover(n, nPop, f), netsX(ns) {}
 
 Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
   VectorXd inp = ComputeNNInput(jointState);
