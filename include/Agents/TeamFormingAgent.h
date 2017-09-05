@@ -31,17 +31,20 @@ SOFTWARE.
 #define TEAM_FORMING_AGENT_H
 
 #include "Agent.h"
+#include "Domains/Target.h"
+
 #include <vector>
 
 using std::vector;
 using std::max;
 
-class TeamFormingAgent : public Agent {
+Vector2d origin(0,0);
+
+class TeamFormingAgent : public Agent, public Target {
  public:
   // TeamFormingAgent has a 4 input neural network. It's reward is the
   //   sum of inverse distances to the nearest tSize other agents.
   TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize);
-  ~TeamFormingAgent();
 
   // Mandatory implementations of virtual functions
 
@@ -49,12 +52,12 @@ class TeamFormingAgent : public Agent {
   //   POI information to ignore.
   virtual VectorXd ComputeNNInput(vector<Vector2d>);
 
+  // Overriden POI class
+  virtual Vector2d GetLocation() { return getCurrentXY(); }
+  
   // Calculates the reward giving 1/r where r is the distance between this
   //   agent and the nearest other agent.
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
-
- private:
-  int teamSize;
 };
 
 #endif // TEAM_FORMING_AGENT_H

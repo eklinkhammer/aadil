@@ -1,9 +1,7 @@
 /*******************************************************************************
-NeuralRovers.h
+NeuralRovers.cpp
 
-Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but its neural network chooses
-between two sub-policies
+See header file for documentation.
 
 Authors: Eric Klinkhammer
 
@@ -28,17 +26,30 @@ SOFTWARE.
 
 #include "NeuralRover.h"
 
-NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, NeuralNet* pNet,
-			 NeuralNet* aNet)
-  : Rover(n, nPop, f), poiNet(pNet), agentNet(aNet) {}
+NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns)
+  : Rover(n, nPop, f), netsX(ns) {}
 
 Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
   VectorXd inp = ComputeNNInput(jointState);
   VectorXd out = GetNEPopulation()->GetNNIndex(i)->EvaluateNN(inp).normalized();
   
-  NeuralNet* net = out(1) > out(0) ? poiNet : agentNet;
+  VectorXd newInp;
+  newInp.setZero(4,1);
 
-  out = net->EvaluateNN(inp).normalized();
+  std::cout << "NeuralRover executing control policy." << std::endl;
+  if (out(1) > out(0)) {
+    newInp(0) = inp(4);
+    newInp(1) = inp(5);
+    newInp(2) = inp(6);
+    newInp(3) = inp(7);
+    out = netsX[0].EvaluateNN(newInp).normalized();
+  } else {
+    newInp(0) = inp(0);
+    newInp(1) = inp(1);
+    newInp(2) = inp(2);
+    newInp(3) = inp(3);
+    out = netsX[1].EvaluateNN(newInp).normalized();
+  }
 
   // Transform to global frame
   Matrix2d Body2Global = RotationMatrix(currentPsi);

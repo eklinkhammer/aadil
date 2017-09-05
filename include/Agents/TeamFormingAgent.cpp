@@ -26,8 +26,10 @@ SOFTWARE.
 
 #include "TeamFormingAgent.h"
 
+
+
 TeamFormingAgent::TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize)
-  : Agent(n, nPop, 4, 12, 2, f), teamSize(tSize) {}
+  : Agent(n, nPop, 4, 12, 2, f), Target(origin, 1, tSize-1) {}
 
 VectorXd TeamFormingAgent::ComputeNNInput(vector<Vector2d> jointState) {
   VectorXd s;

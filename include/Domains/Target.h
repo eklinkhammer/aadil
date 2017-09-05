@@ -55,7 +55,7 @@ class Target{
   ~Target() {}
 
   
-  Vector2d GetLocation() { return loc; }
+  virtual Vector2d GetLocation() { return loc; }
   double GetValue() { return val; }
   double GetNearestObs() { return nearestObs; }
   bool IsObserved() { return observed; }

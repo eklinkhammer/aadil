@@ -58,8 +58,8 @@ class Agent {
  public:
   Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t nOutput,
 	Fitness f);
-  ~Agent();
 
+  virtual ~Agent();
   // Computes the input to the neural network using a list of actor joint states
   //
   // The returned VectorXd will be the same size as nInput
@@ -94,6 +94,7 @@ class Agent {
   //   counterfactual state. The default is the intial state (ie, if the
   //   agent had not moved at all).
   vector<Vector2d> substituteCounterfactual(vector<Vector2d> jointState);
+  vector<Vector2d> substituteCounterfactual(vector<Vector2d>, double, double);
 
   // Evolves the NeuroEvo, using the epochEvals score. When init is true,
   //  only mutates the population.
@@ -116,7 +117,10 @@ class Agent {
   Vector2d getCurrentXY() { return currentXY; }
   Vector2d getInitialXY() { return initialXY; }
 
-  NeuroEvo * GetNEPopulation(){ return AgentNE; }
+  NeuroEvo * GetNEPopulation() {
+    std::cout << "Agent.h::GetNEPopulation" << std::endl;
+    return AgentNE;
+  }
   
  private:
   size_t nSteps;

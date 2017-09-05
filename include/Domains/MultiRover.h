@@ -12,6 +12,9 @@
 #include <iostream>
 
 #include "Agents/Rover.h"
+#include "Agents/NeuralRover.h"
+#include "Agents/TeamFormingAgent.h"
+#include "Agents/OnlyPOIRover.h"
 
 using std::string ;
 using std::vector ;
@@ -30,12 +33,25 @@ class MultiRover{
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 	       numPOIs, Fitness f, size_t rovs, int c, size_t nInput, size_t
 	       nHidden, size_t nOutput, AgentType);
+
+    // MultiRover without neural net information
+    MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
+	       Fitness f, size_t rovs, int c, AgentType);
+
+    // MultiRover with NeuralRovers
+    //
+    // Requirement: The size of netsP, netsA, and rovs must be equal
+    MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
+	       Fitness f, size_t rovs, int c, vector<NeuralNet>, vector<NeuralNet>);
     ~MultiRover();
+
+
+    // Gets each agent's first neural net. Does not get the best net.
+    vector<NeuralNet*> getNNTeam();
     
     void InitialiseEpoch() ;
     
     void SimulateEpoch(bool train = true) ;
-    void SimulateEpoch(size_t goalPOI, char * pomdpEnv, char * pomdpPolicy, VectorXd prior) ;
     void EvolvePolicies(bool init = false) ;
     void ResetEpochEvals() ;
     
@@ -47,8 +63,6 @@ class MultiRover{
     void OutputAverageStepwise(char *) ;
     
     void ExecutePolicies(char * readFile, char * storeTraj, char * storePOI, char * storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
-    
-    void ExecutePolicies(char * readFile, char * storeTraj, char * storePOI, char * storeEval, char * storeQury, char* storeBlf, size_t numIn, size_t numOut, size_t numHidden, size_t goalPOI, char * pomdpEnv, char * pomdpPolicy, VectorXd prior) ; // goalPOI observation triggers mission change, {pomdpEnv file stores POMDP environment, pomdpPolicy stores pomdp policy, prior stores prior belief} for determining inquiry action based on policy expertise belief
     
     void ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in expert and novice control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
   private:

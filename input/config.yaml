@@ -4,13 +4,13 @@ domain:
     xmax: 30.0
     ymin: 0.0
     ymax: 30.0
-  rovers: 1
+  rovers: 2
   pois: 1
-  coupling: 1
+  coupling: 2
 
 scenario:
-  nSteps: 30
-  nEps: 10
+  nSteps: 1
+  nEps: 1
   staticOrRandom: 1
   evalFunc: G
 

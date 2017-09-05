@@ -22,7 +22,10 @@ class NeuroEvo{
     vector<double> GetAllEvaluations() ;
     
     NeuralNet * GetNNIndex(size_t i){return populationNN[i] ;}
-    size_t GetCurrentPopSize(){return populationNN.size() ;}
+    size_t GetCurrentPopSize() {
+      std::cout << "NeuroEvo.h::GetCurrentPopSize()" << std::endl;
+      return populationNN.size();
+    }
   private:
     size_t numIn ;
     size_t numOut ;

@@ -27,7 +27,7 @@ SOFTWARE.
 #include "OnlyPOIRover.h"
 
 OnlyPOIRover::OnlyPOIRover(size_t n, size_t nPop, Fitness f)
-  : Rover(n, nPop, 4, 10, 2, f) {}
+  : Rover(n, nPop, 4, 12, 2, f) {}
 
 VectorXd OnlyPOIRover::ComputeNNInput(vector<Vector2d> jointState) {
   VectorXd s;

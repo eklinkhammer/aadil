@@ -5,7 +5,7 @@ Target class source. Targets record observations and maintain a record of the
 closest one, or closest set if multiple observations are required. Comments and
 documentation can be found in the header file.
 
-Authors: Eric Klinkhammer
+Authors: Eric Klinkhammer, Jen Jen Chung
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal in
@@ -39,8 +39,8 @@ Target::Target(Vector2d xy, double value, int couple, double obsR, bool obs)
   }
 }
 
-void Target::ObserveTarget(Vector2d xy){
-  Vector2d diff = xy - loc;
+void Target::ObserveTarget(Vector2d xy) {
+  Vector2d diff = xy - GetLocation();
   double d = diff.norm();
 
   if (d > obsRadius) { return; }

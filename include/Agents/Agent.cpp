@@ -88,10 +88,16 @@ size_t Agent::selfIndex(vector<Vector2d> jointState) {
 
   return ind;
 }
+
 vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {
+  return substituteCounterfactual(jointState, initialXY(0), initialXY(1));
+}
+
+vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState,
+						 double x, double y) {
   size_t ind = selfIndex(jointState);
-  jointState[ind](0) = initialXY(0);
-  jointState[ind](1) = initialXY(1);
+  jointState[ind](0) = x;
+  jointState[ind](1) = y;
 
   return jointState;
 }
@@ -110,10 +116,13 @@ void Agent::ResetStepwiseEval(){
 }
 
 void Agent::EvolvePolicies(bool init) {
+  //std::cout << "In agent, evolving policy..." << init << std::endl;
   if (!init) {
+    //std::cout << "Evolving population..." << std::endl;
     AgentNE->EvolvePopulation(epochEvals);
   }
-  
+
+  // std::cout << "Mutating population..." << std::endl;
   AgentNE->MutatePopulation() ;
 }
 
