@@ -32,11 +32,25 @@ void printConfig(std::string fileName) {
 }
 
 std::vector<NeuralNet> trainSimple(vector<double> w, AgentType a) {
-  MultiRover domain(w, nSteps, nPop, nPOIs, Fitness::G, rovs, coupling, a);
+  string exp;
+  size_t roverCount, poiCount;
+  int couplingReq;
+  
+  if (a == AgentType::A) {
+    exp = "A";
+    roverCount = AGENT_ROVERS;
+    poiCount = AGENT_POIS;
+    couplingReq = AGENT_COUPLING;
+  } else {
+    exp = "P";
+    roverCount = POI_ROVERS;
+    poiCount = POI_POIS;
+    couplingReq = POI_COUPLING;
+  }
+  MultiRover domain(w, nSteps, nPop, poiCount, Fitness::G, roverCount, couplingReq, a);
 
-  string exp = a == AgentType::A ? "A" : "P";
   for (size_t n = 0; n < nEps; n++) {
-    std::cout << "Training " << exp << " Episode " << n << "..." << std::endl;
+    std::cout << "Training " << exp << " Episode " << n << "...";
     domain.EvolvePolicies((n==0));
     domain.InitialiseEpoch();
 
@@ -81,25 +95,8 @@ int main(){
 
   std::cout << "Pre training ..." << std::endl;
   vector<NeuralNet> aNets = trainSimple(world, AgentType::A);
-  //std::cout << aNets[0]->GetWeightsA();
-
   vector<NeuralNet> pNets = trainSimple(world, AgentType::P);
 
-  std::cout << "generateMultiRoverExperts::main" << std::endl;
-  std::cout << "Information on " << aNets.size() << " agent nets: " << std::endl;
-  for (auto& net : aNets) {
-    std::cout << "Number inputs: " << net.getNI() << std::endl;
-    std::cout << "Number hidden: " << net.getNH() << std::endl;
-    std::cout << "Number output: " << net.getNO() << std::endl;
-  }
-
-  std::cout << "Information on " << pNets.size() << " poi net: " << std::endl;
-  for (auto& net : pNets) {
-    std::cout << "Number inputs: " << net.getNI() << std::endl;
-    std::cout << "Number hidden: " << net.getNH() << std::endl;
-    std::cout << "Number output: " << net.getNO() << std::endl;
-  }
-  
   std::cout << std::endl << "Pre training complete. Now training net of nets: " << std::endl;
   
   MultiRover trainDomain(world, nSteps, nPop, nPOIs, Fitness::G, rovs, coupling,

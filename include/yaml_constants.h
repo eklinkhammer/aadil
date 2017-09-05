@@ -14,6 +14,16 @@ const size_t rovs = config["domain"]["rovers"].as<size_t>();
 const size_t nPOIs = config["domain"]["pois"].as<size_t>();
 const int coupling = config["domain"]["coupling"].as<int>();
 
+// Team forming
+const size_t AGENT_ROVERS = config["domain_agent"]["rovers"].as<size_t>();
+const size_t AGENT_POIS = config["domain_agent"]["pois"].as<size_t>();
+const int AGENT_COUPLING = config["domain_agent"]["coupling"].as<int>();
+
+// POI seeking
+const size_t POI_ROVERS = config["domain_poi"]["rovers"].as<size_t>();
+const size_t POI_POIS = config["domain_poi"]["pois"].as<size_t>();
+const int POI_COUPLING = config["domain_poi"]["coupling"].as<int>();
+
 
 const size_t nSteps = config["scenario"]["nSteps"].as<size_t>();
 const size_t nEps = config["scenario"]["nEps"].as<size_t>();

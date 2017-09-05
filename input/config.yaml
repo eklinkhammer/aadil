@@ -5,11 +5,21 @@ domain:
     ymin: 0.0
     ymax: 30.0
   rovers: 2
-  pois: 1
+  pois: 2
   coupling: 2
 
+domain_agent:
+  rovers: 3
+  pois: 0
+  coupling: 3
+
+domain_poi:
+  rovers: 1
+  pois: 2
+  coupling: 1
+
 scenario:
-  nSteps: 1
+  nSteps: 30
   nEps: 1
   staticOrRandom: 1
   evalFunc: G

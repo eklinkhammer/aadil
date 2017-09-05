@@ -9,8 +9,7 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
   
   for (size_t i = 0; i < nRovers; i++) {
     if (type == AgentType::R) {
-      Agent* newR = new Rover(nSteps, nPop, fitness);
-      roverTeam.push_back(newR);
+      roverTeam.push_back(new Rover(nSteps, nPop, fitness));
     }
   }
 }
@@ -22,17 +21,14 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
     outputQury(false), outputBlf(false), gPOIObs(false), type(t) {
 
   for (size_t i = 0; i < nRovers; i++) {
-    Agent* newA;
     if (type == AgentType::R) {
-      newA = new Rover(nSteps, nPop, fitness);
+      roverTeam.push_back(new Rover(nSteps, nPop, fitness));
     } else if (type == AgentType::P) {
-      newA = new OnlyPOIRover(nSteps, nPop, fitness);
+      roverTeam.push_back(new OnlyPOIRover(nSteps, nPop, fitness));
       coupling = 1;
     } else if (type == AgentType::A) {
-      newA = new TeamFormingAgent(nSteps, nPop, fitness, coupling);
+      roverTeam.push_back(new TeamFormingAgent(nSteps, nPop, fitness, coupling));
     }
-
-    roverTeam.push_back(newA);
   }
 }
 
@@ -43,40 +39,49 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
     coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
     outputQury(false), outputBlf(false), gPOIObs(false), type(AgentType::M) {
 
-  for (size_t i = 0; i < nRovers; i++) {
-    vector<NeuralNet> nets;
-    nets.push_back(netsP[i]);
-    nets.push_back(netsA[i]);
-
-    //    NeuralRover neuralRover(nSteps, nPop, fitness, nets);
+  if (netsP.size() != rovs && netsA.size() != rovs) {
+    for (size_t i = 0; i < nRovers; i++) {
+      vector<NeuralNet> nets;
+      nets.push_back(netsP[0]);
+      nets.push_back(netsA[0]);
+      roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, nets));
+    } 
+  } else if (netsP.size() != rovs) {
+    for (size_t i = 0; i < nRovers; i++) {
+      vector<NeuralNet> nets;
+      nets.push_back(netsP[0]);
+      nets.push_back(netsA[i]);
+      roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, nets));
+    } 
+  } else if (netsA.size() != rovs) {
+    for (size_t i = 0; i < nRovers; i++) {
+      vector<NeuralNet> nets;
+      nets.push_back(netsP[i]);
+      nets.push_back(netsA[0]);
     roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, nets));
-  }
-  std::cout << "MultiRover::MultiRover" << std::endl;
-  std::cout << "All neural rovers created." << std::endl;
-  std::cout << "Neural nets for the neural rovers: " << std::endl;
-  for (auto& rov : roverTeam) {
-    std::cout << "Rover neuro evo nets: " << std::endl;
-    size_t numPop = rov->GetNEPopulation()->GetCurrentPopSize();
-    std::cout << "Pop size: " << numPop << std::endl;
-    for (size_t i = 0; i < rov->GetNEPopulation()->GetCurrentPopSize(); i++) {
-      std::cout << "Rover net: " << std::endl;
-      std::cout << "Number inputs: " << rov->GetNEPopulation()->GetNNIndex(i)->getNI() << std::endl;
-      std::cout << "Number hidden: " << rov->GetNEPopulation()->GetNNIndex(i)->getNH() << std::endl;
-      std::cout << "Number output: " << rov->GetNEPopulation()->GetNNIndex(i)->getNO() << std::endl;
-    }
-
-    std::cout << "Member neural nets: " << std::endl;
-    NeuralRover* rovN = (NeuralRover*) rov;
-    for (auto& net : rovN->getNets()) {
-      std::cout << "Rover net: " << std::endl;
-      std::cout << "Number inputs: " << net.getNI() << std::endl;
-      std::cout << "Number hidden: " << net.getNH() << std::endl;
-      std::cout << "Number output: " << net.getNO() << std::endl;
+    } 
+  } else {
+    for (size_t i = 0; i < nRovers; i++) {
+      vector<NeuralNet> nets;
+      nets.push_back(netsP[i]);
+      nets.push_back(netsA[i]);
+      roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, nets));
     }
   }
 }
 
-MultiRover::~MultiRover(){}
+MultiRover::~MultiRover() {
+  for (size_t i = 0; i < nRovers; i++){
+    delete roverTeam[i] ;
+    roverTeam[i] = 0 ;
+  }
+  if (outputEvals)
+    evalFile.close() ;
+  if (outputTrajs){
+    trajFile.close() ;
+    POIFile.close() ;
+  }
+}
 
 void MultiRover::InitialiseEpoch(){
   double rangeX = world[1] - world[0] ;
@@ -86,8 +91,13 @@ void MultiRover::InitialiseEpoch(){
   initialPsis.clear() ;
   for (size_t i = 0; i < nRovers; i++){
     Vector2d initialXY ;
-    initialXY(0) = rand_interval(world[0]+rangeX/3.0,world[1]-rangeX/3.0) ;
-    initialXY(1) = rand_interval(world[2]+rangeY/3.0,world[3]-rangeX/3.0) ;
+    if (type == AgentType::A) {
+      initialXY(0) = rand_interval(world[0],world[1]);
+      initialXY(1) = rand_interval(world[2],world[3]);
+    } else {
+      initialXY(0) = rand_interval(world[0]+rangeX/3.0,world[1]-rangeX/3.0);
+      initialXY(1) = rand_interval(world[2]+rangeY/3.0,world[3]-rangeX/3.0);
+    }
     double initialPsi = rand_interval(-PI,PI) ;
     initialXYs.push_back(initialXY) ;
     initialPsis.push_back(initialPsi) ;
@@ -251,7 +261,6 @@ void MultiRover::SimulateEpoch(bool train){
 
 void MultiRover::EvolvePolicies(bool init){
   for (size_t i = 0; i < nRovers; i++) {
-    std::cout << "Evolving policy for rover " << i << std::endl;
     roverTeam[i]->EvolvePolicies(init);
   }
 }
@@ -514,7 +523,6 @@ void MultiRover::ExecutePolicies(char * expFile, char * novFile, char * storeTra
 
 vector<NeuralNet*> MultiRover::getNNTeam() {
   std::vector<NeuralNet*> nets;
-  std::cout << "Number of rovers: " << nRovers << std::endl;
   for (size_t i = 0; i < nRovers; i++) {
     nets.push_back(roverTeam[i]->GetNEPopulation()->GetNNIndex(0));
   }

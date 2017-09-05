@@ -117,10 +117,7 @@ class Agent {
   Vector2d getCurrentXY() { return currentXY; }
   Vector2d getInitialXY() { return initialXY; }
 
-  NeuroEvo * GetNEPopulation() {
-    std::cout << "Agent.h::GetNEPopulation" << std::endl;
-    return AgentNE;
-  }
+  NeuroEvo * GetNEPopulation() { return AgentNE; }
   
  private:
   size_t nSteps;
