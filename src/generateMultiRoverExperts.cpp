@@ -102,7 +102,7 @@ int main(){
   world.push_back(WORLD_YMAX);
 
   std::cout << "Control..." << std::endl;
-  //trainSimple(world, AgentType::R);
+  trainSimple(world, AgentType::R);
   
   std::cout << "Pre training ..." << std::endl;
   vector<NeuralNet> aNets = trainSimple(world, AgentType::A);

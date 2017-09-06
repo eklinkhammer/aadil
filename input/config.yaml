@@ -4,7 +4,7 @@ domain:
     xmax: 30.0
     ymin: 0.0
     ymax: 30.0
-  rovers: 6
+  rovers: 9
   pois: 4
   coupling: 6
 
@@ -14,8 +14,8 @@ domain_agent:
   coupling: 3
 
 domain_poi:
-  rovers: 1
-  pois: 2
+  rovers: 2
+  pois: 3
   coupling: 1
 
 scenario:
@@ -26,7 +26,7 @@ scenario:
   poi:
     nEps: 2000
   agent:
-    nEps: 2000
+    nEps: 200
 
 learning:
   ccea:
