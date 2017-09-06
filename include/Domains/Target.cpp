@@ -97,5 +97,5 @@ void Target::resetNearestObs() {
 }
 
 std::ostream& operator<<(std::ostream &strm, const Target &t) {
-  return strm << "(" << t.loc(0) << ", " << t.loc(1) << ") Val: " << t.val;
+  return strm << t.loc(0) << "," << t.loc(1) << "," << t.val;
 }
