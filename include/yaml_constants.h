@@ -2,6 +2,7 @@
 #define _YAML_CONSTANTS_H
 
 #include "yaml-cpp/yaml.h"
+#include <iostream>
 
 YAML::Node config = YAML::LoadFile("../input/config.yaml");
 
@@ -38,5 +39,23 @@ const size_t nInputs = config["learning"]["network"]["nInputs"].as<size_t>();
 const size_t nHidden = config["learning"]["network"]["nHidden"].as<size_t>();
 const size_t nOutputs = config["learning"]["network"]["nOutputs"].as<size_t>();
 
+void printTestList() {
+  YAML::Node node = config["testlist"];
+  for (YAML::const_iterator it=node.begin(); it != node.end(); ++it) {
+    std::cout << it->as<int>() << "\n";
+  }
+}
 
+void printTargets() {
+  YAML::Node node = config["targets"];
+
+  for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
+    std::cout << "Target" << std::endl;
+
+    YAML::Node tgt = it->as<YAML::Node>();
+    for (YAML::const_iterator itr = tgt.begin(); itr != tgt.end(); ++itr) {
+      std::cout << itr->as<int>() << std::endl;
+    }
+  }
+}
 #endif // _YAML_CONSTANTS_H

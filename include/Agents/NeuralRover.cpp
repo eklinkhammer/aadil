@@ -43,11 +43,15 @@ Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointSta
     newInp(3) = inp(7);
     out = netsX[0].EvaluateNN(newInp).normalized();
   } else {
+    // Option 1 - OnlyPOI Rover
     newInp(0) = inp(0);
     newInp(1) = inp(1);
     newInp(2) = inp(2);
     newInp(3) = inp(3);
     out = netsX[1].EvaluateNN(newInp).normalized();
+
+    // Option 2 - Normal (But no coupling) rover
+    // out = netsX[1].EvaluateNN(inp).normalized();
   }
 
   // Transform to global frame

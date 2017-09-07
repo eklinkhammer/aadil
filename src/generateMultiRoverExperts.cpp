@@ -5,6 +5,7 @@
 
 #include "Domains/MultiRover.h"
 #include "yaml_constants.h"
+#include "experimentalSetup.h"
 
 using std::vector ;
 using std::string ;
@@ -78,7 +79,7 @@ std::vector<NeuralNet> trainSimple(vector<double> w, AgentType a) {
   return returnNets;
 }
 
-int main(){
+int main() {
   // Configure IO, ask for user input, and output config files
   std::cout << "Experiment configs file: " << std::endl;
   std::cout << config << std::endl;
@@ -101,8 +102,8 @@ int main(){
   world.push_back(WORLD_YMIN); 
   world.push_back(WORLD_YMAX);
 
-  std::cout << "Control..." << std::endl;
-  trainSimple(world, AgentType::R);
+  //std::cout << "Control..." << std::endl;
+  //trainSimple(world, AgentType::R);
   
   std::cout << "Pre training ..." << std::endl;
   vector<NeuralNet> aNets = trainSimple(world, AgentType::A);
@@ -118,25 +119,31 @@ int main(){
 	    << std::endl;
   
   trainDomain.OutputPerformance(resultFile);
+
+  vector<Target> targets = targetsFromYAML(config["targets"].as<YAML::Node>());
+  vector<Vector2d> xys = vector2dsFromYAML(config["agents"].as<YAML::Node>());
   
   for (size_t n = 0; n < nEps; n++){
     std::cout << "Episode " << n << "...";
     if (n == 0) {
       trainDomain.EvolvePolicies(true) ;
-      if (staticOrRandom == 0)
-        trainDomain.InitialiseEpoch() ; // Static world
+
+      if (staticOrRandom == 0) {
+        trainDomain.InitialiseEpochFromVectors(targets, xys) ; // Static world
+      }
     }
     else
       trainDomain.EvolvePolicies() ;
 
-    if (staticOrRandom == 1)
+    if (staticOrRandom == 1) {
       trainDomain.InitialiseEpoch() ; // Random worlds
+    }
     
-    if (n == nEps-1)
+    if (n == nEps-1) {
       trainDomain.OutputTrajectories(trajFile, poiFile) ;
+    }
     
     trainDomain.ResetEpochEvals() ;
-
     trainDomain.SimulateEpoch() ;
   }
   

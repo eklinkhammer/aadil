@@ -43,13 +43,19 @@ class MultiRover{
     // Requirement: The size of netsP, netsA, and rovs must be equal
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
 	       Fitness f, size_t rovs, int c, vector<NeuralNet>, vector<NeuralNet>);
+
+    // Create a MultiRover Domain from vector of agents and targets
+    //MultiRover(vector<double> w, size_t numSteps, size_t numPop,
+    //	       vector<Target> target, vector<Agent> agents, Fitness f, int c);
     ~MultiRover();
 
 
     // Gets each agent's first neural net. Does not get the best net.
     vector<NeuralNet*> getNNTeam();
     
-    void InitialiseEpoch() ;
+    void InitialiseEpoch();
+
+    void InitialiseEpochFromVectors(vector<Target>, vector<Vector2d>);
     
     void SimulateEpoch(bool train = true) ;
     void EvolvePolicies(bool init = false) ;

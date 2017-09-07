@@ -91,7 +91,7 @@ void MultiRover::InitialiseEpoch(){
   initialPsis.clear() ;
   for (size_t i = 0; i < nRovers; i++){
     Vector2d initialXY ;
-    if (type == AgentType::A) {
+    if (type == AgentType::A || type == AgentType::M) {
       initialXY(0) = rand_interval(world[0],world[1]);
       initialXY(1) = rand_interval(world[2],world[3]);
     } else {
@@ -124,6 +124,19 @@ void MultiRover::InitialiseEpoch(){
       POIs.push_back(Target(xy,v)) ;
   }
 }
+
+void MultiRover::InitialiseEpochFromVectors(vector<Target> targets,
+					    vector<Vector2d> xys) {
+  initialXYs = xys;
+  POIs = targets;
+
+  initialPsis.clear();
+  for (size_t i = 0; i < nRovers; i++) {
+    double initialPsi = rand_interval(-PI,PI);
+    initialPsis.push_back(initialPsi);
+  }
+}
+
 
 vector< vector<size_t> > MultiRover::RandomiseTeams(size_t n){
   vector< vector<size_t> > teams ;

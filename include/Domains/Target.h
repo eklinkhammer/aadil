@@ -42,7 +42,9 @@ class Target{
   //   observation radius: 4
   //   observed: false
  Target(Vector2d xy, double v) : Target(xy, v, 1) {}
- Target(Vector2d xy, double v, int c) : Target(xy, v, c, 4.0, false) {}  
+ Target(Vector2d xy, double v, int c) : Target(xy, v, c, 4.0, false) {}
+
+  //Target(
 
   // Target Constructor
   // xy: The xy location of the Target. ObserveTarget uses this value to

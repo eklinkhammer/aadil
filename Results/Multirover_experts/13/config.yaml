@@ -7,17 +7,14 @@ domain:
   rovers: 4
   pois: 2
   coupling: 4
-
 domain_agent:
   rovers: 4
   pois: 0
   coupling: 4
-
 domain_poi:
-  rovers: 1
-  pois: 2
+  rovers: 2
+  pois: 3
   coupling: 1
-
 scenario:
   nSteps: 40
   nEps: 2000
@@ -27,7 +24,6 @@ scenario:
     nEps: 2000
   agent:
     nEps: 2000
-
 learning:
   ccea:
     nPop: 20
@@ -35,7 +31,6 @@ learning:
     nInputs: 8
     nHidden: 16
     nOutputs: 2
-
 targets:
   - x: 5
     y: 5
@@ -45,7 +40,6 @@ targets:
     y: 25
     coupling: 4
     value: 10
-
 agents:
   - x: 25
     y: 5
@@ -55,7 +49,6 @@ agents:
     y: 24
   - x: 25
     y: 26
-    
 testlist:
   - 1
   - 4
