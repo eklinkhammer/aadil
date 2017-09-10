@@ -7,12 +7,6 @@
 #include "yaml_constants.h"
 #include "experimentalSetup.h"
 
-#include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
-// #include <boost/log/expressions.hpp>
-// #include <boost/log/utility/setup/file.hpp>
-
-
 using std::vector ;
 using std::string ;
 using namespace Eigen ;
@@ -86,9 +80,6 @@ std::vector<NeuralNet> trainSimple(vector<double> w, AgentType a) {
 }
 
 int main() {
-
-  BOOST_LOG_TRIVIAL(trace) << "A trace severity message.";
-
   // Configure IO, ask for user input, and output config files
   std::cout << "Experiment configs file: " << std::endl;
   std::cout << config << std::endl;
