@@ -72,6 +72,15 @@ class MultiRover{
     
     void ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in expert and novice control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
   private:
+    void printPOIs();
+    void printJointState(const vector<Vector2d>);
+
+    void agentObserves(Vector2d xy, int time);
+
+    double calculatePOIStepwiseValue(const Target&);
+    double calculateG();
+    double calculateStepwiseG();
+    
     Fitness fitness;
     AgentType type;
     
@@ -88,6 +97,8 @@ class MultiRover{
     
     vector<Agent *> roverTeam ;
     vector<Target> POIs ;
+    vector<Target> tempPOIs;
+    
     bool gPOIObs ;
     
     bool outputEvals ;
@@ -97,15 +108,15 @@ class MultiRover{
     bool outputBlf ;
     bool outputAvgStepR ;
     
-    std::ofstream evalFile ;
-    std::ofstream trajFile ;
-    std::ofstream POIFile ;
-    std::ofstream NNFile ;
-    std::ofstream quryFile ;
-    std::ofstream blfFile ;
-    std::ofstream avgStepRFile ;
+    std::ofstream evalFile;
+    std::ofstream trajFile;
+    std::ofstream POIFile;
+    std::ofstream NNFile;
+    std::ofstream quryFile;
+    std::ofstream blfFile;
+    std::ofstream avgStepRFile;
     
-    vector< vector<size_t> > RandomiseTeams(size_t) ;
+    vector< vector<size_t> > RandomiseTeams(size_t);
 } ;
 
 #endif // MULTIROVER_H_

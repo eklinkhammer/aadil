@@ -57,10 +57,10 @@ class Target{
   ~Target() {}
 
   
-  virtual Vector2d GetLocation() { return loc; }
-  double GetValue() { return val; }
-  double GetNearestObs() { return nearestObs; }
-  bool IsObserved() { return observed; }
+  virtual Vector2d GetLocation() const { return loc; }
+  double GetValue() const { return val; }
+  double GetNearestObs() const { return nearestObs; }
+  bool IsObserved() const { return observed; }
 
   // The target is observed by an object at position xy. If this observer is
   //   closer than the current set of closest observations (which may be just
