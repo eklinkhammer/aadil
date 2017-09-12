@@ -32,6 +32,9 @@ SOFTWARE.
 #include "Learning/NeuralNet.h"
 #include "Rover.h"
 
+#include <iostream>
+#include <string>
+
 using std::string;
 using std::vector;
 
@@ -45,9 +48,15 @@ class NeuralRover : public Rover {
   virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
 
   vector<NeuralNet> getNets() { return netsX; }
+
+  void setOutputBool(bool);
+  void outputTrajectory(std::string);
+  
  private:
-  // Scale this to use a list of nets at a later date
   vector<NeuralNet> netsX;
+  std::ofstream trajFile;
+
+  bool outputTrajs;
 };
 
 #endif // NEURAL_ROVER_H

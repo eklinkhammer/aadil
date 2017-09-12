@@ -109,15 +109,15 @@ class Agent {
   // Sets the performance for the epoch and position i to either G or stepwise D
   void SetEpochPerformance(double G, size_t i);
 
-  vector<double> GetEpochEvals(){ return epochEvals; }
+  vector<double> GetEpochEvals() const{ return epochEvals; }
   
-  double getCurrentPsi() { return currentPsi; }
-  double getInitialPsi() { return initialPsi; }
+  double getCurrentPsi() const { return currentPsi; }
+  double getInitialPsi() const { return initialPsi; }
 
-  Vector2d getCurrentXY() { return currentXY; }
-  Vector2d getInitialXY() { return initialXY; }
+  Vector2d getCurrentXY() const { return currentXY; }
+  Vector2d getInitialXY() const { return initialXY; }
 
-  NeuroEvo * GetNEPopulation() { return AgentNE; }
+  NeuroEvo * GetNEPopulation() const { return AgentNE; }
   
  private:
   size_t nSteps;

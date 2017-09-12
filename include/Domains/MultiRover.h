@@ -25,28 +25,21 @@ enum class AgentType {A, P, R, M};
 
 class MultiRover{
   public:
- MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
+ MultiRover(vector<double> w, size_t nSteps, size_t nPop, size_t nPOIs,
 	    string evalFunc, size_t rovs, int c = 1)
-   : MultiRover(w, numSteps, numPop, numPOIs, Fitness::G, rovs, c, 8, 16, 2,
-		AgentType::R) {};
+   : MultiRover(w, nSteps, nPop, nPOIs, Fitness::G, rovs, c, AgentType::R) {};
   
-    MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
-	       numPOIs, Fitness f, size_t rovs, int c, size_t nInput, size_t
-	       nHidden, size_t nOutput, AgentType);
+    /* MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t */
+    /* 	       numPOIs, Fitness f, size_t rovs, int c, size_t nInput, size_t */
+    /* 	       nHidden, size_t nOutput, AgentType); */
 
     // MultiRover without neural net information
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
 	       Fitness f, size_t rovs, int c, AgentType);
 
     // MultiRover with NeuralRovers
-    //
-    // Requirement: The size of netsP, netsA, and rovs must be equal
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
 	       Fitness f, size_t rovs, int c, vector<NeuralNet>, vector<NeuralNet>);
-
-    // Create a MultiRover Domain from vector of agents and targets
-    //MultiRover(vector<double> w, size_t numSteps, size_t numPop,
-    //	       vector<Target> target, vector<Agent> agents, Fitness f, int c);
     ~MultiRover();
 
 
@@ -62,7 +55,7 @@ class MultiRover{
     void ResetEpochEvals() ;
     
     void OutputPerformance(std::string) ;
-    void OutputTrajectories(std::string, std::string) ;
+    void OutputTrajectories(std::string, std::string, std::string) ;
     void OutputControlPolicies(std::string) ;
     void OutputQueries(char *) ;
     void OutputBeliefs(char *) ;
@@ -72,6 +65,17 @@ class MultiRover{
     
     void ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in expert and novice control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
   private:
+    void printPOIs();
+    void printJointState(const vector<Vector2d>);
+    void agentObserves(Vector2d xy, int time);
+ 
+    double calculateG();
+    double calculateStepwiseG();
+    double calculatePOIStepwiseValue(const Target& poi);
+
+
+
+    
     Fitness fitness;
     AgentType type;
     
@@ -87,7 +91,9 @@ class MultiRover{
     vector<double> initialPsis ;
     
     vector<Agent *> roverTeam ;
-    vector<Target> POIs ;
+    vector<Target> POIs;
+    vector<Target> tempPOIs;
+    
     bool gPOIObs ;
     
     bool outputEvals ;
@@ -104,6 +110,7 @@ class MultiRover{
     std::ofstream quryFile ;
     std::ofstream blfFile ;
     std::ofstream avgStepRFile ;
+    std::ofstream trajChoiceFile;
     
     vector< vector<size_t> > RandomiseTeams(size_t) ;
 } ;

@@ -74,15 +74,13 @@ void Agent::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy, double 
 }
 
 size_t Agent::selfIndex(vector<Vector2d> jointState) {
-  size_t ind = -1;
-                  
   for (size_t i = 0; i < jointState.size(); i++) {
     if (jointState[i](0) == currentXY(0) && jointState[i](1) == currentXY(1)) {
       return i;
     }
   }
 
-  return ind;
+  return -1;
 }
 
 vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {

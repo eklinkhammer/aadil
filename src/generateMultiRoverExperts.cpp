@@ -91,6 +91,7 @@ int main() {
   string poiFile = fileDir + "/POIs.txt";
   string configFile = fileDir + "/config.yaml";
   string nnFile = fileDir + "/NNs.txt";
+  string trajChoiceFile = fileDir + "/trajectory_choice.txt";
   
   makeDir(fileDir);
   printConfig(configFile);
@@ -102,8 +103,8 @@ int main() {
   world.push_back(WORLD_YMIN); 
   world.push_back(WORLD_YMAX);
 
-  //std::cout << "Control..." << std::endl;
-  //trainSimple(world, AgentType::R);
+  std::cout << "Control..." << std::endl;
+  trainSimple(world, AgentType::R);
   
   std::cout << "Pre training ..." << std::endl;
   vector<NeuralNet> aNets = trainSimple(world, AgentType::A);
@@ -140,7 +141,7 @@ int main() {
     }
     
     if (n == nEps-1) {
-      trainDomain.OutputTrajectories(trajFile, poiFile) ;
+      trainDomain.OutputTrajectories(trajFile, poiFile, trajChoiceFile) ;
     }
     
     trainDomain.ResetEpochEvals() ;

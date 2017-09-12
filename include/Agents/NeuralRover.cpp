@@ -27,7 +27,7 @@ SOFTWARE.
 #include "NeuralRover.h"
 
 NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns)
-  : Rover(n, nPop, f), netsX(ns) {}
+  : Rover(n, nPop, f), netsX(ns), outputTrajs(false) {}
 
 Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
   VectorXd inp = ComputeNNInput(jointState);
@@ -36,6 +36,10 @@ Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointSta
   VectorXd newInp;
   newInp.setZero(4,1);
 
+  if (outputTrajs) {
+    trajFile << (out(1) > out(0) ? "A" : "P") << std::endl;
+  }
+  
   if (out(1) > out(0)) {
     newInp(0) = inp(4);
     newInp(1) = inp(5);
@@ -66,3 +70,17 @@ Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointSta
   
   return currentXY;
 }
+
+void NeuralRover::setOutputBool(bool output) {
+  outputTrajs = output;
+}
+
+void NeuralRover::outputTrajectory(std::string tFile) {
+  if (trajFile.is_open()) {
+    trajFile.close();
+  }
+  trajFile.open(tFile.c_str(), std::ios::app);
+
+  setOutputBool(true);
+}
+

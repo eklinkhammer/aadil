@@ -53,9 +53,8 @@ void Target::ObserveTarget(Vector2d xy) {
       furthestValidObsIndex = i;
     }
   }
-  
-  if (d > furthestValidObs) { return; }
 
+  if (d > furthestValidObs) { return; }
   nearestObsVector[furthestValidObsIndex] = d;
 
   int numberValid = 0;

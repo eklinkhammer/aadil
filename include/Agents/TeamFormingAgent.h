@@ -53,7 +53,7 @@ class TeamFormingAgent : public Agent, public Target {
   virtual VectorXd ComputeNNInput(vector<Vector2d>);
 
   // Overriden POI class
-  virtual Vector2d GetLocation() { return getCurrentXY(); }
+  virtual Vector2d GetLocation() const { return getCurrentXY(); }
   
   // Calculates the reward giving 1/r where r is the distance between this
   //   agent and the nearest other agent.

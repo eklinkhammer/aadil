@@ -74,7 +74,7 @@ TEST_F(AgentTest, testSubstituteCounterfactual) {
   Vector2d xy1, xy2, xya;
   xy1(0) = 1; xy1(1) = 4; 
   xy2(0) = 3; xy2(1) = 2;
-  xya(0) = 2; xya(1) = 6;
+  xya(0) = 2; xya(1) = 5;
 
   jointState.push_back(xy1);
   jointState.push_back(xy2);
