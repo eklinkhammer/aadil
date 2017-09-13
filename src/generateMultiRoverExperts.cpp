@@ -32,43 +32,41 @@ void printConfig(std::string fileName) {
   stream.close();
 }
 
-std::vector<NeuralNet> trainSimple(vector<double> w, AgentType a) {
+void trainDomainF(MultiRover* domain, size_t epochs, bool output,
+		 int outputPeriod, string exp) {
+  for (size_t n = 0; n < epochs; n++) {
+    if (output && (n % outputPeriod == 0 || n == epochs - 1)) {
+      std::cout << "Training " << exp << " Episode " << n << "...";
+      domain->setVerbose(true);
+    } else {
+      domain->setVerbose(false);
+    }
+    domain->EvolvePolicies((n==0));
+    domain->InitialiseEpoch();
+
+    domain->ResetEpochEvals();
+    domain->SimulateEpoch();
+  }
+}
+std::vector<NeuralNet> trainSimple(vector<double> w, AgentType a, size_t
+				   roverCount, size_t poiCount, int
+				   couplingReq, size_t nSteps, size_t
+				   epochs, bool output, int outputPeriod) {
   string exp;
-  size_t roverCount, poiCount, epochs;
-  int couplingReq;
-  
   if (a == AgentType::A) {
-    exp = "A";
-    roverCount = AGENT_ROVERS;
-    poiCount = AGENT_POIS;
-    couplingReq = AGENT_COUPLING;
-    epochs = AGENT_EPS;
+    exp = "T";
   } else if (a == AgentType::P) {
     exp = "P";
-    roverCount = POI_ROVERS;
-    poiCount = POI_POIS;
-    couplingReq = POI_COUPLING;
-    epochs = POI_EPS;
+  } else if (a == AgentType::E) {
+    exp = "E";
   } else {
     exp = "R";
-    roverCount = rovs;
-    poiCount = nPOIs;
-    couplingReq = coupling;
-    epochs = nEps;
   }
-  MultiRover domain(w, nSteps, nPop, poiCount, Fitness::G, roverCount, couplingReq, a);
+  MultiRover domain(w, nSteps, CCEA_POP, poiCount, Fitness::G, roverCount, couplingReq, a);
 
-  for (size_t n = 0; n < epochs; n++) {
-    std::cout << "Training " << exp << " Episode " << n << "...";
-    domain.EvolvePolicies((n==0));
-    domain.InitialiseEpoch();
-
-    domain.ResetEpochEvals();
-    domain.SimulateEpoch();
-  }
+  trainDomainF(&domain, epochs, output, outputPeriod, exp);
 
   std::vector<NeuralNet*> myNets = domain.getNNTeam();
-
   std::vector<NeuralNet> returnNets;
   
   for (auto& net : myNets) {
@@ -102,59 +100,80 @@ int main() {
   world.push_back(WORLD_XMAX);
   world.push_back(WORLD_YMIN); 
   world.push_back(WORLD_YMAX);
-
-  std::cout << "Control..." << std::endl;
-  trainSimple(world, AgentType::R);
   
   std::cout << "Pre training ..." << std::endl;
-  vector<NeuralNet> aNets = trainSimple(world, AgentType::A);
-  vector<NeuralNet> pNets = trainSimple(world, AgentType::P);
+  vector<NeuralNet> aNets = trainSimple(world, AgentType::A, TEAM_ROVERS,
+					TEAM_POIS, TEAM_COUPLING, TEAM_STEPS,
+					TEAM_EPS, true, 20);
+  vector<NeuralNet> pNets = trainSimple(world, AgentType::P, POI_ROVERS,
+					POI_POIS, POI_COUPLING, POI_STEPS,
+					POI_EPS, true, 20);
 
+  vector<NeuralNet> eNets = trainSimple(world, AgentType::E, EXPLORING_ROVERS,
+					EXPLORING_POIS, EXPLORING_COUPLING, EXPLORING_STEPS,
+					EXPLORING_EPS, true, 20);
+  vector<size_t> aInds = {0, 1, 2, 3};
+  vector<size_t> pInds = {4, 5, 6, 7};
+  vector<size_t> eInds = {0, 1, 2, 3};
+  vector< vector<size_t> > inds = {aInds, pInds, eInds};
+  vector< vector<NeuralNet> > nets = {aNets, pNets, eNets};
+  
   std::cout << std::endl << "Pre training complete. Now training net of nets: " << std::endl;
 
-  MultiRover trainDomain(world, nSteps, nPop, nPOIs, Fitness::G, rovs, coupling,
-			 pNets, aNets);
+  MultiRover trainDomain(world, NEURAL_STEPS, CCEA_POP, NEURAL_POIS, Fitness::G,
+			 NEURAL_ROVERS, NEURAL_COUPLING, nets, inds);
 
+  trainDomainF(&trainDomain, NEURAL_EPS, true, 20, "N");
+  
   // Experiment starts here
+
+  std::cout << "Test starting..." << std::endl;
   std::cout << std::endl << "Writing log files to: " << fileDir << std::endl
 	    << std::endl;
   
   trainDomain.OutputPerformance(resultFile);
+  trainDomain.OutputTrajectories(trajFile, poiFile, trajChoiceFile);
+  trainDomain.InitialiseEpoch();
+  trainDomain.SimulateEpoch();
 
-  vector<Target> targets = targetsFromYAML(config["targets"].as<YAML::Node>());
-  vector<Vector2d> xys = vector2dsFromYAML(config["agents"].as<YAML::Node>());
+  std::cout << "Test complete." << std::endl;
   
-  for (size_t n = 0; n < nEps; n++){
-    std::cout << "Episode " << n << "...";
-    if (n == 0) {
-      trainDomain.EvolvePolicies(true) ;
+  
+  // //vector<Target> targets = targetsFromYAML(config["targets"].as<YAML::Node>());
+  // //vector<Vector2d> xys = vector2dsFromYAML(config["agents"].as<YAML::Node>());
+  // int staticOrRandom = 1;
+  
+  // for (size_t n = 0; n < NEURAL_EPS; n++){
+  //   std::cout << "Episode " << n << "...";
+  //   if (n == 0) {
+  //     trainDomain.EvolvePolicies(true) ;
 
-      if (staticOrRandom == 0) {
-        trainDomain.InitialiseEpochFromVectors(targets, xys) ; // Static world
-      }
-    }
-    else
-      trainDomain.EvolvePolicies() ;
+  //     if (staticOrRandom == 0) {
+  //       // trainDomain.InitialiseEpochFromVectors(targets, xys) ; // Static world
+  //     }
+  //   }
+  //   else
+  //     trainDomain.EvolvePolicies() ;
 
-    if (staticOrRandom == 1) {
-      trainDomain.InitialiseEpoch() ; // Random worlds
-    }
+  //   if (staticOrRandom == 1) {
+  //     trainDomain.InitialiseEpoch() ; // Random worlds
+  //   }
     
-    if (n == nEps-1) {
-      trainDomain.OutputTrajectories(trajFile, poiFile, trajChoiceFile) ;
-    }
+  //   if (n == NEURAL_EPS-1) {
+  //     trainDomain.OutputTrajectories(trajFile, poiFile, trajChoiceFile) ;
+  //   }
     
-    trainDomain.ResetEpochEvals() ;
-    trainDomain.SimulateEpoch() ;
-  }
+  //   trainDomain.ResetEpochEvals() ;
+  //   trainDomain.SimulateEpoch() ;
+  // }
   
 
   
-  std::cout << "\nWriting final control policies to file...\n" ;
+  // std::cout << "\nWriting final control policies to file...\n" ;
   
-  trainDomain.OutputControlPolicies(nnFile) ;
+  // trainDomain.OutputControlPolicies(nnFile) ;
   
-  std::cout << "Test complete!\n" ;
+  // std::cout << "Test complete!\n" ;
   
   return 0 ;
 }

@@ -31,8 +31,10 @@ SOFTWARE.
 Agent::Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t
 	     nOutput, Fitness f) : nSteps(n), popSize(nPop), numIn(nInput),
 				   numHidden(nHidden), numOut(nOutput),
-				   fitness(f) {
+				   fitness(f), printOutput(false) {
   AgentNE = new NeuroEvo(numIn, numOut, numHidden, nPop);
+
+  id = std::chrono::system_clock::now().time_since_epoch().count() % 100000;
 }
 
 Agent::~Agent() {
@@ -157,4 +159,13 @@ void Agent::SetEpochPerformance(double G, size_t i) {
   } else if (fitness == Fitness::G) {
     epochEvals[i] = G;
   }
+}
+
+void Agent::openOutputFile(std::string filename) {
+  std::string uniqueFilename = filename + std::to_string(id);
+  if (outputFile.is_open()) {
+    outputFile.close();
+  }
+
+  outputFile.open(uniqueFilename.c_str(), std::ios::app);
 }

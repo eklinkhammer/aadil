@@ -14,6 +14,7 @@
 #include "Agents/Rover.h"
 #include "Agents/NeuralRover.h"
 #include "Agents/TeamFormingAgent.h"
+#include "Agents/ExploringAgent.h"
 #include "Agents/OnlyPOIRover.h"
 
 using std::string ;
@@ -21,7 +22,7 @@ using std::vector ;
 using std::shuffle ;
 using namespace Eigen ;
 
-enum class AgentType {A, P, R, M};
+enum class AgentType {A, P, R, M, E};
 
 class MultiRover{
   public:
@@ -39,7 +40,8 @@ class MultiRover{
 
     // MultiRover with NeuralRovers
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
-	       Fitness f, size_t rovs, int c, vector<NeuralNet>, vector<NeuralNet>);
+	       Fitness f, size_t rovs, int c, vector<vector<NeuralNet>>,
+	       vector< vector<size_t> >);
     ~MultiRover();
 
 
@@ -52,8 +54,13 @@ class MultiRover{
     
     void SimulateEpoch(bool train = true) ;
     void EvolvePolicies(bool init = false) ;
-    void ResetEpochEvals() ;
-    
+    void ResetEpochEvals();
+
+    void resetPOIs();
+    void resetAgents();
+    void resetDomain();
+
+    void setVerbose(bool toggle) { verbose = toggle; }
     void OutputPerformance(std::string) ;
     void OutputTrajectories(std::string, std::string, std::string) ;
     void OutputControlPolicies(std::string) ;
@@ -68,10 +75,12 @@ class MultiRover{
     void printPOIs();
     void printJointState(const vector<Vector2d>);
     void agentObserves(Vector2d xy, int time);
- 
+
+    void toggleAgentOutput(bool);
+    
     double calculateG();
     double calculateStepwiseG();
-    double calculatePOIStepwiseValue(const Target& poi);
+    double calculatePOIValue(const Target& poi);
 
 
 
@@ -95,6 +104,7 @@ class MultiRover{
     vector<Target> tempPOIs;
     
     bool gPOIObs ;
+    bool verbose;
     
     bool outputEvals ;
     bool outputTrajs ;

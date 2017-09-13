@@ -1,7 +1,10 @@
 /*******************************************************************************
-TeamFormingAgent.cpp
+ExploringAgent.h
 
-Rover that only sees Agents. See header file for all documentation.
+Agent that only sees other agents. Extension of the TeamFormingAgent class. Its 
+neural networks' inputs are the 4 Agent quadrants from the Rover domain. It 
+scores by the distance to other agents (for some degree of agent 
+coupling).
 
 Authors: Eric Klinkhammer
 
@@ -24,50 +27,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
+#ifndef EXPLORING_AGENT_H
+#define EXPLORING_AGENT_H
+
 #include "TeamFormingAgent.h"
 
+class ExploringAgent : public TeamFormingAgent {
+ public:
+  // An exploring agent receives a negative reward when it is in
+  //   a team of tSize or more agents.
+  ExploringAgent(size_t n, size_t nPop, Fitness f, int tSize);
 
-Vector2d origin(0,0);
+  virtual double getReward();
+};
 
-TeamFormingAgent::TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize)
-  : Agent(n, nPop, 4, 12, 2, f), Target(origin, 1, tSize-1) {}
-
-VectorXd TeamFormingAgent::ComputeNNInput(vector<Vector2d> jointState) {
-  VectorXd s;
-  s.setZero(numIn,1) ;
-  MatrixXd Global2Body = RotationMatrix(-currentPsi) ;
-
-  size_t ind = selfIndex(jointState);
-  
-  Vector2d rovV ;
-  rovV.setZero(2,1) ;
-  for (size_t i = 0; i < jointState.size(); i++){
-    if (i != ind) {
-      rovV = jointState[i] - currentXY ;
-      Vector2d rovBody = Global2Body*rovV ;
-      Vector2d diff = currentXY - rovBody ;
-      double d = diff.norm() ;
-      double theta = atan2(rovBody(1),rovBody(0)) ;
-      size_t q ;
-      if (theta >= PI/2.0)
-        q = 3 ;
-      else if (theta >= 0.0)
-        q = 0 ;
-      else if (theta >= -PI/2.0)
-        q = 1 ;
-      else
-        q = 2 ;
-      s(q) += 1.0/max(d,1.0) ;
-    }
-  }
-  
-  return s ;
-}
-
-double TeamFormingAgent::getReward() {
-  return IsObserved() ? (GetValue() / max(GetNearestObs(), 1.0)) : 0.0;
-}
-
-void TeamFormingAgent::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G) {
-  // TODO
-}
+#endif // EXPLORING_AGENT_H

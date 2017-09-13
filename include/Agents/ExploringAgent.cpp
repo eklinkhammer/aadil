@@ -1,10 +1,10 @@
 /*******************************************************************************
-TeamFormingAgent.h
+ExploringAgent.cpp
 
-Agent that only sees other agents. Extension of the Agent base class. Its 
+Agent that only sees other agents. Extension of the TeamFormingAgent class. Its 
 neural networks' inputs are the 4 Agent quadrants from the Rover domain. It 
-scores by the inverse distance to other agents (for some degree of agent 
-coupling).
+scores by the distance to other agents (for some degree of agent 
+coupling). Method documentation in header file.
 
 Authors: Eric Klinkhammer
 
@@ -27,37 +27,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef TEAM_FORMING_AGENT_H
-#define TEAM_FORMING_AGENT_H
+#include "ExploringAgent.h"
 
-#include "Agent.h"
-#include "Domains/Target.h"
+ExploringAgent::ExploringAgent(size_t n, size_t nPop, Fitness f, int tSize)
+  : TeamFormingAgent(n, nPop, f, tSize) {}
 
-#include <vector>
-
-using std::vector;
-using std::max;
-
-class TeamFormingAgent : public Agent, public Target {
- public:
-  // TeamFormingAgent has a 4 input neural network. It's reward is the
-  //   sum of inverse distances to the nearest tSize other agents.
-  TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize);
-
-  // Mandatory implementations of virtual functions
-
-  // Computes the NN state for just the agent jointstate. Class has no
-  //   POI information to ignore.
-  virtual VectorXd ComputeNNInput(vector<Vector2d>);
-
-  // Overriden POI class
-  virtual Vector2d GetLocation() const { return getCurrentXY(); }
-  
-  // Calculates the reward giving 1/r where r is the distance between this
-  //   agent and the nearest other agent.
-  virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
-
-  virtual double getReward();
-};
-
-#endif // TEAM_FORMING_AGENT_H
+double ExploringAgent::getReward() {
+  return IsObserved() ? (GetValue() * (1 - 1 / max(GetNearestObs(), 1.0))) : GetValue();
+}

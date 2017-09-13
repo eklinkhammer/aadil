@@ -90,6 +90,9 @@ class Agent {
 
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) = 0;
 
+  // The Reward an agent receives at a given time step.
+  virtual double getReward() { return 0.0; }
+  
   // Returns a jointstate that has the agent's state replaced with a
   //   counterfactual state. The default is the intial state (ie, if the
   //   agent had not moved at all).
@@ -118,6 +121,9 @@ class Agent {
   Vector2d getInitialXY() const { return initialXY; }
 
   NeuroEvo * GetNEPopulation() const { return AgentNE; }
+
+  void setOutputBool(bool toggle) { printOutput = toggle; }
+  void openOutputFile(std::string filename);
   
  private:
   size_t nSteps;
@@ -131,6 +137,8 @@ class Agent {
   std::vector<double> epochEvals;
 
   void ResetStepwiseEval();
+
+  unsigned id;
 
 
  protected:
@@ -148,6 +156,9 @@ class Agent {
 
   // Determines the index of this agent's position in a jointState vector
   size_t selfIndex(vector<Vector2d> jointState);
+
+  bool printOutput;
+  std::ofstream outputFile;
 };
 
 #endif // AGENT_H_

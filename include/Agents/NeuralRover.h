@@ -41,22 +41,18 @@ using std::vector;
 class NeuralRover : public Rover {
  public:
   // Order of list: poi net, agent net
-  NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns);
+  NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns,
+	      vector<vector<size_t>> indices, size_t nOut);
 
   // Uses the jointState to determine which of its neural networks to use to
   //  determine the action.
   virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
 
   vector<NeuralNet> getNets() { return netsX; }
-
-  void setOutputBool(bool);
-  void outputTrajectory(std::string);
   
  private:
   vector<NeuralNet> netsX;
-  std::ofstream trajFile;
-
-  bool outputTrajs;
+  vector< vector<size_t> > index;
 };
 
 #endif // NEURAL_ROVER_H

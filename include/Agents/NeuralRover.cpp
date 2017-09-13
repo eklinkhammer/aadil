@@ -26,37 +26,41 @@ SOFTWARE.
 
 #include "NeuralRover.h"
 
-NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns)
-  : Rover(n, nPop, f), netsX(ns), outputTrajs(false) {}
+NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns, vector<vector<size_t> > indices, size_t nOut)
+  : Rover(n, nPop, 8, 16, nOut, f), netsX(ns), index(indices) {}
 
 Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
   VectorXd inp = ComputeNNInput(jointState);
   VectorXd out = GetNEPopulation()->GetNNIndex(i)->EvaluateNN(inp).normalized();
   
-  VectorXd newInp;
-  newInp.setZero(4,1);
 
-  if (outputTrajs) {
-    trajFile << (out(1) > out(0) ? "A" : "P") << std::endl;
+
+  
+  
+
+  int max_index = 0;
+  for (int i = 0; i < out.size(); i++) {
+    if (out(i) > out(max_index)) {
+      max_index = i;
+    }
+  }
+
+  if (printOutput) {
+    outputFile << max_index << std::endl;
   }
   
-  if (out(1) > out(0)) {
-    newInp(0) = inp(4);
-    newInp(1) = inp(5);
-    newInp(2) = inp(6);
-    newInp(3) = inp(7);
-    out = netsX[0].EvaluateNN(newInp).normalized();
-  } else {
-    // Option 1 - OnlyPOI Rover
-    newInp(0) = inp(0);
-    newInp(1) = inp(1);
-    newInp(2) = inp(2);
-    newInp(3) = inp(3);
-    out = netsX[1].EvaluateNN(newInp).normalized();
+  vector<size_t> inds = index[max_index];
 
-    // Option 2 - Normal (But no coupling) rover
-    // out = netsX[1].EvaluateNN(inp).normalized();
+  VectorXd newInp;
+  newInp.setZero(inds.size(),1); // set to size inds
+  
+  int index_input = 0;
+  for (size_t i : inds) {
+    newInp(index_input) = inp(i);
+    index_input++;
   }
+
+  out = netsX[max_index].EvaluateNN(newInp).normalized();
 
   // Transform to global frame
   Matrix2d Body2Global = RotationMatrix(currentPsi);
@@ -69,18 +73,5 @@ Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointSta
   currentPsi = pi_2_pi(currentPsi);
   
   return currentXY;
-}
-
-void NeuralRover::setOutputBool(bool output) {
-  outputTrajs = output;
-}
-
-void NeuralRover::outputTrajectory(std::string tFile) {
-  if (trajFile.is_open()) {
-    trajFile.close();
-  }
-  trajFile.open(tFile.c_str(), std::ios::app);
-
-  setOutputBool(true);
 }
 
