@@ -15,11 +15,14 @@ enum nnOut {BOUNDED, UNBOUNDED} ; // bounded output will apply activation functi
 #include <sstream>
 #include <vector>
 #include <Eigen/Eigen>
+#include <string>
+
 #include "Utilities/Utilities.h"
 
 using namespace Eigen ;
 using easymath::rand_interval ;
 using std::vector ;
+using std::string;
 
 class NeuralNet{
   public:
@@ -39,6 +42,9 @@ class NeuralNet{
     double GetEvaluation() {return evaluation ;}
     void SetEvaluation(double eval) {evaluation = eval ;}
     void BackPropagation(vector<VectorXd> trainInputs, vector<VectorXd> trainTargets) ;
+
+    static vector<NeuralNet*> loadNNFromFile(string, size_t, size_t, size_t);
+    
   private:
     double bias ;
     MatrixXd weightsA ;

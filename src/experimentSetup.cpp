@@ -51,3 +51,27 @@ std::vector<Vector2d> vector2dsFromYAML(YAML::Node node) {
 
   return targets;
 }
+
+size_t size_tFromYAML(YAML::Node node, string key) {
+  return fromYAML<size_t>(node, key);
+}
+
+int intFromYAML(YAML::Node node, string key) {
+  return fromYAML<int>(node, key);
+}
+
+bool boolFromYAML(YAML::Node node, string key) {
+  return fromYAML<bool>(node, key);
+}
+
+string stringFromYAML(YAML::Node node, string key) {
+  return fromYAML<string>(node, key);
+}
+
+double doubleFromYAML(YAML::Node node, string key) {
+  return fromYAML<double>(node, key);
+}
+
+YAML::Node nodeFromYAML(YAML::Node node, string key) {
+  return fromYAML<YAML::Node>(node, key);
+}

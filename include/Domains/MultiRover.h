@@ -47,6 +47,7 @@ class MultiRover{
 
     // Gets each agent's first neural net. Does not get the best net.
     vector<NeuralNet*> getNNTeam();
+    void initRovers();
     
     void InitialiseEpoch();
 
@@ -60,34 +61,73 @@ class MultiRover{
     void resetAgents();
     void resetDomain();
 
-    void setVerbose(bool toggle) { verbose = toggle; }
+
     void OutputPerformance(std::string) ;
     void OutputTrajectories(std::string, std::string, std::string) ;
     void OutputControlPolicies(std::string) ;
     void OutputQueries(char *) ;
     void OutputBeliefs(char *) ;
     void OutputAverageStepwise(char *) ;
+
+    // read in control policies and execute in random world, store
+    //   trajectory and POI results in second and third inputs, team performance
+    //   stored in fourth input, fifth-seventh inputs define NN structure
+    void ExecutePolicies(string readFile, string storeTraj, string storePOI,
+			 string storeEval, size_t numIn, size_t numOut, size_t numHidden);
+ 
+    // read in expert and novice control policies and execute in random world,
+    //   store trajectory and POI results in second and third inputs, team
+    //   performance stored in fourth input, fifth-seventh inputs define NN structure
+    void ExecutePolicies(string expFile, string novFile, string storeTraj,
+			 string storePOI, string storeEval, size_t numIn,
+			 size_t numOut, size_t numHidden);
+
+    // Read NN from file and create rover team with those agents
+    void loadNNs(string nnFile, size_t numIn, size_t numHidden, size_t numOut);
+
+    // Read NNs from file and create Neural Rover with those nets as inputs
+    void loadNNsNeuralRover(vector<string>, vector<size_t>, vector<size_t>,
+			    vector<size_t>, vector<vector<size_t>>);
     
-    void ExecutePolicies(char * readFile, char * storeTraj, char * storePOI, char * storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
+    void setNSteps(size_t n)        { nSteps = n; }
+    void setNPop(size_t n)          { nPop = n; }
+    void setNPOIs(size_t n)         { nPOIs = n; }
+    void setNRovers(size_t n)       { nRovers = n; }
+    void setEvalFunc(string s)      {evaluationFunction = s; }
+    void setType(AgentType t)       { type = t; }
+    void setFitness(Fitness f)      { fitness = f; }
+    void setCoupling(int n)         { coupling = n; }
+    void setWorld(vector<double> w) { world = w; }
+    void setVerbose(bool toggle)    { verbose = toggle; }
+    void setBias(bool bias)         { biasStart = bias; }
     
-    void ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden) ; // read in expert and novice control policies and execute in random world, store trajectory and POI results in second and third inputs, team performance stored in fourth input, fifth-seventh inputs define NN structure
+    size_t         getNSteps()   { return nSteps; }
+    size_t         getNPop()     { return nPop; }
+    size_t         getNPOIs()    { return nPOIs; }
+    size_t         getNRovers()  { return nRovers; }
+    string         getEvalFunc() { return evaluationFunction; }
+    AgentType      getType()     { return type; }
+    Fitness        getFitness()  { return fitness; }
+    int            getCoupling() { return coupling; }
+    vector<double> getWorld()    { return world; }
+    bool           getVerbose()  { return verbose; }
+    bool           getBias()     { return biasStart; }
+
   private:
     void printPOIs();
     void printJointState(const vector<Vector2d>);
     void agentObserves(Vector2d xy, int time);
 
     void toggleAgentOutput(bool);
+
     
     double calculateG();
     double calculateStepwiseG();
     double calculatePOIValue(const Target& poi);
 
-
-
-    
     Fitness fitness;
     AgentType type;
-    
+
     vector<double> world ;
     size_t nSteps ;
     size_t nPop ;
@@ -105,6 +145,7 @@ class MultiRover{
     
     bool gPOIObs ;
     bool verbose;
+    bool biasStart;
     
     bool outputEvals ;
     bool outputTrajs ;

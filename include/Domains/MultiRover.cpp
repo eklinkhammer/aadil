@@ -4,20 +4,10 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 		       numPOIs, Fitness f, size_t rovs, int c, AgentType t)
   : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
     coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
-    outputQury(false), outputBlf(false), gPOIObs(false), type(t), verbose(true) {
+    outputQury(false), outputBlf(false), gPOIObs(false), type(t), verbose(true),
+    biasStart(true) {
 
-  for (size_t i = 0; i < nRovers; i++) {
-    if (type == AgentType::R) {
-      roverTeam.push_back(new Rover(nSteps, nPop, fitness));
-    } else if (type == AgentType::P) {
-      roverTeam.push_back(new OnlyPOIRover(nSteps, nPop, fitness));
-      coupling = 1;
-    } else if (type == AgentType::A) {
-      roverTeam.push_back(new TeamFormingAgent(nSteps, nPop, fitness, coupling));
-    } else if (type == AgentType::E) {
-      roverTeam.push_back(new ExploringAgent(nSteps, nPop, fitness, coupling));
-    }
-  }
+  initRovers();
 }
 
 MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
@@ -25,15 +15,11 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 		       vector< vector<NeuralNet> > nets, vector<vector<size_t>> inds)
   : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
     coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
-    outputQury(false), outputBlf(false), gPOIObs(false), type(AgentType::M), verbose(true) {
+    outputQury(false), outputBlf(false), gPOIObs(false), type(AgentType::M), verbose(true),
+    biasStart(true) {
 
   size_t nOut = inds.size();
   for (size_t i = 0; i < nRovers; i++) {
-    // int netsPI = netsP.size() == rovs ? i : 0;
-    // int netsAI = netsA.size() == rovs ? i : 0;
-    // vector<NeuralNet> nets;
-    // nets.push_back(netsP[netsPI]);
-    // nets.push_back(netsA[netsAI]);
     vector<NeuralNet> netsAgent;
     for (size_t j = 0; j < nets.size(); j++) {
       int netI = nets[j].size() == rovs ? i : 0;
@@ -56,6 +42,22 @@ MultiRover::~MultiRover() {
   }
 }
 
+void MultiRover::initRovers() {
+  roverTeam.clear();
+  
+  for (size_t i = 0; i < nRovers; i++) {
+    if (type == AgentType::R) {
+      roverTeam.push_back(new Rover(nSteps, nPop, fitness));
+    } else if (type == AgentType::P) {
+      roverTeam.push_back(new OnlyPOIRover(nSteps, nPop, fitness));
+      setCoupling(1);
+    } else if (type == AgentType::A) {
+      roverTeam.push_back(new TeamFormingAgent(nSteps, nPop, fitness, coupling));
+    } else if (type == AgentType::E) {
+      roverTeam.push_back(new ExploringAgent(nSteps, nPop, fitness, coupling));
+    }
+  }
+}
 void MultiRover::InitialiseEpoch(){
   double rangeX = world[1] - world[0] ;
   double rangeY = world[3] - world[2] ;
@@ -64,7 +66,7 @@ void MultiRover::InitialiseEpoch(){
   initialPsis.clear() ;
   for (size_t i = 0; i < nRovers; i++){
     Vector2d initialXY ;
-    if (type == AgentType::A) {
+    if (type == AgentType::A || !biasStart) {
       initialXY(0) = rand_interval(world[0],world[1]);
       initialXY(1) = rand_interval(world[2],world[3]);
     } else {
@@ -182,7 +184,7 @@ void MultiRover::SimulateEpoch(bool train){
       }
     }
     
-    double eval = calculateG(); // calculate G resets POIs as well
+    double eval = calculateG();
     resetDomain();
     maxEval = max(eval, maxEval);
     
@@ -291,156 +293,100 @@ void MultiRover::OutputAverageStepwise(char * A){
   outputAvgStepR = true ;
 }
 
-void MultiRover::ExecutePolicies(char * readFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden){
-  // Filename to read NN control policy
-	std::stringstream fileName ;
-  fileName << readFile ;
-  std::ifstream nnFile ;
+void MultiRover::ExecutePolicies(string readFile, string storeTraj,
+				 string storePOI, string storeEval,
+				 size_t numIn, size_t numOut, size_t numHidden) {
+
+  loadNNs(readFile, numIn, numHidden, numOut);
   
-  vector<NeuralNet *> loadedNN ;
-  std::cout << "Reading out " << nPop << " NN control policies for each rover to test...\n" ;
-  nnFile.open(fileName.str().c_str(),std::ios::in) ;
-  
-  // Read in all NN weight matrices
-  std::string line ;
-  MatrixXd NNA ;
-  MatrixXd NNB ;
-  NNA.setZero(numIn,numHidden) ;
-  NNB.setZero(numHidden+1,numOut) ;
-  int nnK = NNA.rows() + NNB.rows() ; // number of lines corresponding to a single control policy
-  int k = 0 ; // track line number
-  while (std::getline(nnFile,line)){
-    std::stringstream lineStream(line) ;
-    std::string cell ;
-    if (k % nnK < NNA.rows()){
-      int i = k % nnK ;
-      int j = 0 ;
-      while (std::getline(lineStream,cell,','))
-        NNA(i,j++) = atof(cell.c_str()) ;
-    }
-    else {
-      int i = (k % nnK)-NNA.rows() ;
-      int j = 0 ;
-      while (std::getline(lineStream,cell,','))
-        NNB(i,j++) = atof(cell.c_str()) ;
-    }
-    if ((k+1) % nnK == 0){
-      NeuralNet * newNN = new NeuralNet(numIn, numOut, numHidden) ;
-      newNN->SetWeights(NNA, NNB) ;
-      loadedNN.push_back(newNN) ;
-    }
-    k++ ;
-  }
-  nnFile.close() ;
-  
-  // Assign control policies to rovers ;
-  k = 0 ;
-  for (size_t i = 0; i < nRovers; i++){
-    NeuroEvo * rovNE = roverTeam[i]->GetNEPopulation() ;
-    for (size_t j = 0; j < nPop; j++){
-      rovNE->GetNNIndex(j)->SetWeights(loadedNN[k]->GetWeightsA(),loadedNN[k]->GetWeightsB()) ;
-      k++ ;
-    }
+
+  if (getVerbose()) {
+    std::cout << "Initialising test world..." << std::endl;
   }
   
-  // Initialise test world
-  std::cout << "Initialising test world...\n" ;
   InitialiseEpoch() ;
   OutputPerformance(storeEval) ;
   OutputTrajectories(storeTraj, storePOI, "d") ;
   ResetEpochEvals() ;
   SimulateEpoch(false) ; // simulate in test mode
-  
-  for (size_t i = 0; i < loadedNN.size(); i++){
-    delete loadedNN[i] ;
-    loadedNN[i] = 0 ;
+}
+
+void MultiRover::loadNNs(string nnFile, size_t numIn, size_t numHidden,
+			 size_t numOut) {
+  if (getVerbose()) {
+    std::cout << "Reading in neural network policies from " << nnFile
+	      << std::endl;
+  }
+
+  vector<NeuralNet*> loadedNN = NeuralNet::loadNNFromFile(nnFile, numIn, numHidden,
+							  numOut);
+
+  int k = 0;
+  for (auto& rov : roverTeam) {
+    NeuroEvo* rovNE = rov->GetNEPopulation();
+    for (size_t i = 0; i < getNPop(); i++) {
+      rovNE->GetNNIndex(i)->SetWeights(loadedNN[k]->GetWeightsA(),
+				       loadedNN[k]->GetWeightsB());
+      k++;
+    }
+  }
+
+  for (size_t i = 0; i< loadedNN.size(); i++) {
+    delete loadedNN[i];
+    loadedNN[i] = 0;
   }
 }
 
+void MultiRover::loadNNsNeuralRover(vector<string> nnFiles, vector<size_t> nIns,
+				    vector<size_t> nHiddens, vector<size_t> nOuts,
+				    vector<vector<size_t>> inds) {
 
-void MultiRover::ExecutePolicies(char * expFile, char * novFile, char * storeTraj, char * storePOI, char* storeEval, size_t numIn, size_t numOut, size_t numHidden){
-  // Filename to read expert NN control policies
-  std::stringstream expFileName ;
-  expFileName << expFile ;
-  std::ifstream expNNFile ;
-  
-  vector<NeuralNet *> expLoadedNN ;
-  std::cout << "Reading out " << nPop << " expert NN control policies for each rover to test...\n" ;
-  expNNFile.open(expFileName.str().c_str(),std::ios::in) ;
-  
-  // Read in all NN weight matrices
-  std::string eline ;
-  MatrixXd NNA ;
-  MatrixXd NNB ;
-  NNA.setZero(numIn,numHidden) ;
-  NNB.setZero(numHidden+1,numOut) ;
-  int nnK = NNA.rows() + NNB.rows() ; // number of lines corresponding to a single control policy
-  int k = 0 ; // track line number
-  while (std::getline(expNNFile,eline)){
-    std::stringstream lineStream(eline) ;
-    std::string cell ;
-    if (k % nnK < NNA.rows()){
-      int i = k % nnK ;
-      int j = 0 ;
-      while (std::getline(lineStream,cell,','))
-        NNA(i,j++) = atof(cell.c_str()) ;
-    }
-    else {
-      int i = (k % nnK)-NNA.rows() ;
-      int j = 0 ;
-      while (std::getline(lineStream,cell,','))
-        NNB(i,j++) = atof(cell.c_str()) ;
-    }
-    if ((k+1) % nnK == 0){
-      NeuralNet * newNN = new NeuralNet(numIn, numOut, numHidden) ;
-      newNN->SetWeights(NNA, NNB) ;
-      expLoadedNN.push_back(newNN) ;
-    }
-    k++ ;
+  vector< vector<NeuralNet*> > nets;
+  for (size_t i = 0; i < nnFiles.size(); i++) {
+    size_t nIn = nIns.size() == nnFiles.size() ? i : 0;
+    size_t nH = nHiddens.size() == nnFiles.size() ? i : 0;
+    size_t nOut = nOuts.size() == nnFiles.size() ? i : 0;
+    vector<NeuralNet*> subNets = NeuralNet::loadNNFromFile(nnFiles[i], nIns[nIn],
+							   nHiddens[nH], nOuts[nOut]);
+    nets.push_back(subNets);
   }
-  expNNFile.close() ;
+
+  roverTeam.clear();
   
-  // Filename to read novive NN control policies
-  std::stringstream novFileName ;
-  novFileName << novFile ;
-  std::ifstream novNNFile ;
-  
-  vector<NeuralNet *> novLoadedNN ;
-  std::cout << "Reading out " << nPop << " novice NN control policies for each rover to test...\n" ;
-  novNNFile.open(novFileName.str().c_str(),std::ios::in) ;
-  
-  // Read in all NN weight matrices
-  std::string nline ;
-  NNA.setZero(numIn,numHidden) ;
-  NNB.setZero(numHidden+1,numOut) ;
-  nnK = NNA.rows() + NNB.rows() ; // number of lines corresponding to a single control policy
-  k = 0 ; // track line number
-  while (std::getline(novNNFile,nline)){
-    std::stringstream lineStream(nline) ;
-    std::string cell ;
-    if (k % nnK < NNA.rows()){
-      int i = k % nnK ;
-      int j = 0 ;
-      while (std::getline(lineStream,cell,','))
-        NNA(i,j++) = atof(cell.c_str()) ;
+  size_t nOut = inds.size();
+  for (size_t i = 0; i < getNRovers(); i++) {
+    vector<NeuralNet> netsAgent;
+    for (auto& net : nets) {
+      int netI = net.size() == getNRovers() ? i : 0;
+      netsAgent.push_back(*net[netI]);
     }
-    else {
-      int i = (k % nnK)-NNA.rows() ;
-      int j = 0 ;
-      while (std::getline(lineStream,cell,','))
-        NNB(i,j++) = atof(cell.c_str()) ;
-    }
-    if ((k+1) % nnK == 0){
-      NeuralNet * newNN = new NeuralNet(numIn, numOut, numHidden) ;
-      newNN->SetWeights(NNA, NNB) ;
-      novLoadedNN.push_back(newNN) ;
-    }
-    k++ ;
+    roverTeam.push_back(new NeuralRover(getNSteps(), getNPop(), getFitness(),
+					netsAgent, inds, nOut));
   }
-  novNNFile.close() ;
+}
+void MultiRover::ExecutePolicies(string expFile, string novFile,
+				 string storeTraj, string storePOI,
+				 string storeEval, size_t numIn, size_t numOut,
+				 size_t numHidden){
+
+  if (verbose) {
+    std::cout << "Reading out " << nPop << " expert NN control policies for"
+	      << " each rover to test..." << std::endl;
+  }
+  
+  vector<NeuralNet *> expLoadedNN = NeuralNet::loadNNFromFile(expFile,numIn,
+							      numHidden,numOut);
+
+  if (verbose) {
+    std::cout << "Reading out " << nPop << " novice NN control policies "
+	      << "for each rover to test..." << std::endl;
+  }
+  
+  vector<NeuralNet *> novLoadedNN = NeuralNet::loadNNFromFile(novFile, numIn,
+							      numHidden,numOut);
   
   // Assign control policies to rovers ;
-  k = 0 ;
+  int k = 0 ;
   for (size_t i = 0; i < nRovers; i++){
     NeuroEvo * rovNE = roverTeam[i]->GetNEPopulation() ;
     if (k == 0){
