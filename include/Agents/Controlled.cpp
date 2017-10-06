@@ -1,7 +1,8 @@
 /*******************************************************************************
-NeuralRovers.cpp
+Controlled.cpp
 
-See header file for documentation.
+NeuralRover Agent that allows users to manually choose and option. Documentation
+in header file.
 
 Authors: Eric Klinkhammer
 
@@ -24,50 +25,59 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#include "NeuralRover.h"
+#include "Controlled.h"
 
-NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns, vector<vector<size_t> > indices, size_t nOut)
-  : Rover(n, nPop, 8, 16, nOut, f), netsX(ns), index(indices) {}
+Controlled::Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns,
+	     vector<vector<size_t>> indices, size_t nOut)
+    : NeuralRover(n, nPop, f, ns, indices, nOut) {}
 
-Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
+Vector2d Controlled::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
+
+  vector<Vector2d> options;
+  vector<double> psiOptions;
+
   VectorXd inp = ComputeNNInput(jointState);
-  VectorXd out = GetNEPopulation()->GetNNIndex(i)->EvaluateNN(inp).normalized();
   
+  for (size_t i = 0; i < netsX.size(); i++) {
+    vector<size_t> inds = index[i];
 
-  int max_index = 0;
-  for (int i = 0; i < out.size(); i++) {
-    if (out(i) > out(max_index)) {
-      max_index = i;
+    VectorXd newInp;
+    newInp.setZero(inds.size(),1);
+
+    int index_input = 0;
+
+    for (size_t i : inds) {
+      inp(index_input) = inp(i);
+      index_input++;
     }
+
+    VectorXd out = netsX[i].EvaluateNN(newInp).normalized();
+
+    // Transform to global frame
+    Matrix2d Body2Global = RotationMatrix(currentPsi);
+    Vector2d deltaXY = Body2Global*out;
+    double deltaPsi = atan2(out(1),out(0));
+
+    options.push_back(deltaXY);
+    psiOptions.push_back(deltaPsi);
   }
 
-  if (printOutput) {
-    outputFile << max_index << std::endl;
-  }
-  
-  vector<size_t> inds = index[max_index];
-
-  VectorXd newInp;
-  newInp.setZero(inds.size(),1); // set to size inds
-  
-  int index_input = 0;
-  for (size_t i : inds) {
-    newInp(index_input) = inp(i);
-    index_input++;
+  for (size_t i = 0; i < options.size(); i++) {
+    std::cout << i << ":" << options[i](0) << "," << options[i](1) << " "
+	      << psiOptions[i] << std::endl;
   }
 
-  out = netsX[max_index].EvaluateNN(newInp).normalized();
+  int selection;
+  std::cout << "Select option: " << std::endl;
+  std::cin >> selection;
 
-  // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(currentPsi);
-  Vector2d deltaXY = Body2Global*out;
-  double deltaPsi = atan2(out(1),out(0));
-  
-  // Move
+  Vector2d deltaXY = options[selection];
+  double deltaPsi = psiOptions[selection];
+
+    // Move
   currentXY += deltaXY;
   currentPsi += deltaPsi;
   currentPsi = pi_2_pi(currentPsi);
   
   return currentXY;
 }
-

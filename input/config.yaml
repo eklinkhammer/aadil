@@ -2,6 +2,11 @@
 # All entries in this list must be a top level node in 
 experiments:
   - twoagent
+  - threeagent
+  - onepoi
+  - rover
+  - exploreone
+  - exploretwo
 
 twoagent:
   world:
@@ -11,9 +16,9 @@ twoagent:
     ymax: 30.0
   ccea_pop: 15
   nRovs: 4
-  nPOIs: 0
+  nPOIs: 3
   coupling: 2
-  nEps: 500
+  nEps: 200
   nSteps: 20
   biasStart: 0
   staticOrRandom: 1
@@ -24,4 +29,135 @@ twoagent:
     - 2
     - 3
   output: 1
-  
+
+threeagent:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 15
+  nRovs: 6
+  nPOIs: 0
+  coupling: 3
+  nEps: 200
+  nSteps: 20
+  biasStart: 0
+  staticOrRandom: 1
+  type: A
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+  output: 1
+
+onepoi:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 15
+  nRovs: 1
+  nPOIs: 2
+  coupling: 1
+  nEps: 500
+  nSteps: 30
+  biasStart: 1
+  staticOrRandom: 1
+  type: P
+  output: 1
+  ind:
+    - 4
+    - 5
+    - 6
+    - 7
+
+rover:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 15
+  nRovs: 2
+  nPOIs: 2
+  coupling: 1
+  nEps: 1000
+  nSteps: 25
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  output: 1
+
+exploretwo:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 15
+  nRovs: 6
+  nPOIs: 0
+  coupling: 2
+  nEps: 500
+  nSteps: 30
+  biasStart: 0
+  staticOrRandom: 1
+  type: E
+  output: 1
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+
+exploreone:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 15
+  nRovs: 6
+  nPOIs: 0
+  coupling: 1
+  nEps: 500
+  nSteps: 30
+  biasStart: 0
+  staticOrRandom: 1
+  type: E
+  output: 1
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    
+NeuralRover:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 10.0
+    ymax: 10.0
+  ccea_pop: 1
+  nRovs: 6
+  nPOIs: 5
+  coupling: 3
+  nEps: 1
+  nSteps: 10
+  biasStart: 1
+  staticOrRandom: 1
+  type: M
+  output: 1
+  input: 1

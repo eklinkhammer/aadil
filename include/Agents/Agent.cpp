@@ -169,3 +169,7 @@ void Agent::openOutputFile(std::string filename) {
 
   outputFile.open(uniqueFilename.c_str(), std::ios::app);
 }
+
+std::ostream& operator<<(std::ostream &strm, const Agent &a) {
+  return strm << "ID: " << a.id << " Loc: (" << a.currentXY(0) << ", " << a.currentXY(1) << ")";
+}

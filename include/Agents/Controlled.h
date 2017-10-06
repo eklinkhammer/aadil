@@ -1,7 +1,7 @@
 /*******************************************************************************
-NeuralRovers.cpp
+Controlled.h
 
-See header file for documentation.
+NeuralRover Agent that allows users to manually choose and option
 
 Authors: Eric Klinkhammer
 
@@ -24,50 +24,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
+#ifndef CONTROLLED_ROVER_H_
+#define CONTROLLED_ROVER_H_
+
 #include "NeuralRover.h"
 
-NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns, vector<vector<size_t> > indices, size_t nOut)
-  : Rover(n, nPop, 8, 16, nOut, f), netsX(ns), index(indices) {}
+#include <string>
+#include <iostream>
 
-Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
-  VectorXd inp = ComputeNNInput(jointState);
-  VectorXd out = GetNEPopulation()->GetNNIndex(i)->EvaluateNN(inp).normalized();
-  
 
-  int max_index = 0;
-  for (int i = 0; i < out.size(); i++) {
-    if (out(i) > out(max_index)) {
-      max_index = i;
-    }
-  }
+using std::string;
+using std::vector;
 
-  if (printOutput) {
-    outputFile << max_index << std::endl;
-  }
-  
-  vector<size_t> inds = index[max_index];
+class Controlled : public NeuralRover {
+ public:
+  Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns,
+	       vector<vector<size_t>> indices, size_t nOut);
 
-  VectorXd newInp;
-  newInp.setZero(inds.size(),1); // set to size inds
-  
-  int index_input = 0;
-  for (size_t i : inds) {
-    newInp(index_input) = inp(i);
-    index_input++;
-  }
-
-  out = netsX[max_index].EvaluateNN(newInp).normalized();
-
-  // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(currentPsi);
-  Vector2d deltaXY = Body2Global*out;
-  double deltaPsi = atan2(out(1),out(0));
-  
-  // Move
-  currentXY += deltaXY;
-  currentPsi += deltaPsi;
-  currentPsi = pi_2_pi(currentPsi);
-  
-  return currentXY;
-}
-
+  // Rover prompts user to select from among the vectors provided
+  //   by all control policies.
+  virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
+};
+#endif // CONTROLLED_ROVER_H_

@@ -124,6 +124,8 @@ class Agent {
 
   void setOutputBool(bool toggle) { printOutput = toggle; }
   void openOutputFile(std::string filename);
+
+  friend std::ostream& operator<<(std::ostream&, const Agent&);
   
  private:
   size_t nSteps;

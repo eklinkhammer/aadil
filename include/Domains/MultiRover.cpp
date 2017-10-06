@@ -12,10 +12,11 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 
 MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 		       numPOIs, Fitness f, size_t rovs, int c,
-		       vector< vector<NeuralNet> > nets, vector<vector<size_t>> inds)
+		       vector< vector<NeuralNet> > nets, vector<vector<size_t>> inds,
+		       bool controlled)
   : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
     coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
-    outputQury(false), outputBlf(false), gPOIObs(false), type(AgentType::M), verbose(true),
+    outputQury(false), outputBlf(false), gPOIObs(false), verbose(true),
     biasStart(true) {
 
   size_t nOut = inds.size();
@@ -25,7 +26,13 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
       int netI = nets[j].size() == rovs ? i : 0;
       netsAgent.push_back(nets[j][netI]);
     }
-    roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, netsAgent, inds, nOut));
+    if (controlled) {
+      roverTeam.push_back(new Controlled(nSteps, nPop, fitness, netsAgent, inds, nOut));
+      type = AgentType::C;
+    } else {
+      roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, netsAgent, inds, nOut));
+      type = AgentType::M;
+    }
   }
 }
 
@@ -162,6 +169,9 @@ void MultiRover::SimulateEpoch(bool train){
     for (size_t t = 0; t < nSteps; t++) {
       vector<Vector2d> newJointState ;
       double G = 0.0 ;
+      if (type == AgentType::C) {
+	std::cout << *this << std::endl;
+      }
       for (size_t j = 0; j < nRovers; j++){ // looping down the rows of 'teams'
         Vector2d xy = roverTeam[j]->ExecuteNNControlPolicy(teams[j][i],jointState) ;
         newJointState.push_back(xy);
@@ -515,4 +525,43 @@ double MultiRover::calculateStepwiseG() {
   }
   
   return G;
+}
+
+std::ostream& operator<<(std::ostream &strm, const MultiRover &d) {
+  double height = d.world[3] - d.world[2];
+  double width  = d.world[1] - d.world[0];
+
+  int h = floor(height);
+  int w = floor(width);
+  
+  double vals[h][w];
+  for (int i = 0; i < h; i++) {
+    for (int j = 0; j < w; j++) {
+      vals[i][j] = 0;
+    }
+  }
+
+  for (const auto& poi : d.POIs) {
+    Vector2d loc = poi.GetLocation();
+    int fh = (int) (floor (loc(0)));
+    int fw = (int) (floor (loc(1)));
+    int ph = (fh + h) % h;
+    int pw = (fw + w) % w;
+
+    vals[ph][pw] += poi.GetValue();
+    strm << poi << std::endl;
+  }
+  
+  for (const auto& rov : d.roverTeam) {
+    strm << *rov << std::endl;
+  }
+
+  for (int i = 0; i < h; i++) {
+    for (int j = 0; j < w; j++) {
+      strm << vals[i][j] << " ";
+    }
+    strm << std::endl;
+  }
+  
+  return strm;
 }

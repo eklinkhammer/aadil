@@ -50,7 +50,7 @@ class NeuralRover : public Rover {
 
   vector<NeuralNet> getNets() { return netsX; }
   
- private:
+ protected:
   vector<NeuralNet> netsX;
   vector< vector<size_t> > index;
 };

@@ -10,19 +10,21 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <math.h>
 
 #include "Agents/Rover.h"
 #include "Agents/NeuralRover.h"
 #include "Agents/TeamFormingAgent.h"
 #include "Agents/ExploringAgent.h"
 #include "Agents/OnlyPOIRover.h"
+#include "Agents/Controlled.h"
 
 using std::string ;
 using std::vector ;
 using std::shuffle ;
 using namespace Eigen ;
 
-enum class AgentType {A, P, R, M, E};
+enum class AgentType {A, P, R, M, E, C};
 
 class MultiRover{
   public:
@@ -41,7 +43,7 @@ class MultiRover{
     // MultiRover with NeuralRovers
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
 	       Fitness f, size_t rovs, int c, vector<vector<NeuralNet>>,
-	       vector< vector<size_t> >);
+	       vector< vector<size_t> >, bool controlled = false);
     ~MultiRover();
 
 
@@ -93,7 +95,7 @@ class MultiRover{
     void setNPop(size_t n)          { nPop = n; }
     void setNPOIs(size_t n)         { nPOIs = n; }
     void setNRovers(size_t n)       { nRovers = n; }
-    void setEvalFunc(string s)      {evaluationFunction = s; }
+    void setEvalFunc(string s)      { evaluationFunction = s; }
     void setType(AgentType t)       { type = t; }
     void setFitness(Fitness f)      { fitness = f; }
     void setCoupling(int n)         { coupling = n; }
@@ -113,7 +115,12 @@ class MultiRover{
     bool           getVerbose()  { return verbose; }
     bool           getBias()     { return biasStart; }
 
+    friend std::ostream& operator<<(std::ostream&, const MultiRover&);
+    
   private:
+    // Objective Functions
+    double objectiveRoverObservePOI();
+    // Other functions
     void printPOIs();
     void printJointState(const vector<Vector2d>);
     void agentObserves(Vector2d xy, int time);
