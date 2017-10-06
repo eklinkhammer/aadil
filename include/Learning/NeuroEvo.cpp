@@ -2,9 +2,10 @@
 #include "NeuroEvo.h"
 
 // Constructor: Initialises all NN in population, given NN layer sizes and population size, also sets SurvivalFunction
-NeuroEvo::NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize): numIn(nIn), numOut(nOut), numHidden(nHidden), populationSize(pSize){
-  for (size_t i = 0; i < populationSize; i++)
+NeuroEvo::NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize): numIn(nIn), numOut(nOut), numHidden(nHidden), populationSize(pSize) {
+  for (size_t i = 0; i < populationSize; i++) {
     populationNN.push_back(new NeuralNet(numIn, numOut, numHidden)) ;
+  }
   SurvivalFunction = &NeuroEvo::BinaryTournament ; // how to decide which NNs to retain after each round of evolution
 }
 
@@ -20,7 +21,9 @@ NeuroEvo::~NeuroEvo(){
 void NeuroEvo::MutatePopulation(){
   for (size_t i = 0; i < populationSize; i++){
     size_t j = i + populationSize ;
+    //    std::cout << "Pushing back new NeuralNet..." << std::endl;
     populationNN.push_back(new NeuralNet(numIn, numOut, numHidden)) ;
+    // std::cout << "Setting weights " << std::endl;
     populationNN[j]->SetWeights(populationNN[i]->GetWeightsA(),populationNN[i]->GetWeightsB()) ;
     populationNN[j]->MutateWeights() ;
   }

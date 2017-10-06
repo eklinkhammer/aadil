@@ -42,7 +42,9 @@ class Target{
   //   observation radius: 4
   //   observed: false
  Target(Vector2d xy, double v) : Target(xy, v, 1) {}
- Target(Vector2d xy, double v, int c) : Target(xy, v, c, 4.0, false) {}  
+ Target(Vector2d xy, double v, int c) : Target(xy, v, c, 4.0, false) {}
+
+  //Target(
 
   // Target Constructor
   // xy: The xy location of the Target. ObserveTarget uses this value to
@@ -55,10 +57,10 @@ class Target{
   ~Target() {}
 
   
-  Vector2d GetLocation() { return loc; }
-  double GetValue() { return val; }
-  double GetNearestObs() { return nearestObs; }
-  bool IsObserved() { return observed; }
+  virtual Vector2d GetLocation() const { return loc; }
+  double GetValue() const { return val; }
+  double GetNearestObs() const { return nearestObs; }
+  bool IsObserved() const { return observed; }
 
   // The target is observed by an object at position xy. If this observer is
   //   closer than the current set of closest observations (which may be just

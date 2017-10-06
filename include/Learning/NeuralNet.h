@@ -15,11 +15,14 @@ enum nnOut {BOUNDED, UNBOUNDED} ; // bounded output will apply activation functi
 #include <sstream>
 #include <vector>
 #include <Eigen/Eigen>
+#include <string>
+
 #include "Utilities/Utilities.h"
 
 using namespace Eigen ;
 using easymath::rand_interval ;
 using std::vector ;
+using std::string;
 
 class NeuralNet{
   public:
@@ -32,10 +35,16 @@ class NeuralNet{
     void SetWeights(MatrixXd, MatrixXd) ;
     MatrixXd GetWeightsA() {return weightsA ;}
     MatrixXd GetWeightsB() {return weightsB ;}
+    size_t getNI() { return nI; };
+    size_t getNH() { return nH; };
+    size_t getNO() { return nO; };
     void OutputNN(const char *, const char *) ; // write NN weights to file
     double GetEvaluation() {return evaluation ;}
     void SetEvaluation(double eval) {evaluation = eval ;}
     void BackPropagation(vector<VectorXd> trainInputs, vector<VectorXd> trainTargets) ;
+
+    static vector<NeuralNet*> loadNNFromFile(string, size_t, size_t, size_t);
+    
   private:
     double bias ;
     MatrixXd weightsA ;
@@ -44,6 +53,9 @@ class NeuralNet{
     double mutationStd ;
     double evaluation ;
     double eta ;
+    size_t nI;
+    size_t nH;
+    size_t nO;
     vector<size_t> layerActivation ;
 
     void InitialiseWeights(MatrixXd &) ;

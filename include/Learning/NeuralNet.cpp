@@ -1,7 +1,7 @@
 #include "NeuralNet.h"
 
 // Constructor: Initialises NN given layer sizes, also initialises NN activation function, currently has hardcoded mutation rates, mutation value std and bias node value
-NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afType, nnOut bOut){
+NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afType, nnOut bOut) : nI(numIn), nH(numHidden), nO(numOut) {
   bias = 1.0 ;
   MatrixXd A(numIn, numHidden) ;
   weightsA = A ;
@@ -9,7 +9,7 @@ NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afTyp
   weightsB = B ;
   mutationRate = 0.5 ;
   mutationStd = 1.0 ;
-  
+
   if (afType == TANH)
     ActivationFunction = &NeuralNet::HyperbolicTangent ;
   else if (afType == LOGISTIC)
@@ -18,6 +18,7 @@ NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afTyp
     std::cout << "ERROR: Unknown activation function type! Using default hyperbolic tangent function.\n" ;
     ActivationFunction = &NeuralNet::HyperbolicTangent ;
   }
+  //  std::cout << "Line" << std::endl;
   
   if (bOut == BOUNDED){
     layerActivation.push_back(0) ;
@@ -27,15 +28,18 @@ NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afTyp
     layerActivation.push_back(0) ;
     layerActivation.push_back(2) ;
   }
-    
+  //std::cout << "Line" << std::endl;
   InitialiseWeights(weightsA) ;
+  //std::cout << "Line" << std::endl;
   InitialiseWeights(weightsB) ;
   
   eta = 0.0001 ; // learning rate
+  //std::cout << "NeuralNet - end" << std::endl;
 }
 
 // Evaluate NN output given input vector
 VectorXd NeuralNet::EvaluateNN(VectorXd inputs){
+  //std::cout << "EvaluateNN";
   VectorXd hiddenLayer = (this->*ActivationFunction)(inputs, layerActivation[0]) ;
   VectorXd outputs = (this->*ActivationFunction)(hiddenLayer, layerActivation[1]) ;
   return outputs ;
@@ -259,4 +263,53 @@ VectorXd NeuralNet::LogisticFunction(VectorXd input, size_t layer){
   }
   
   return output ;
+}
+
+vector<NeuralNet*> NeuralNet::loadNNFromFile(std::string filename, size_t numIn,
+				     size_t numHidden, size_t numOut) {
+  vector<NeuralNet*> loadedNN;
+  std::ifstream nnFile;
+  nnFile.open(filename.c_str(), std::ios::in);
+
+  std::string line;
+  MatrixXd NNA;
+  MatrixXd NNB;
+
+  NNA.setZero(numIn, numHidden);
+  NNB.setZero(numHidden+1, numOut);
+
+  // lines / network
+  int nnK = NNA.rows() + NNB.rows();
+
+  // line in file
+  int k = 0;
+  while(std::getline(nnFile, line)) {
+    std::stringstream lineStream(line);
+    std::string cell;
+    if (k % nnK < NNA.rows()) {
+      int i = k % nnK;
+      int j = 0;
+      while (std::getline(lineStream, cell, ',')) {
+	NNA(i, j++) = atof(cell.c_str());
+      }
+    } else {
+      int i = (k % nnK) - NNA.rows();
+      int j = 0;
+
+      while (std::getline(lineStream, cell, ',')) {
+	NNB(i, j++) = atof(cell.c_str());
+      }
+    }
+
+    if ((k+1) % nnK == 0) {
+      NeuralNet* newNN = new NeuralNet(numIn, numOut, numHidden);
+      newNN->SetWeights(NNA, NNB);
+      loadedNN.push_back(newNN);
+    }
+    k++;    
+  }
+
+  nnFile.close();
+
+  return loadedNN;
 }
