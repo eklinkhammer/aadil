@@ -42,6 +42,10 @@ public:
     return s;
   }
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) {};
+
+  virtual Agent* copyAgent() const {
+    return new AgentChild(1,1,1,1,1,Fitness::G);
+  }
 };
 
 TEST_F(AgentTest, testInitialiseNewLearningEpoch) {

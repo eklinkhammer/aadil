@@ -88,3 +88,7 @@ void Rover::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G){
   
   stepwiseD += (G-G_hat);
 }
+
+Agent* Rover::copyAgent() const {
+  return new Rover(*this);
+}

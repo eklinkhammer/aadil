@@ -1,10 +1,8 @@
 /*******************************************************************************
-TeamFormingAgent.h
+State.h
 
-Agent that only sees other agents. Extension of the Agent base class. Its 
-neural networks' inputs are the 4 Agent quadrants from the Rover domain. It 
-scores by the inverse distance to other agents (for some degree of agent 
-coupling).
+A state is a tuple of Vector2d position and double orientation. Defined in
+header file.
 
 Authors: Eric Klinkhammer
 
@@ -27,40 +25,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef TEAM_FORMING_AGENT_H
-#define TEAM_FORMING_AGENT_H
-
-#include "Agent.h"
-#include "Domains/Target.h"
+#ifndef STATE_H_
+#define STATE_H_
 
 #include <vector>
+#include <Eigen/Eigen>
+#include <iostream>
 
 using std::vector;
-using std::max;
 
-class TeamFormingAgent : public Agent, public Target {
+class State {
  public:
-  // TeamFormingAgent has a 4 input neural network. It's reward is the
-  //   sum of inverse distances to the nearest tSize other agents.
-  TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize);
-
-  // Mandatory implementations of virtual functions
-
-  // Computes the NN state for just the agent jointstate. Class has no
-  //   POI information to ignore.
-  virtual VectorXd ComputeNNInput(vector<Vector2d>);
-
-  // Overriden POI class
-  virtual Vector2d GetLocation() const { return getCurrentXY(); }
+  State() {
+    Vector2d originVec(0,0);
+    _pos = originVec;
+    _psi = 0;
+  }
   
-  // Calculates the reward giving 1/r where r is the distance between this
-  //   agent and the nearest other agent.
-  virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
+ State(Vector2d position, double angle) : _pos(position), _psi(angle) {};
 
-  virtual Agent* copyAgent() const;
-  virtual double getReward();
+  Vector2d pos() const { return _pos; }
+  double psi() const { return _psi; }
+
+  friend std::ostream& operator<<(std::ostream &strm, const State &state) {
+    return strm << state.pos() << "," << state.psi();
+  }
  private:
-  size_t teamSize;
+  Vector2d _pos;
+  double _psi;
 };
 
-#endif // TEAM_FORMING_AGENT_H
+#endif // STATE_H_

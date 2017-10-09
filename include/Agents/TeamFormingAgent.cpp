@@ -30,7 +30,7 @@ SOFTWARE.
 Vector2d origin(0,0);
 
 TeamFormingAgent::TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize)
-  : Agent(n, nPop, 4, 12, 2, f), Target(origin, 1, tSize-1) {}
+  : Agent(n, nPop, 4, 12, 2, f), Target(origin, 1, tSize-1), teamSize(tSize) {}
 
 VectorXd TeamFormingAgent::ComputeNNInput(vector<Vector2d> jointState) {
   VectorXd s;
@@ -70,4 +70,11 @@ double TeamFormingAgent::getReward() {
 
 void TeamFormingAgent::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G) {
   // TODO
+}
+
+Agent* TeamFormingAgent::copyAgent() const {
+  TeamFormingAgent* copy = new TeamFormingAgent(getNSteps(), getNPop(), getFitness(), teamSize);
+  NeuroEvo* nets = GetNEPopulation();
+  copy->setNets(nets);
+  return copy;
 }

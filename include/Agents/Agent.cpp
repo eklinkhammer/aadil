@@ -28,6 +28,12 @@ SOFTWARE.
 
 #include "Agent.h"
 
+Agent::Agent() : Agent(10, 10, 1, 1, 1, Fitness::G) {};
+
+Agent::Agent(const Agent& other) {
+  
+}
+
 Agent::Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t
 	     nOutput, Fitness f) : nSteps(n), popSize(nPop), numIn(nInput),
 				   numHidden(nHidden), numOut(nOutput),
@@ -40,6 +46,37 @@ Agent::Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t
 Agent::~Agent() {
   delete(AgentNE);
   AgentNE = 0;
+}
+
+State Agent::executeNNControlPolicy(size_t i, const vector<State> jointState) {
+  VectorXd inp = computeNNInput(jointState);
+  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
+
+  // Transform to global frame
+  Matrix2d Body2Global = RotationMatrix(currentPsi);
+  Vector2d deltaXY = Body2Global*out;
+  double deltaPsi = atan2(out(1),out(0));
+
+  Vector2d nextXY = currentXY + deltaXY;
+  double nextPsi = pi_2_pi(deltaPsi + currentPsi);
+
+  State nextState(nextXY, nextPsi);
+  return nextState;
+}
+
+VectorXd Agent::computeNNInput(const vector<State> jointState) {
+  vector<Vector2d> jointVecState;
+  for (const auto& s : jointState) {
+    jointVecState.push_back(s.pos());
+  }
+
+  return ComputeNNInput(jointVecState);
+}
+
+void Agent::move(const State newState) {
+  currentState = newState;
+  currentXY = currentState.pos();
+  currentPsi = currentState.psi();
 }
 
 Vector2d Agent::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
@@ -69,6 +106,23 @@ void Agent::InitialiseNewLearningEpoch(Vector2d xy, double psi) {
 
   currentXY = initialXY;
   currentPsi = initialPsi;
+
+  currentState = State(currentXY, currentPsi);
+  initialState = State(initialXY, initialPsi);
+}
+
+void Agent::initialiseNewLearningEpoch(State s) {
+  ResetStepwiseEval();
+  currentState = s;
+  initialState = s;
+
+  
+  currentXY = currentState.pos();
+  currentPsi = currentState.psi();
+}
+
+void Agent::initialiseNewLearningEpoch(State s, vector<Target> pois) {
+  initialiseNewLearningEpoch(s);
 }
 
 void Agent::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy, double psi) {

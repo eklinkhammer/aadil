@@ -41,6 +41,7 @@ SOFTWARE.
 #include "Learning/NeuroEvo.h"
 #include "Utilities/Utilities.h"
 #include "Domains/Target.h"
+#include "Domains/State.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846264338328
@@ -56,9 +57,10 @@ enum class Fitness {G, D};
 
 class Agent {
  public:
+  Agent();
+  Agent(const Agent&);
   Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t nOutput,
 	Fitness f);
-
   virtual ~Agent();
   // Computes the input to the neural network using a list of actor joint states
   //
@@ -67,6 +69,11 @@ class Agent {
   // This function is a pure virtual function.
   virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) = 0;
 
+  // default is ComputeNNInput . map fst
+  virtual VectorXd computeNNInput(const vector<State>);
+  virtual State executeNNControlPolicy(size_t, const vector<State>);
+  void move(const State);
+  
   // Calculates the new XY position from the ith neural network in the CCEA pool
   //   using the result of ComputeNNInput with the jointstate as input.
   //
@@ -81,6 +88,9 @@ class Agent {
   //
   // Type classes would solve this problem...
   virtual void InitialiseNewLearningEpoch(Vector2d xy, double psi);
+
+  virtual void initialiseNewLearningEpoch(State s);
+  virtual void initialiseNewLearningEpoch(State s, vector<Target>);
   
   // Sets initial simulation parameters, including rover positions. Clears
   //   evaluation storage vector. Intended for use with POIs
@@ -99,6 +109,7 @@ class Agent {
   vector<Vector2d> substituteCounterfactual(vector<Vector2d> jointState);
   vector<Vector2d> substituteCounterfactual(vector<Vector2d>, double, double);
 
+  void setState(State s) { currentState = s; }
   // Evolves the NeuroEvo, using the epochEvals score. When init is true,
   //  only mutates the population.
   void EvolvePolicies(bool init = false);
@@ -114,11 +125,14 @@ class Agent {
 
   vector<double> GetEpochEvals() const{ return epochEvals; }
   
-  double getCurrentPsi() const { return currentPsi; }
-  double getInitialPsi() const { return initialPsi; }
+  double getCurrentPsi() const { return currentState.psi(); }
+  double getInitialPsi() const { return initialState.psi(); }
 
-  Vector2d getCurrentXY() const { return currentXY; }
-  Vector2d getInitialXY() const { return initialXY; }
+  State getCurrentState() const { return currentState; }
+  State getInitialState() const { return initialState; }
+  
+  Vector2d getCurrentXY() const { return currentState.pos(); }
+  Vector2d getInitialXY() const { return initialState.pos(); }
 
   NeuroEvo * GetNEPopulation() const { return AgentNE; }
 
@@ -126,7 +140,8 @@ class Agent {
   void openOutputFile(std::string filename);
 
   friend std::ostream& operator<<(std::ostream&, const Agent&);
-  
+
+  virtual Agent* copyAgent() const = 0;
  private:
   size_t nSteps;
   size_t popSize;
@@ -161,6 +176,15 @@ class Agent {
 
   bool printOutput;
   std::ofstream outputFile;
+
+  State initialState;
+  State currentState;
+
+  void setNets(NeuroEvo* nets) { AgentNE = nets; }
+
+  size_t getNSteps() const { return nSteps; }
+  size_t getNPop() const { return popSize; }
+  Fitness getFitness() const { return fitness; }
 };
 
 #endif // AGENT_H_

@@ -30,10 +30,12 @@ class Rover : public Agent {
   // Pure Virtual functions
   virtual VectorXd ComputeNNInput(vector<Vector2d> jointState);
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
-
+  virtual Agent* copyAgent() const;
+  
   // Overriding
   virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d, double);
-    
+
+  
  protected:
   vector<Target> POIs;
 };
