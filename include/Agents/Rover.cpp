@@ -90,5 +90,7 @@ void Rover::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G){
 }
 
 Agent* Rover::copyAgent() const {
-  return new Rover(*this);
+  Rover* copy = new Rover(getNSteps(), getNPop(), getFitness());
+  copy->setNets(GetNEPopulation());
+  return copy;
 }

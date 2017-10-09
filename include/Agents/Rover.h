@@ -36,7 +36,7 @@ class Rover : public Agent {
   virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d, double);
 
   
- protected:
+ protected: 
   vector<Target> POIs;
 };
 

@@ -28,12 +28,6 @@ SOFTWARE.
 
 #include "Agent.h"
 
-Agent::Agent() : Agent(10, 10, 1, 1, 1, Fitness::G) {};
-
-Agent::Agent(const Agent& other) {
-  
-}
-
 Agent::Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t
 	     nOutput, Fitness f) : nSteps(n), popSize(nPop), numIn(nInput),
 				   numHidden(nHidden), numOut(nOutput),
@@ -166,14 +160,16 @@ void Agent::ResetStepwiseEval(){
 }
 
 void Agent::EvolvePolicies(bool init) {
-  //std::cout << "In agent, evolving policy..." << init << std::endl;
+  std::cout << "In agent, evolving policy..." << init << std::endl;
   if (!init) {
-    //std::cout << "Evolving population..." << std::endl;
+    std::cout << "Evolving population..." << std::endl;
+    std::cout << AgentNE << std::endl;
     AgentNE->EvolvePopulation(epochEvals);
   }
 
-  // std::cout << "Mutating population..." << std::endl;
-  AgentNE->MutatePopulation() ;
+  std::cout << "Mutating population..." << std::endl;
+  std::cout << AgentNE << std::endl;
+  AgentNE->MutatePopulation();
 }
 
 void Agent::OutputNNs(std::string nnFile) {

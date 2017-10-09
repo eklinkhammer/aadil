@@ -57,8 +57,6 @@ enum class Fitness {G, D};
 
 class Agent {
  public:
-  Agent();
-  Agent(const Agent&);
   Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t nOutput,
 	Fitness f);
   virtual ~Agent();
@@ -71,7 +69,7 @@ class Agent {
 
   // default is ComputeNNInput . map fst
   virtual VectorXd computeNNInput(const vector<State>);
-  virtual State executeNNControlPolicy(size_t, const vector<State>);
+
   void move(const State);
   
   // Calculates the new XY position from the ith neural network in the CCEA pool
@@ -82,6 +80,8 @@ class Agent {
   // Is implemented. Should only be overriden when the NN does not directly return
   //   a new position (ie, when it chooses between two other networks).
   virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
+
+  virtual State executeNNControlPolicy(size_t i, const vector<State> jointState);
 
   // Sets initial simulation parameters, including rover positions. Clears
   //   evaluation storage vector.
@@ -141,7 +141,7 @@ class Agent {
 
   friend std::ostream& operator<<(std::ostream&, const Agent&);
 
-  virtual Agent* copyAgent() const = 0;
+  // virtual Agent* copyAgent() const = 0;
  private:
   size_t nSteps;
   size_t popSize;

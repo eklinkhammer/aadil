@@ -66,7 +66,7 @@ TEST_F(AgentTest, testInitialiseNewLearningEpoch) {
   EXPECT_EQ(initXY(0), a.getCurrentXY()(0));
   EXPECT_EQ(initXY(1), a.getCurrentXY()(1));
 }
-
+ 
 TEST_F(AgentTest, testSubstituteCounterfactual) {
   AgentChild a(1,1,1,1,1, Fitness::G);
   Vector2d initXY; initXY(0) = 2; initXY(1) = 5;

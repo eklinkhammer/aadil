@@ -57,7 +57,7 @@ class TeamFormingAgent : public Agent, public Target {
   //   agent and the nearest other agent.
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
 
-  virtual Agent* copyAgent() const;
+  virtual Agent* copyAgent() const; 
   virtual double getReward();
  private:
   size_t teamSize;

@@ -55,15 +55,21 @@ void trainDomain(MultiRover* domain, size_t epochs, bool output, int outputPerio
     if (n == epochs - 1) {
       configureOutput(domain, topDir, id);
     }
+    std::cout << "TrainDomain_loop_n: " << n << std::endl;
     trainDomainOnce(domain, (n==0));
   }
 }
 
 void trainDomainOnce(MultiRover* domain, bool evolve) {
+  std::cout << "trainDomainOnce:start" << std::endl;
   domain->EvolvePolicies(evolve);
+  std::cout << "trainDomainOnce:evolved" << std::endl;
   domain->InitialiseEpoch();
+  std::cout << "trainDomainOnce:init" << std::endl;
   domain->ResetEpochEvals();
+  std::cout << "trainDomainOnce:reset" << std::endl;
   domain->SimulateEpoch();
+  std::cout << "trainDomainOnce:simulated" << std::endl;
 }
 
 void testDomainOnce(MultiRover* domain, bool output) {
@@ -163,7 +169,7 @@ int main() {
   std::cout << "Experiment configs file: " << std::endl;
   std::cout << config << std::endl;
 
-  int trialNum = readTrialNum();
+  int trialNum = 1;//readTrialNum();
   string fileDir = "Results/" + std::to_string(trialNum);
   makeDir(fileDir);
   

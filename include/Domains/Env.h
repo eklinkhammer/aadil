@@ -33,6 +33,7 @@ SOFTWARE.
 
 #include "Agents/Agent.h"
 #include "State.h"
+#include "Agents/TeamFormingAgent.h"
 
 using std::vector;
 
@@ -83,5 +84,11 @@ class Env {
   vector< size_t> teamIndex;
   vector<State> currentStates;
   vector< vector<State> > historyStates;
+
+  size_t curTime;
+
+  void applyNewStateEffects();
+  void applyStateEffect(State);
 };
+
 #endif // ENV_H_

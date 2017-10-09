@@ -55,6 +55,8 @@ void Env::applyStep(vector<State> jointStates) {
 
   currentStates = jointStates;
   historyStates.push_back(currentStates);
+  applyNewStateEffects();
+  curTime += 1;
 }
 
 vector<State> Env::step()  {
@@ -77,6 +79,7 @@ void Env::init(vector<State> initStates, vector<size_t> index) {
 
 void Env::reset() {
   init(historyStates[0], teamIndex);
+  curTime = 0;
 }
 
 double Env::currentReward() const {
@@ -96,11 +99,34 @@ double Env::estimateRewardOfStep(vector<State> nextStep) const {
   vector< Target > backupTargets = targets;
   vector< Agent* > backupAgents;
   for (const auto& a : agents) {
-    backupAgents.push_back(a->copyAgent());
+    // backupAgents.push_back(a->copyAgent());
   }
 
   Env rollOut(world, backupAgents, backupTargets, teamSize);
   rollOut.applyStep(nextStep);
 
   return rollOut.currentReward();
+}
+
+void Env::applyNewStateEffects() {
+  for (const auto& state : currentStates) {
+    applyStateEffect(state);
+  }
+}
+
+void Env::applyStateEffect(State s) {
+  Vector2d xy = s.pos();
+
+  for (auto& agent : agents) {
+    if (TeamFormingAgent* t = dynamic_cast<TeamFormingAgent*>(agent)) {
+      Vector2d otherLoc = t->getCurrentXY();
+      if (!(otherLoc(0) == xy(0) && otherLoc(1) == xy(1))) {
+	t->ObserveTarget(s.pos(), curTime);
+      }
+    }
+  }
+
+  for (auto& target : targets) {
+    target.ObserveTarget(xy, curTime);
+  }
 }

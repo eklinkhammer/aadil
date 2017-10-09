@@ -72,7 +72,7 @@ void TeamFormingAgent::DifferenceEvaluationFunction(vector<Vector2d> jointState,
   // TODO
 }
 
-Agent* TeamFormingAgent::copyAgent() const {
+Agent* TeamFormingAgent::copyAgent() const { 
   TeamFormingAgent* copy = new TeamFormingAgent(getNSteps(), getNPop(), getFitness(), teamSize);
   NeuroEvo* nets = GetNEPopulation();
   copy->setNets(nets);
