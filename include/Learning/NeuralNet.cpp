@@ -38,7 +38,7 @@ NeuralNet::NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun afTyp
 }
 
 // Evaluate NN output given input vector
-VectorXd NeuralNet::EvaluateNN(VectorXd inputs){
+VectorXd NeuralNet::EvaluateNN(VectorXd inputs) const{
   //std::cout << "EvaluateNN";
   VectorXd hiddenLayer = (this->*ActivationFunction)(inputs, layerActivation[0]) ;
   VectorXd outputs = (this->*ActivationFunction)(hiddenLayer, layerActivation[1]) ;
@@ -208,7 +208,7 @@ void NeuralNet::InitialiseWeights(MatrixXd & A){
 }
 
 // Hyperbolic tan activation function
-VectorXd NeuralNet::HyperbolicTangent(VectorXd input, size_t layer){
+VectorXd NeuralNet::HyperbolicTangent(VectorXd input, size_t layer) const{
   VectorXd output ;
   if (layer == 0){
     output = input.transpose()*weightsA ;
@@ -237,7 +237,7 @@ VectorXd NeuralNet::HyperbolicTangent(VectorXd input, size_t layer){
 }
 
 // Logistic function activation function
-VectorXd NeuralNet::LogisticFunction(VectorXd input, size_t layer){
+VectorXd NeuralNet::LogisticFunction(VectorXd input, size_t layer) const{
   VectorXd output ;
   if (layer == 0){
     output = weightsA*input ;

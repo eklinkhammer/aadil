@@ -90,7 +90,9 @@ class Target{
   //   has no nearest observation.
   void ResetTarget();
   friend std::ostream& operator<<(std::ostream&, const Target&);
-  
+
+  void setLocation(Vector2d newLoc) { loc = newLoc; }
+  int getCoupling() const { return coupling; }
  private:
     Vector2d loc ;
     double val ;
@@ -104,6 +106,10 @@ class Target{
 
     void resetNearestObs();
 
+ protected:
+    void setObserved(bool obs) { observed = obs; }
+    void setNearestObs(double nearest) { nearestObs = nearest; }
+    
 };
 
 #endif // TARGET_H_

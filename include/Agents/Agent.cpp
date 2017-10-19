@@ -42,40 +42,54 @@ Agent::~Agent() {
   AgentNE = 0;
 }
 
-Vector2d Agent::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
-  VectorXd inp = ComputeNNInput(jointState);
+State Agent::executeNNControlPolicy(size_t i, vector<State> jointState) {
+  State newState = getNextState(i, jointState);
+  move(newState);
+  return newState;
+}
+
+State Agent::getNextState(size_t i, vector<State> jointState) const {
+  vector<Vector2d> justPos;
+  for (const auto& s : jointState) {
+    justPos.push_back(s.pos());
+  }
+
+  VectorXd inp = ComputeNNInput(justPos);
   VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
 
   // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(currentPsi);
+  Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
   Vector2d deltaXY = Body2Global*out;
   double deltaPsi = atan2(out(1),out(0));
   
   // Move
-  currentXY += deltaXY;
-  currentPsi += deltaPsi;
+  //std::cout << "Current State: " << getCurrentState();
+  //std::cout << " Delta State: " << State(deltaXY, deltaPsi);
+  Vector2d currentXY = getCurrentXY() + deltaXY;
+  double currentPsi = getCurrentPsi() + deltaPsi;
   currentPsi = pi_2_pi(currentPsi);
-  
-  return currentXY;
+
+  State s(currentXY, currentPsi);
+  return s;
 }
 
-void Agent::InitialiseNewLearningEpoch(Vector2d xy, double psi) {
-  initialXY.setZero(initialXY.size(),1);
+void Agent::move(State newState) {
+  currentState = newState;
+}
+
+void Agent::initialiseNewLearningEpoch(State s) {
+  initialState = s;
+  currentState = initialState;
+
   ResetStepwiseEval();
-
-  initialXY(0) = xy(0);
-  initialXY(1) = xy(1);
-  initialPsi = psi;
-
-  currentXY = initialXY;
-  currentPsi = initialPsi;
 }
 
-void Agent::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy, double psi) {
-  InitialiseNewLearningEpoch(xy, psi);
+void Agent::initialiseNewLearningEpoch(State s, vector<Target> targets) {
+  initialiseNewLearningEpoch(s);
 }
 
-size_t Agent::selfIndex(vector<Vector2d> jointState) {
+size_t Agent::selfIndex(vector<Vector2d> jointState) const {
+  Vector2d currentXY = getCurrentXY();
   for (size_t i = 0; i < jointState.size(); i++) {
     if (jointState[i](0) == currentXY(0) && jointState[i](1) == currentXY(1)) {
       return i;
@@ -86,6 +100,7 @@ size_t Agent::selfIndex(vector<Vector2d> jointState) {
 }
 
 vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState) {
+  Vector2d initialXY = getInitialXY();
   return substituteCounterfactual(jointState, initialXY(0), initialXY(1));
 }
 
@@ -98,7 +113,7 @@ vector<Vector2d> Agent::substituteCounterfactual(vector<Vector2d> jointState,
   return jointState;
 }
 
-Matrix2d Agent::RotationMatrix(double psi){
+Matrix2d Agent::RotationMatrix(double psi) const{
   Matrix2d R ;
   R(0,0) = cos(psi) ;
   R(0,1) = -sin(psi) ;
@@ -171,5 +186,6 @@ void Agent::openOutputFile(std::string filename) {
 }
 
 std::ostream& operator<<(std::ostream &strm, const Agent &a) {
-  return strm << "ID: " << a.id << " Loc: (" << a.currentXY(0) << ", " << a.currentXY(1) << ")";
+  Vector2d currentXY = a.getCurrentXY();
+  return strm << "ID: " << a.id << " Loc: (" << currentXY(0) << ", " << currentXY(1) << ")";
 }

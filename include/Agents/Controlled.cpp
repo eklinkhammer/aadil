@@ -31,12 +31,16 @@ Controlled::Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns,
 	     vector<vector<size_t>> indices, size_t nOut)
     : NeuralRover(n, nPop, f, ns, indices, nOut) {}
 
-Vector2d Controlled::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
-
+State Controlled::getNextState(size_t i, vector<State> jointState) const {
   vector<Vector2d> options;
   vector<double> psiOptions;
 
-  VectorXd inp = ComputeNNInput(jointState);
+  vector<Vector2d> justPos;
+  for (const auto& s : jointState) {
+    justPos.push_back(s.pos());
+  }
+
+  VectorXd inp = ComputeNNInput(justPos);
   
   for (size_t i = 0; i < netsX.size(); i++) {
     vector<size_t> inds = index[i];
@@ -54,7 +58,7 @@ Vector2d Controlled::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointStat
     VectorXd out = netsX[i].EvaluateNN(newInp).normalized();
 
     // Transform to global frame
-    Matrix2d Body2Global = RotationMatrix(currentPsi);
+    Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
     Vector2d deltaXY = Body2Global*out;
     double deltaPsi = atan2(out(1),out(0));
 
@@ -74,10 +78,11 @@ Vector2d Controlled::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointStat
   Vector2d deltaXY = options[selection];
   double deltaPsi = psiOptions[selection];
 
-    // Move
-  currentXY += deltaXY;
-  currentPsi += deltaPsi;
+  // Move
+  Vector2d currentXY = getCurrentXY() + deltaXY;
+  double currentPsi = getCurrentPsi() + deltaPsi;
   currentPsi = pi_2_pi(currentPsi);
-  
-  return currentXY;
+
+  State s(currentXY, currentPsi);
+  return s;
 }

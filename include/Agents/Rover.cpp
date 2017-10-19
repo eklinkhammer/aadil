@@ -5,21 +5,17 @@ Rover::Rover(size_t n, size_t nPop, Fitness f) : Rover(n, nPop, 8, 16, 2, f) {}
 Rover::Rover(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t
 	     nOut, Fitness f) : Agent(n, nPop, nInput, nHidden, nOut, f) {}
 
-// Initial simulation parameters, includes setting initial rover position, POI
-//   positions and values, and clearing the evaluation storage vector
-void Rover::InitialiseNewLearningEpoch(vector<Target> pois, Vector2d xy,
-				       double psi) {
-
-  Agent::InitialiseNewLearningEpoch(xy, psi);
-  
+void Rover::initialiseNewLearningEpoch(State s, vector<Target> pois) {
+  Agent::initialiseNewLearningEpoch(s);
   POIs.clear();
-  for (size_t i = 0; i < pois.size(); i++){
-    POIs.push_back(pois[i]) ;
-  }
+  POIs = pois;
 }
 
 // Compute the NN input state given the rover locations and the POI locations and values in the world
-VectorXd Rover::ComputeNNInput(vector<Vector2d> jointState) {
+VectorXd Rover::ComputeNNInput(vector<Vector2d> jointState) const {
+  double currentPsi = getCurrentPsi();
+  Vector2d currentXY = getCurrentXY();
+  
   VectorXd s;
   s.setZero(numIn,1) ;
   MatrixXd Global2Body = RotationMatrix(-currentPsi) ;
@@ -87,4 +83,10 @@ void Rover::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G){
   }
   
   stepwiseD += (G-G_hat);
+}
+
+Agent* Rover::copyAgent() const {
+  Rover* copy = new Rover(getSteps(), getPop(), getFitness());
+  copy->setNets(GetNEPopulation());
+  return copy;
 }

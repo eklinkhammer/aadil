@@ -47,7 +47,7 @@ void trainDomain(MultiRover* domain, size_t epochs, bool output, int outputPerio
 		 string exp, string topDir, string id) {
   for (size_t n = 0; n < epochs; n++) {
     if (output && (n % outputPeriod == 0 || n == epochs - 1)) {
-      std::cout << "Training " << exp << " Episode " << n << "...";
+      std::cout << "Training " << id << " Episode " << n << "...";
       domain->setVerbose(true);
     } else {
       domain->setVerbose(false);
@@ -55,6 +55,7 @@ void trainDomain(MultiRover* domain, size_t epochs, bool output, int outputPerio
     if (n == epochs - 1) {
       configureOutput(domain, topDir, id);
     }
+
     trainDomainOnce(domain, (n==0));
   }
 }
@@ -149,6 +150,42 @@ std::vector<NeuralNet> trainAndGetTeam(YAML::Node root, std::string key, std::st
   return getTeam(&domain);
 }
 
+Env* trainAndGetEnv(YAML::Node root, std::string key, std::string topDir) {
+  // Get variables from node to construct domain
+  size_t nRovs  = size_tFromYAML(root, nRovsS);
+  size_t nPOIs  = size_tFromYAML(root, nPOIsS);
+  size_t nSteps = size_tFromYAML(root, nStepsS);
+  int coupling  = intFromYAML(root, couplingS);
+
+  string type = stringFromYAML(root, typeS);
+  AgentType t = stringToAgentType(type);
+
+  size_t cceaPop = size_tFromYAML(root, cceaPopS);
+  size_t nEps = size_tFromYAML(root, nEpsS);
+
+
+  double xmin = fromYAML<double>(root, xminS);
+  double ymin = fromYAML<double>(root, yminS);
+  double xmax = fromYAML<double>(root, xmaxS);
+  double ymax = fromYAML<double>(root, ymaxS);
+  std::vector<double> world = {xmin, xmax, ymin, ymax};
+  
+  MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, t);
+
+  int biasStart = intFromYAML(root, biasStartS);
+  if (biasStart == 0) {
+    domain.setBias(false);
+  }
+
+  int output = intFromYAML(root, outputS);
+  trainDomain(&domain, nEps, (output == 1), 20, type, topDir, key);
+
+  vector<Agent*> agents = domain.getAgents();
+  Env* env = domain.createSim(nRovs);
+  env->setID(key);
+  return env;
+}
+
 void configureOutput(MultiRover* domain, string fileDir, string id) {
   string resultFile = fileDir + "/" + id + "_results";
   string trajFile   = fileDir + "/" + id + "_trajectory";
@@ -163,7 +200,7 @@ int main() {
   std::cout << "Experiment configs file: " << std::endl;
   std::cout << config << std::endl;
 
-  int trialNum = readTrialNum();
+  int trialNum = 1;//readTrialNum();
   string fileDir = "Results/" + std::to_string(trialNum);
   makeDir(fileDir);
   
@@ -175,15 +212,15 @@ int main() {
     experimentStrings.push_back(experimentName);
   }
 
-  vector< vector<NeuralNet> > neuralNets;
+  vector< Env* > envs;
   vector< vector<size_t>> inds;
   
   for (auto& expKey : experimentStrings) {
     YAML::Node expNode = nodeFromYAML(config, expKey);
     
-    vector<NeuralNet> expTeam = trainAndGetTeam(expNode, expKey, fileDir);
+    Env* env = trainAndGetEnv(expNode, expKey, fileDir);
     vector<size_t> ind = fromYAML<vector<size_t>>(expNode, "ind");
-    neuralNets.push_back(expTeam);
+    envs.push_back(env);
     inds.push_back(ind);
   }
 
@@ -196,6 +233,7 @@ int main() {
   int coupling  = intFromYAML(root, couplingS);
 
   string type = stringFromYAML(root, typeS);
+  AgentType t = stringToAgentType(type);
 
   size_t cceaPop = size_tFromYAML(root, cceaPopS);
   size_t nEps = size_tFromYAML(root, nEpsS);
@@ -212,15 +250,19 @@ int main() {
   if (controlInt == 1) {
     controlled = true;
   }
-  
-  MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, neuralNets, inds, controlled);
+
+  std::cout << "Got to domain creation." << std::endl;
+  MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, t);
+  //MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, neuralNets, inds, controlled);
 
   int biasStart = intFromYAML(root, biasStartS);
   if (biasStart == 0) {
     domain.setBias(false);
   }
 
-  testDomainOnce(&domain, true);
-    
+  domain.setVerbose(true);
+  domain.InitialiseEpoch();
+  domain.ResetEpochEvals();
+  domain.simulateWithAlignment(false, envs);
   return 0 ;
 }

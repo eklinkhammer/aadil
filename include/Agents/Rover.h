@@ -28,14 +28,18 @@ class Rover : public Agent {
   ~Rover() {};
 
   // Pure Virtual functions
-  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState);
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const;
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
 
   // Overriding
-  virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d, double);
+  // Initial simulation parameters, includes setting initial rover position, POI
+  //   positions and values, and clearing the evaluation storage vector
+  virtual void initialiseNewLearningEpoch(State s, vector<Target>);
     
  protected:
   vector<Target> POIs;
+
+  virtual Agent* copyAgent() const;
 };
 
 #endif // ROVER_H_

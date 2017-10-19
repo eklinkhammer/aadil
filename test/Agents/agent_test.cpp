@@ -37,11 +37,13 @@ public:
   AgentChild(size_t n, size_t nP, size_t nI, size_t nH, size_t nO,
 		       Fitness f) : Agent(n, nP, nI, nH, nO, f) {}
 
-  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) {
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const {
     VectorXd s;
     return s;
   }
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) {};
+
+  virtual Agent* copyAgent() const { return NULL; }
 };
 
 TEST_F(AgentTest, testInitialiseNewLearningEpoch) {
@@ -52,7 +54,7 @@ TEST_F(AgentTest, testInitialiseNewLearningEpoch) {
   Vector2d initXY; initXY(0) = 2; initXY(1) = 5;
   double initPsi = 1.2;
 
-  a.InitialiseNewLearningEpoch(initXY, initPsi);
+  a.initialiseNewLearningEpoch(State(initXY, initPsi));
 
   EXPECT_EQ(initPsi, a.getInitialPsi());
   EXPECT_EQ(initPsi, a.getCurrentPsi());
@@ -68,7 +70,7 @@ TEST_F(AgentTest, testSubstituteCounterfactual) {
   Vector2d initXY; initXY(0) = 2; initXY(1) = 5;
   double initPsi = 1.2;
 
-  a.InitialiseNewLearningEpoch(initXY, initPsi);
+  a.initialiseNewLearningEpoch(State(initXY, initPsi));
   
   vector<Vector2d> jointState;
   Vector2d xy1, xy2, xya;

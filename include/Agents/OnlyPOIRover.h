@@ -46,7 +46,9 @@ class OnlyPOIRover : public Rover {
 
   // Computes the NN state for just the given POI locations and values in the
   //   world. Ignores all agent information.
-  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState);
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const;
+
+  virtual Agent* copyAgent() const;
 };
 
 #endif // ONLY_POI_ROVER_H

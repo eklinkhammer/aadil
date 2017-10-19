@@ -46,13 +46,14 @@ class NeuralRover : public Rover {
 
   // Uses the jointState to determine which of its neural networks to use to
   //  determine the action.
-  virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
-
-  vector<NeuralNet> getNets() { return netsX; }
+  virtual State getNextState(size_t i, vector<State> jointState) const;
+  
+  vector<NeuralNet> getNets() const { return netsX; }
   
  protected:
   vector<NeuralNet> netsX;
   vector< vector<size_t> > index;
+  virtual Agent* copyAgent() const;
 };
 
 #endif // NEURAL_ROVER_H

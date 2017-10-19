@@ -39,7 +39,7 @@ TEST_F(TeamFormingAgentTest, testFirstObservationNoCoupling) {
 
   // Default obs radius is 4.0
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy);
   
   double expected_nearest = (pos - xy).norm();
@@ -54,7 +54,7 @@ TEST_F(TeamFormingAgentTest, testFirstObservationTooFarNoCoupling) {
   Vector2d xy; xy(0) = 4; xy(1) = 2;
 
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
+
   t.ObserveTarget(xy);
   
   EXPECT_FALSE(t.IsObserved());
@@ -66,7 +66,7 @@ TEST_F(TeamFormingAgentTest, testWorseObservationNoCoupling) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy);
 
   EXPECT_TRUE(t.IsObserved());
@@ -83,7 +83,7 @@ TEST_F(TeamFormingAgentTest, testBetterObservationNoCoupling) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy2);
 
   EXPECT_TRUE(t.IsObserved());
@@ -100,7 +100,7 @@ TEST_F(TeamFormingAgentTest, testFirstObservationsCoupling) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy);
   t.ObserveTarget(xy2);
   EXPECT_TRUE(t.IsObserved());
@@ -112,7 +112,7 @@ TEST_F(TeamFormingAgentTest, testInsufficientObservationsCoupling) {
   Vector2d xy; xy(0) = 4; xy(1) = 0;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy);
   EXPECT_FALSE(t.IsObserved());
 }
@@ -124,7 +124,7 @@ TEST_F(TeamFormingAgentTest, testBetterObservationCoupling) {
   Vector2d xy3; xy3(0) = 0; xy3(1) = 2;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy);
   t.ObserveTarget(xy2);
   t.ObserveTarget(xy3);
@@ -139,7 +139,7 @@ TEST_F(TeamFormingAgentTest, testWorseObservationsCoupling) {
   Vector2d xy3; xy3(0) = 0; xy3(1) = 2;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy3);
   t.ObserveTarget(xy);
   t.ObserveTarget(xy2);
@@ -153,7 +153,7 @@ TEST_F(TeamFormingAgentTest, testWorseObservationWithTime) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy, 1);
 
   EXPECT_TRUE(t.IsObserved());
@@ -170,8 +170,8 @@ TEST_F(TeamFormingAgentTest, testBetterObservationWithTime) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
-  t.ObserveTarget(xy2, 1);
+  t.initialiseNewLearningEpoch(State(pos, 0));
+    t.ObserveTarget(xy2, 1);
 
   EXPECT_TRUE(t.IsObserved());
   EXPECT_DOUBLE_EQ(3.5, t.GetNearestObs());
@@ -187,7 +187,7 @@ TEST_F(TeamFormingAgentTest, testObserveWithTimeCouplingInsufficentAtTime) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy, 1);
   t.ObserveTarget(xy2, 2);
   EXPECT_FALSE(t.IsObserved());
@@ -199,8 +199,8 @@ TEST_F(TeamFormingAgentTest, testObserveWithTimeCouplingSufficentAtTime) {
   Vector2d xy2; xy2(0) = 0; xy2(1) = 3.5;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
-  t.ObserveTarget(xy, 2);
+  t.initialiseNewLearningEpoch(State(pos, 0));
+    t.ObserveTarget(xy, 2);
   t.ObserveTarget(xy2, 2);
   EXPECT_TRUE(t.IsObserved());
   EXPECT_DOUBLE_EQ(3.25, t.GetNearestObs());
@@ -213,8 +213,8 @@ TEST_F(TeamFormingAgentTest, testObserveWithTimeCouplingSufficentAtTimeThenNewTi
   Vector2d xy3; xy3(0) = 0; xy3(1) = 2;
 
   TeamFormingAgent t(1, 1, Fitness::G, 3);
-  t.InitialiseNewLearningEpoch(pos, 0);
-  t.ObserveTarget(xy, 1);
+  t.initialiseNewLearningEpoch(State(pos, 0));
+    t.ObserveTarget(xy, 1);
   t.ObserveTarget(xy2, 1);
   t.ObserveTarget(xy3, 2);
   EXPECT_TRUE(t.IsObserved());
@@ -226,7 +226,7 @@ TEST_F(TeamFormingAgentTest, testObserveThenReset) {
   Vector2d xy; xy(0) = 4; xy(1) = 0;
 
   TeamFormingAgent t(1, 1, Fitness::G, 2);
-  t.InitialiseNewLearningEpoch(pos, 0);
+  t.initialiseNewLearningEpoch(State(pos, 0));
   t.ObserveTarget(xy, 1);
   t.ResetTarget();
 
