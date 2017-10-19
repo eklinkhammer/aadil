@@ -30,12 +30,12 @@ SOFTWARE.
 Vector2d origin(0,0);
 
 TeamFormingAgent::TeamFormingAgent(size_t n, size_t nPop, Fitness f, int tSize)
-  : Agent(n, nPop, 4, 12, 2, f), Target(origin, 1, tSize-1) {}
+  : Agent(n, nPop, 4, 12, 2, f), Target(origin, 1, tSize-1), teamSize(tSize) {}
 
-VectorXd TeamFormingAgent::ComputeNNInput(vector<Vector2d> jointState) {
+VectorXd TeamFormingAgent::ComputeNNInput(vector<Vector2d> jointState) const {
   VectorXd s;
   s.setZero(numIn,1) ;
-  MatrixXd Global2Body = RotationMatrix(-currentPsi) ;
+  MatrixXd Global2Body = RotationMatrix(-getCurrentPsi()) ;
 
   size_t ind = selfIndex(jointState);
   
@@ -43,9 +43,9 @@ VectorXd TeamFormingAgent::ComputeNNInput(vector<Vector2d> jointState) {
   rovV.setZero(2,1) ;
   for (size_t i = 0; i < jointState.size(); i++){
     if (i != ind) {
-      rovV = jointState[i] - currentXY ;
+      rovV = jointState[i] - getCurrentXY() ;
       Vector2d rovBody = Global2Body*rovV ;
-      Vector2d diff = currentXY - rovBody ;
+      Vector2d diff = getCurrentXY() - rovBody ;
       double d = diff.norm() ;
       double theta = atan2(rovBody(1),rovBody(0)) ;
       size_t q ;
@@ -70,4 +70,12 @@ double TeamFormingAgent::getReward() {
 
 void TeamFormingAgent::DifferenceEvaluationFunction(vector<Vector2d> jointState, double G) {
   // TODO
+}
+
+Agent* TeamFormingAgent::copyAgent() const {
+  TeamFormingAgent* copy = new TeamFormingAgent(getSteps(), getPop(), getFitness(), getTeamSize());
+  copy->setNets(GetNEPopulation());
+  copy->setObserved(IsObserved());
+  copy->setNearestObs(GetNearestObs());
+  return copy;
 }

@@ -29,7 +29,7 @@ class NeuralNet{
     NeuralNet(size_t numIn, size_t numOut, size_t numHidden, actFun = TANH, nnOut = BOUNDED) ; // single hidden layer
     ~NeuralNet(){}
     
-    VectorXd EvaluateNN(VectorXd inputs) ;
+    VectorXd EvaluateNN(VectorXd inputs) const;
     VectorXd EvaluateNN(VectorXd inputs, VectorXd & hiddenLayer) ;
     void MutateWeights() ;
     void SetWeights(MatrixXd, MatrixXd) ;
@@ -59,9 +59,9 @@ class NeuralNet{
     vector<size_t> layerActivation ;
 
     void InitialiseWeights(MatrixXd &) ;
-    VectorXd (NeuralNet::*ActivationFunction)(VectorXd, size_t) ;
-    VectorXd HyperbolicTangent(VectorXd, size_t) ; // outputs between [-1,1]
-    VectorXd LogisticFunction(VectorXd, size_t) ; // outputs between [0,1]
+    VectorXd (NeuralNet::*ActivationFunction)(VectorXd, size_t) const;
+    VectorXd HyperbolicTangent(VectorXd, size_t) const; // outputs between [-1,1]
+    VectorXd LogisticFunction(VectorXd, size_t) const; // outputs between [0,1]
     double RandomMutation(double) ;
     void WriteNN(MatrixXd, std::stringstream &) ;
 } ;

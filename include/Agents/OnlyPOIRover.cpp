@@ -29,8 +29,11 @@ SOFTWARE.
 OnlyPOIRover::OnlyPOIRover(size_t n, size_t nPop, Fitness f)
   : Rover(n, nPop, 4, 12, 2, f) {}
 
-VectorXd OnlyPOIRover::ComputeNNInput(vector<Vector2d> jointState) {
+VectorXd OnlyPOIRover::ComputeNNInput(vector<Vector2d> jointState) const {
   VectorXd s;
+  double currentPsi = getCurrentPsi();
+  Vector2d currentXY = getCurrentXY();
+  
   s.setZero(numIn,1) ;
   MatrixXd Global2Body = RotationMatrix(-currentPsi) ;
   
@@ -57,4 +60,10 @@ VectorXd OnlyPOIRover::ComputeNNInput(vector<Vector2d> jointState) {
   }
   
   return s ;
+}
+
+Agent* OnlyPOIRover::copyAgent() const {
+  OnlyPOIRover* copy = new OnlyPOIRover(getSteps(), getPop(), getFitness());
+  copy->setNets(GetNEPopulation());
+  return copy;
 }

@@ -1,10 +1,8 @@
 /*******************************************************************************
-ExploringAgent.h
+State.h
 
-Agent that only sees other agents. Extension of the TeamFormingAgent class. Its 
-neural networks' inputs are the 4 Agent quadrants from the Rover domain. It 
-scores by the distance to other agents (for some degree of agent 
-coupling).
+A state is a tuple of Vector2d position and double orientation. Defined in
+header file.
 
 Authors: Eric Klinkhammer
 
@@ -27,20 +25,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef EXPLORING_AGENT_H
-#define EXPLORING_AGENT_H
+#ifndef STATE_H_
+#define STATE_H_
 
-#include "TeamFormingAgent.h"
+#include <vector>
+#include <Eigen/Eigen>
+#include <iostream>
 
-class ExploringAgent : public TeamFormingAgent {
+using std::vector;
+
+class State {
  public:
-  // An exploring agent receives a negative reward when it is in
-  //   a team of tSize or more agents.
-  ExploringAgent(size_t n, size_t nPop, Fitness f, int tSize);
+  State() {
+    Vector2d originVec(0,0);
+    _pos = originVec;
+    _psi = 0;
+  }
+  
+ State(Vector2d position, double angle) : _pos(position), _psi(angle) {};
 
-  virtual double getReward();
+  Vector2d pos() const { return _pos; }
+  double psi() const { return _psi; }
 
-  virtual Agent* copyAgent() const;
+  friend std::ostream& operator<<(std::ostream &strm, const State &state) {
+    return strm << "(" << state.pos()(0) << "," << state.pos()(1) << ")," << state.psi();
+  }
+ private:
+  Vector2d _pos;
+  double _psi;
 };
 
-#endif // EXPLORING_AGENT_H
+#endif // STATE_H_
+ 

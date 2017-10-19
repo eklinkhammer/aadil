@@ -48,7 +48,7 @@ class TeamFormingAgent : public Agent, public Target {
 
   // Computes the NN state for just the agent jointstate. Class has no
   //   POI information to ignore.
-  virtual VectorXd ComputeNNInput(vector<Vector2d>);
+  virtual VectorXd ComputeNNInput(vector<Vector2d>) const;
 
   // Overriden POI class
   virtual Vector2d GetLocation() const { return getCurrentXY(); }
@@ -58,6 +58,13 @@ class TeamFormingAgent : public Agent, public Target {
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double);
 
   virtual double getReward();
+
+  int getTeamSize() const { return teamSize; }
+
+ protected:
+  virtual Agent* copyAgent() const;
+ private:
+  int teamSize;
 };
 
 #endif // TEAM_FORMING_AGENT_H

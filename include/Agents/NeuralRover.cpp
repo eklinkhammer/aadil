@@ -29,10 +29,17 @@ SOFTWARE.
 NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns, vector<vector<size_t> > indices, size_t nOut)
   : Rover(n, nPop, 8, 16, nOut, f), netsX(ns), index(indices) {}
 
-Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState) {
-  VectorXd inp = ComputeNNInput(jointState);
-  VectorXd out = GetNEPopulation()->GetNNIndex(i)->EvaluateNN(inp).normalized();
+State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
+  vector<Vector2d> justPos;
+  for (const auto& s : jointState) {
+    justPos.push_back(s.pos());
+  }
+
+  VectorXd inp = ComputeNNInput(justPos);
+  NeuroEvo* AgentNE = GetNEPopulation();
   
+  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
+
 
   int max_index = 0;
   for (int i = 0; i < out.size(); i++) {
@@ -42,7 +49,7 @@ Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointSta
   }
 
   if (printOutput) {
-    outputFile << max_index << std::endl;
+    //outputFile << max_index << std::endl;
   }
   
   vector<size_t> inds = index[max_index];
@@ -58,16 +65,24 @@ Vector2d NeuralRover::ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointSta
 
   out = netsX[max_index].EvaluateNN(newInp).normalized();
 
+  
   // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(currentPsi);
+  Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
   Vector2d deltaXY = Body2Global*out;
   double deltaPsi = atan2(out(1),out(0));
   
   // Move
-  currentXY += deltaXY;
-  currentPsi += deltaPsi;
+  Vector2d currentXY = getCurrentXY() + deltaXY;
+  double currentPsi = getCurrentPsi() + deltaPsi;
   currentPsi = pi_2_pi(currentPsi);
-  
-  return currentXY;
+
+  State s(currentXY, currentPsi);
+  return s;
+}
+
+Agent* NeuralRover::copyAgent() const {
+  NeuralRover* copy = new NeuralRover(getSteps(), getPop(), getFitness(), netsX, index, netsX.size());
+  copy->setNets(GetNEPopulation());
+  return copy;
 }
 

@@ -35,3 +35,9 @@ ExploringAgent::ExploringAgent(size_t n, size_t nPop, Fitness f, int tSize)
 double ExploringAgent::getReward() {
   return IsObserved() ? (GetValue() * (1 - 1 / max(GetNearestObs(), 1.0))) : GetValue();
 }
+
+Agent* ExploringAgent::copyAgent() const {
+  ExploringAgent* copy = new ExploringAgent(getSteps(), getPop(), getFitness(), getTeamSize());
+  copy->setNets(GetNEPopulation());
+  return copy;
+}

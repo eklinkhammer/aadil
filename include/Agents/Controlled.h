@@ -43,6 +43,6 @@ class Controlled : public NeuralRover {
 
   // Rover prompts user to select from among the vectors provided
   //   by all control policies.
-  virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
+  virtual State getNextState(size_t i, vector<State> jointState) const;
 };
 #endif // CONTROLLED_ROVER_H_

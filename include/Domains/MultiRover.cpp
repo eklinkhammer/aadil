@@ -37,10 +37,10 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 }
 
 MultiRover::~MultiRover() {
-  for (size_t i = 0; i < nRovers; i++){
-    delete roverTeam[i] ;
-    roverTeam[i] = 0 ;
-  }
+  // for (size_t i = 0; i < nRovers; i++){
+  //   delete roverTeam[i] ;
+  //   roverTeam[i] = 0 ;
+  // }
   if (outputEvals)
     evalFile.close() ;
   if (outputTrajs){
@@ -138,10 +138,250 @@ vector< vector<size_t> > MultiRover::RandomiseTeams(size_t n){
   return teams ;
 }
 
-void MultiRover::SimulateEpoch(bool train){
-  size_t teamSize ;
+vector<Env*> MultiRover::createEnvs(vector< vector< Agent* > > agents,
+				    vector<string> labels, size_t teamSize) {
+  vector<Env*> envs;
+  vector< vector< Agent* > > dupAgents = duplicateAll(agents);
+  
+  for (size_t i = 0; i < agents.size(); i++) {
+    envs.push_back(new Env(world, dupAgents[i], POIs, teamSize, labels[i]));
+  }
 
-  teamSize = train ? 2*nPop : nPop;
+  return envs;
+}
+
+vector< vector< Agent* > > MultiRover::duplicateAll(vector< vector< Agent* > > agents) {
+  size_t maxsize = 0;
+  for (const auto& i : agents) {
+    if (i.size() > maxsize) maxsize = i.size();
+  }
+
+  vector< vector< Agent* > > allAgents;
+  for (auto& i : agents) {
+    allAgents.push_back(duplicate(i, maxsize));
+  }
+
+  return allAgents;
+}
+
+vector< Agent* > MultiRover::duplicate(vector< Agent* > agents, size_t n) {
+  if (agents.size() == n) return agents;
+
+  for (size_t i = 0; i < n - agents.size(); i=i) {
+    agents.push_back(agents[i]->copyAgent());
+  }
+
+  return agents;
+}
+
+void MultiRover::simulateWithAlignment(bool train, vector< vector< Agent* >> agents,
+				       vector< string > labels) {
+  size_t teamSize = train ? 2*nPop : nPop;
+  std::cout << "Creating envs: " << std::endl;
+  vector<Env*> envs = createEnvs(agents, labels, teamSize);
+
+  vector< vector<size_t> > teams = RandomiseTeams(teamSize);
+
+  vector< State > jointState ;
+  vector< size_t > teamIndex;
+  for (size_t i = 0; i < teamSize; i++) {
+    for (size_t j = 0; j < nRovers; j++) {
+      State s(initialXYs[j], initialPsis[j]);
+      jointState.push_back(s);
+      teamIndex.push_back(teams[j][i]);
+    }
+  }
+  
+  Env env(world, roverTeam, POIs, teamSize);
+  env.init(jointState, teamIndex);
+
+  for (auto& e : envs) {
+    e->init(jointState, teamIndex);
+  }
+
+  vector< State > bestMove;
+  double bestResult = 0;
+  
+  for (size_t t = 0; t < nSteps; t++) {
+    for (auto& e : envs) {
+      std::cout << "Using Env: " << e->getID() << std::endl;
+      std::cout << "Last step: " << e->latestStepReward() << std::endl;
+      double estimate = e->estimateRewardOfStep(e->nextStep());
+      std::cout << "Estimate of following: " << estimate << std::endl;
+      std::cout << "Estimate margin: " << estimate - e->currentReward() << std::endl;
+    }
+  }
+}
+
+void MultiRover::simulateWithAlignment(bool train, vector<Env*> envs) {
+  size_t teamSize = train ? 2*nPop : nPop;
+    
+  // grab first network from each sim
+  vector< size_t > index;
+  for (size_t i = 0; i < nRovers; i++) {
+    index.push_back(0);
+  }
+  
+  Env* env = createSim(teamSize);
+  for (auto& e : envs) {
+    e->init(env->getCurrentStates(), index);
+    e->setTargetLocations(POIs);
+  }
+
+  //envs.push_back(env);
+
+  double equalCount = 0.0;
+  double moveCount = 0.0;
+  for (size_t t = 0; t < nSteps; t++) {
+    double maxLast = 0;
+    double maxEstimateMargin = 0;
+    double maxEstimateActual = env->currentReward();
+    std::cout << "Step: " << t << " Current Reward: " << maxEstimateActual << std::endl;
+    std::cout << *this << std::endl;
+    // std::cout << "Env current states:" << std::endl;
+    // for (auto& s : env->getCurrentStates()) {
+    // 	std::cout << s << " ";
+    // }
+    // std::cout << std::endl;
+    std::cout << "ID        LastStep  NextStep  NextG" << std::endl;
+
+    // I need three because nextStep has super weird behavior
+    // I can't use an index because nextStep is not pure (??????)
+    vector< State > nextM;
+    vector< State > nextR;
+    vector< State > nextE;
+    vector< State > nextG;
+    string nextMS;
+    string nextRS;
+    string nextES;
+    string nextGS;
+
+    auto rng = std::default_random_engine {};
+    std::shuffle(std::begin(envs), std::end(envs), rng);
+
+    string name;
+    vector< State > next;
+    for (size_t i = 0; i < envs.size(); i++) {
+
+      
+      Env* e = envs[i];
+      name = e->getID();
+      double lastR = e->latestStepReward();
+      next = e->nextStep();
+      double estimate = e->estimateRewardOfStep(next);
+      double estimateActual = env->estimateRewardOfStep(next);
+      double estimateMargin = estimate - e->currentReward();
+      printf("%.*s\t%.2f\t%.2f\t%.2f\n", 10, (name + "          ").c_str(), lastR, estimateMargin, estimateActual);
+
+      
+      if (lastR > maxLast) {
+	maxLast = lastR;
+	nextR = next;
+	nextRS = name;
+      } 
+
+      // if (estimate > maxEstimate) {
+      // 	maxEstimate = estimate;
+      // 	nextE = next;
+      // 	nextES = name;
+      // }
+
+      if (estimateMargin > maxEstimateMargin) {
+	maxEstimateMargin = estimateMargin;
+	nextM = next;
+	nextMS = name;
+      }
+
+      if (estimateActual > maxEstimateActual) {
+	maxEstimateActual = estimateActual;
+	nextG = next;
+	nextGS = name;
+      }
+    }
+    
+    vector< State > nextMove;
+    string choice;
+    string choiceNoG;
+    if (nextM.size() > 0) {
+      nextMove = nextM;
+      choice = nextMS;
+      choiceNoG = choice;
+    } else if (nextR.size() > 0) {
+      nextMove = nextR;
+      choice = nextRS;
+      choiceNoG = choice;
+    // } else if (nextE.size() > 0) {
+    //   nextMove = nextE;
+    //   choice = nextES;
+    } else {
+      nextMove = next;
+      choice = "default pick of " + name;
+      choiceNoG = choice;
+    }
+
+    if (nextG.size() > 0) {
+      nextMove = nextG;
+      choice = nextGS;
+    }
+
+    moveCount++;
+    std::cout << "The pick with access to G is: " << choice << std::endl;
+    std::cout << "The pick without access is: " << choiceNoG << std::endl;
+    if (choice.compare(choiceNoG) != 0) {
+      std::cout << "The choices were not equal." << std::endl;
+    } else {
+      equalCount++;
+    }
+    if (rand() % 100 < 3) {
+      nextMove = next;
+      choice = "random pick of " + name;
+    }
+
+    // std::cout << "Choice nextMove: " << std::endl;
+    // for (auto& s : nextMove) {
+    //   std::cout << s << " ";
+    // }
+    std::cout << "Choice nextMove: " << choice << std::endl;
+    
+    for (auto& e : envs) {
+      e->applyStep(nextMove);
+    }
+
+    env->applyStep(nextMove);
+  }
+
+  std::cout << "Final alignment percentage: " << equalCount / moveCount << std::endl;
+  std::cout << "Final reward: " << env->currentReward() << std::endl;
+}
+
+double MultiRover::runSim(Env* env) {
+  for (size_t t = 0; t < nSteps; t++) {
+    vector< State > jointState = env->step();
+
+    if (outputTrajs) {
+      printJointState(jointState);
+    }
+  }
+
+  return env->currentReward();
+}
+
+Env* MultiRover::createSim(size_t teamSize) {
+  Env* env = new Env(world, roverTeam, POIs, teamSize);
+
+  vector< State > initState;
+  vector< size_t > netPerAgent;
+  for (size_t j = 0; j < nRovers; j++) {
+    State s(initialXYs[j], initialPsis[j]);
+    initState.push_back(s);
+  }
+
+  env->init(initState, netPerAgent);
+
+  return env;
+}
+void MultiRover::SimulateEpoch(bool train){
+  size_t teamSize = train ? 2*nPop : nPop;
     
   // each row is the population for a single agent
   vector< vector<size_t> > teams = RandomiseTeams(teamSize) ; 
@@ -149,53 +389,30 @@ void MultiRover::SimulateEpoch(bool train){
   if (outputTrajs) {
     printPOIs();
   }
+
+  Env* env = createSim(teamSize);
   
   double maxEval = 0.0 ;
-  for (size_t i = 0; i < teamSize; i++){ // looping across the columns of 'teams'
+  vector< size_t > netEachAgentUses;
+  
+  for (size_t i = 0; i < teamSize; i++) { // looping across the columns of 'teams'
     // Initialise world and reset rovers and POIs
-    vector<Vector2d> jointState ;
-    for (size_t j = 0; j < nRovers; j++){
-      roverTeam[j]->InitialiseNewLearningEpoch(POIs,initialXYs[j],initialPsis[j]) ;
-      jointState.push_back(initialXYs[j]) ;
+    vector< State > jointState ;
+    netEachAgentUses.clear();
+    
+    for (size_t j = 0; j < nRovers; j++) {
+      netEachAgentUses.push_back(teams[j][i]);
     }
+
+    env->init(netEachAgentUses);
     
     if (outputTrajs && i == teamSize - 1) {
       printJointState(jointState);
       toggleAgentOutput(true);
     }
     
-    tempPOIs = POIs;
-    
-    for (size_t t = 0; t < nSteps; t++) {
-      vector<Vector2d> newJointState ;
-      double G = 0.0 ;
-      if (type == AgentType::C) {
-	std::cout << *this << std::endl;
-      }
-      for (size_t j = 0; j < nRovers; j++){ // looping down the rows of 'teams'
-        Vector2d xy = roverTeam[j]->ExecuteNNControlPolicy(teams[j][i],jointState) ;
-        newJointState.push_back(xy);
-	agentObserves(xy, t);
-      }
-
-      if (fitness == Fitness::D) {
-	calculateStepwiseG();
-
-	for (auto& rov : roverTeam) {
-	  rov->DifferenceEvaluationFunction(newJointState, G);
-	}
-      }
-      
-      jointState = newJointState;
-      newJointState.clear();
-      
-      if (outputTrajs) {
-        printJointState(jointState);
-      }
-    }
-    
-    double eval = calculateG();
-    resetDomain();
+    double eval = runSim(env);
+    env->reset();
     maxEval = max(eval, maxEval);
     
     // Assign fitness
@@ -207,7 +424,8 @@ void MultiRover::SimulateEpoch(bool train){
       evalFile << eval << "," ;
     }
   }
-  
+
+  delete env;
   if (outputEvals) {
     evalFile << std::endl;
   }
@@ -445,8 +663,9 @@ void MultiRover::printPOIs() {
   }
 }
  
-void MultiRover::printJointState(const vector<Vector2d> jointState) {
-  for (const auto& vec : jointState) {
+void MultiRover::printJointState(const vector<State> jointState) {
+  for (const auto& s : jointState) {
+    Vector2d vec = s.pos();
     trajFile << vec(0) << "," << vec(1) << ",";
   }
   trajFile << std::endl;
@@ -499,9 +718,7 @@ void MultiRover::resetPOIs() {
     poi.ResetTarget();
   }
 }
-double MultiRover::calculatePOIValue(const Target& poi) {
-  return poi.IsObserved() ? (poi.GetValue() / max(poi.GetNearestObs(), 1.0)) : 0.0;
-}
+
 
 double MultiRover::calculateG() {
   double G = 0.0;
@@ -515,6 +732,10 @@ double MultiRover::calculateG() {
   }
 
   return G;
+}
+
+double MultiRover::calculatePOIValue(const Target& poi) {
+  return poi.IsObserved() ? (poi.GetValue() / max(poi.GetNearestObs(), 1.0)) : 0.0;
 }
 
 double MultiRover::calculateStepwiseG() {
@@ -533,6 +754,8 @@ std::ostream& operator<<(std::ostream &strm, const MultiRover &d) {
 
   int h = floor(height);
   int w = floor(width);
+
+  string output[h][w];
   
   double vals[h][w];
   for (int i = 0; i < h; i++) {
@@ -545,20 +768,48 @@ std::ostream& operator<<(std::ostream &strm, const MultiRover &d) {
     Vector2d loc = poi.GetLocation();
     int fh = (int) (floor (loc(0)));
     int fw = (int) (floor (loc(1)));
+
+    if (fh < 0 || fw < 0 || fw > width || fh > height) {
+      continue;
+    }
+    // Look up 6.042. This is probably not needed. I forget why I put it in
     int ph = (fh + h) % h;
     int pw = (fw + w) % w;
 
     vals[ph][pw] += poi.GetValue();
-    strm << poi << std::endl;
+    //strm << poi << std::endl;
   }
   
   for (const auto& rov : d.roverTeam) {
-    strm << *rov << std::endl;
+    //strm << *rov << std::endl;
+
+    Vector2d loc = rov->getCurrentXY();
+    int fh = (int) (floor (loc(0)));
+    int fw = (int) (floor (loc(1)));
+    if (fh < 0 || fw < 0 || fw > width || fh > height) {
+      continue;
+    }
+    int ph = (fh + h) % h;
+    int pw = (fw + w) % w;
+
+    output[ph][pw] += "A";
   }
 
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
-      strm << vals[i][j] << " ";
+      //strm << vals[i][j] << " ";
+    }
+    //strm << std::endl;
+  }
+
+  for (int i = 0; i < h; i++) {
+    for (int j = 0; j < w; j++) {
+      if (vals[i][j] > 0) {
+	output[i][j] += "P";
+      }
+      string out = output[i][j];
+      out = (" " + out + " - ").substr(1,3);
+      strm << out;
     }
     strm << std::endl;
   }

@@ -19,6 +19,8 @@
 #include "Agents/OnlyPOIRover.h"
 #include "Agents/Controlled.h"
 
+#include "Env.h"
+
 using std::string ;
 using std::vector ;
 using std::shuffle ;
@@ -56,6 +58,13 @@ class MultiRover{
     void InitialiseEpochFromVectors(vector<Target>, vector<Vector2d>);
     
     void SimulateEpoch(bool train = true) ;
+
+    // Runs a simulation in an environment for the set number of steps.
+    // Returns the reward of that environment
+    double runSim(Env* env);
+
+    Env* createSim(size_t teamSize);
+    
     void EvolvePolicies(bool init = false) ;
     void ResetEpochEvals();
 
@@ -112,17 +121,25 @@ class MultiRover{
     Fitness        getFitness()  { return fitness; }
     int            getCoupling() { return coupling; }
     vector<double> getWorld()    { return world; }
+    vector< Agent* > getAgents() { return roverTeam; }
     bool           getVerbose()  { return verbose; }
     bool           getBias()     { return biasStart; }
 
     friend std::ostream& operator<<(std::ostream&, const MultiRover&);
-    
+
+    // Alignment
+    vector<Env*> createEnvs(vector< vector< Agent* >>,vector<string>, size_t);
+    vector< vector< Agent* >> duplicateAll(vector< vector< Agent* >>);
+    vector< Agent* > duplicate(vector< Agent* >, size_t);
+    void simulateWithAlignment(bool, vector< vector< Agent* >>,vector< string >);
+
+    void simulateWithAlignment(bool, vector<Env*>);
   private:
     // Objective Functions
     double objectiveRoverObservePOI();
     // Other functions
     void printPOIs();
-    void printJointState(const vector<Vector2d>);
+    void printJointState(const vector<State>);
     void agentObserves(Vector2d xy, int time);
 
     void toggleAgentOutput(bool);

@@ -41,6 +41,7 @@ SOFTWARE.
 #include "Learning/NeuroEvo.h"
 #include "Utilities/Utilities.h"
 #include "Domains/Target.h"
+#include "Domains/State.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846264338328
@@ -65,28 +66,28 @@ class Agent {
   // The returned VectorXd will be the same size as nInput
   //
   // This function is a pure virtual function.
-  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) = 0;
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const = 0;
 
-  // Calculates the new XY position from the ith neural network in the CCEA pool
+  // Calculates the new State from the ith neural network in the CCEA pool
   //   using the result of ComputeNNInput with the jointstate as input.
   //
   // Updates both currentXY and currentPsi
   //
   // Is implemented. Should only be overriden when the NN does not directly return
   //   a new position (ie, when it chooses between two other networks).
-  virtual Vector2d ExecuteNNControlPolicy(size_t i, vector<Vector2d> jointState);
-
+  virtual State executeNNControlPolicy(size_t, vector<State>);
+  virtual State getNextState(size_t, vector<State>) const;
+  void move(State);
+  
   // Sets initial simulation parameters, including rover positions. Clears
   //   evaluation storage vector.
-  //
-  // Type classes would solve this problem...
-  virtual void InitialiseNewLearningEpoch(Vector2d xy, double psi);
-  
+  virtual void initialiseNewLearningEpoch(State s);
+
   // Sets initial simulation parameters, including rover positions. Clears
   //   evaluation storage vector. Intended for use with POIs
   //
   // Base functionality is to ignore the first argument.
-  virtual void InitialiseNewLearningEpoch(vector<Target>, Vector2d xy, double psi);
+  virtual void initialiseNewLearningEpoch(State s, vector<Target>);
 
   virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) = 0;
 
@@ -114,17 +115,21 @@ class Agent {
 
   vector<double> GetEpochEvals() const{ return epochEvals; }
   
-  double getCurrentPsi() const { return currentPsi; }
-  double getInitialPsi() const { return initialPsi; }
+  double getCurrentPsi() const { return currentState.psi(); }
+  double getInitialPsi() const { return initialState.psi(); }
 
-  Vector2d getCurrentXY() const { return currentXY; }
-  Vector2d getInitialXY() const { return initialXY; }
+  Vector2d getCurrentXY() const { return currentState.pos(); }
+  Vector2d getInitialXY() const { return initialState.pos(); }
+
+  State getCurrentState() const { return currentState; }
+  State getInitialState() const { return initialState; }
 
   NeuroEvo * GetNEPopulation() const { return AgentNE; }
 
   void setOutputBool(bool toggle) { printOutput = toggle; }
   void openOutputFile(std::string filename);
-
+  virtual Agent* copyAgent() const = 0;
+  
   friend std::ostream& operator<<(std::ostream&, const Agent&);
   
  private:
@@ -144,23 +149,27 @@ class Agent {
 
 
  protected:
-  Matrix2d RotationMatrix(double psi);
+  Matrix2d RotationMatrix(double psi) const;
   Fitness fitness;
 
-  Vector2d initialXY;
-  double initialPsi;
-
-  Vector2d currentXY;
-  double currentPsi;
+  State initialState;
+  State currentState;
 
   size_t numIn;
   double stepwiseD;
 
   // Determines the index of this agent's position in a jointState vector
-  size_t selfIndex(vector<Vector2d> jointState);
+  size_t selfIndex(vector<Vector2d> jointState) const;
 
   bool printOutput;
   std::ofstream outputFile;
+
+  void setNets(NeuroEvo* nets) { AgentNE = nets; }
+
+  size_t getSteps() const { return nSteps; }
+  size_t getPop() const { return popSize; }
+  Fitness getFitness() const { return fitness; }
+  
 };
 
 #endif // AGENT_H_
