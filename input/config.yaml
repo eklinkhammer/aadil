@@ -1,25 +1,34 @@
 # A list of all experiments to run
 # All entries in this list must be a top level node in 
 experiments:
-  - twoagent
-  - threeagent
-  - onepoi
-  - rover
+  - agentstate
+  #- twoagent
+  #- threeagent
+  #- onepoi
+  #- rover
   #- exploreone
   #- exploretwo
 
-twoagent:
+agentstate:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
+    xmax: 20.0
+    ymax: 20.0
   ccea_pop: 15
-  nRovs: 4
-  nPOIs: 3
-  coupling: 3
-  nEps: 100
-  nSteps: 20
+  nRovs: 2
+  nPOIs: 1
+  targets:
+    - x: 2
+      y: 3
+      coupling: 1
+      value: 10
+  agents:
+    - x: 5
+      y: 2
+  coupling: 2
+  nEps: 5
+  nSteps: 15
   biasStart: 0
   staticOrRandom: 1
   type: A
@@ -28,8 +37,12 @@ twoagent:
     - 1
     - 2
     - 3
+    - 4
+    - 5
+    - 6
+    - 7
   output: 1
-
+  
 threeagent:
   world:
     xmin: 0.0

@@ -43,10 +43,10 @@ void setDomain(MultiRover* domain, YAML::Node root);
 
 // Trains domain for specified number of epochs
 void trainDomain(MultiRover*, size_t, bool, int, std::string, std::string,
-		 std::string);
+		 std::string, bool);
 
 // Trains domain a single epoch.
-void trainDomainOnce(MultiRover*, bool);
+void trainDomainOnce(MultiRover*, bool, bool);
 
 // Extracts and copies a team of neural nets from a domain
 std::vector<NeuralNet> getTeam(MultiRover* domain);

@@ -1,8 +1,7 @@
 /*******************************************************************************
-State.h
+Objective.h
 
-A state is a tuple of Vector2d position and double orientation. Defined in
-header file.
+Receives an award from an environment (memoryless)
 
 Authors: Eric Klinkhammer
 
@@ -25,36 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef STATE_H_
-#define STATE_H_
+#ifndef OBJ_H_
+#define OBJ_H_
 
-#include <vector>
-#include <Eigen/Eigen>
-#include <iostream>
+#include "Env.h"
 
-using namespace Eigen;
-
-class State {
- public:
-  State() {
-    Vector2d originVec(0,0);
-    _pos = originVec;
-    _psi = 0;
-  }
-  
- State(Vector2d position, double angle) : _pos(position), _psi(angle) {};
-
-  Vector2d pos() const { return _pos; }
-  double psi() const { return _psi; }
-
-  friend std::ostream& operator<<(std::ostream &strm, const State &state) {
-    return strm << "(" << state.pos()(0) << "," << state.pos()(1) << ")," << state.psi();
-  }
- private:
-  Vector2d _pos;
-  double _psi;
+class Objective {
+public:
+  virtual double operator() (Env* e) = 0;
 };
-
-#endif // STATE_H_
-
- 
+#endif//OBJ_H_

@@ -1,8 +1,7 @@
 /*******************************************************************************
-State.h
+G.h
 
-A state is a tuple of Vector2d position and double orientation. Defined in
-header file.
+Rover domain classic reward.
 
 Authors: Eric Klinkhammer
 
@@ -25,36 +24,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef STATE_H_
-#define STATE_H_
+#ifndef G_H_
+#define G_H_
 
+#include "Objective.h"
 #include <vector>
-#include <Eigen/Eigen>
-#include <iostream>
 
-using namespace Eigen;
+using std::vector;
 
-class State {
+class G : public Objective {
  public:
-  State() {
-    Vector2d originVec(0,0);
-    _pos = originVec;
-    _psi = 0;
-  }
+  G();
+  G(int c, double observationR, double minR);
   
- State(Vector2d position, double angle) : _pos(position), _psi(angle) {};
+  /**
+    The classic rover domain reward, as described in <paper>. The reward is the
+       sum of the value, per poi, of the closest c agents to the poi scaled by
+       their average distance to the poi. Only observations within some radius
+       r are counted. No reward is given if less than c agents observe a poi,
+       and no additional reward is given for additional agents.
 
-  Vector2d pos() const { return _pos; }
-  double psi() const { return _psi; }
+    The coupling (c) value is determined either by the coupling member variable,
+      or if set to a default value (-1) will use the target's values.
 
-  friend std::ostream& operator<<(std::ostream &strm, const State &state) {
-    return strm << "(" << state.pos()(0) << "," << state.pos()(1) << ")," << state.psi();
-  }
+    The observational radius (r) value is determined by the observationRadius
+      member variable, of if set to a default value (less than 0) will use the
+      target's observation radius.
+
+    Returns the reward of the current state of the environment.
+   **/
+  virtual double operator() (Env* env);
+
  private:
-  Vector2d _pos;
-  double _psi;
+  int coupling;
+  double observationRadius;
+  double minRadius;
 };
 
-#endif // STATE_H_
-
- 
+#endif//G_H_

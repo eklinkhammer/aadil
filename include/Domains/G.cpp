@@ -1,8 +1,7 @@
 /*******************************************************************************
-State.h
+G.h
 
-A state is a tuple of Vector2d position and double orientation. Defined in
-header file.
+Rover domain classic reward.
 
 Authors: Eric Klinkhammer
 
@@ -25,36 +24,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef STATE_H_
-#define STATE_H_
+#include "G.h"
 
-#include <vector>
-#include <Eigen/Eigen>
-#include <iostream>
+// Default values support heterogenous POIs
+G::G() : G(-1, -1, -1) {}
+	 
+G::G(int c, double observationR, double minR)
+  : Objective(), coupling(c), observationRadius(observationR), minRadius(minR) {}
 
-using namespace Eigen;
+// There are two ways to approach this. The first is the one below, where
+//   target's keep track of the best approach at each coupling. The alternative
+//   is to use Env's history of states and just apply them, in order, to the poi's
+double G::operator() (Env* env) {
+  vector< Target > targets = env->getTargets(); // copied
 
-class State {
- public:
-  State() {
-    Vector2d originVec(0,0);
-    _pos = originVec;
-    _psi = 0;
-  }
+  double reward = 0.0;
   
- State(Vector2d position, double angle) : _pos(position), _psi(angle) {};
+  for (auto& target : targets) {
 
-  Vector2d pos() const { return _pos; }
-  double psi() const { return _psi; }
+    target.ResetTarget();
+    
+    if (coupling != -1) {
+      target.setCoupling(coupling);
+    }
 
-  friend std::ostream& operator<<(std::ostream &strm, const State &state) {
-    return strm << "(" << state.pos()(0) << "," << state.pos()(1) << ")," << state.psi();
+    if (observationRadius != -1) {
+      target.setObservationRadius(observationRadius);
+    }
+
+    for (const auto& ss : env->getHistoryStates()) {
+      target.observeTarget(ss);
+    }
+    
+    reward += target.rewardAtCoupling(coupling);
   }
- private:
-  Vector2d _pos;
-  double _psi;
-};
 
-#endif // STATE_H_
-
- 
+  return reward;
+}

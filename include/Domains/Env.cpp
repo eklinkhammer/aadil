@@ -33,7 +33,7 @@ Env::Env(vector<double> w, vector<Agent*> team, vector<Target> pois, size_t nPop
 Env::Env(vector<double> w, vector<Agent*> team, vector<Target> pois, size_t nPop, string name)
   : world(w), agents(team), targets(pois), teamSize(nPop), idstring(name) {}
 
-vector<State> Env::nextStep() const {
+vector<State> Env::nextStep(vector< size_t > teamIndex) const {
   vector<State> jointState;
   for (size_t a = 0; a < agents.size(); a++) {
     State aS = agents[a]->executeNNControlPolicy(teamIndex[a], currentStates);
@@ -55,18 +55,16 @@ void Env::applyStep(vector<State> jointStates) {
   curTime += 1;
 }
 
-vector<State> Env::step()  {
-  vector<State> nextStates = nextStep();
+vector<State> Env::step(vector< size_t > teamIndex)  {
+  vector<State> nextStates = nextStep(teamIndex);
   applyStep(nextStates);
   return nextStates;
 }
 
-void Env::init(vector<State> initStates, vector<size_t> index) {
+void Env::init(vector<State> initStates) {
   historyStates.clear();
   currentStates = initStates;
   historyStates.push_back(currentStates);
-
-  teamIndex = index;
 
   while(agents.size() < initStates.size()) {
     agents.push_back(agents[0]->copyAgent());
@@ -84,7 +82,7 @@ void Env::init(vector<State> initStates, vector<size_t> index) {
 }
 
 void Env::reset() {
-  init(historyStates[0], teamIndex);
+  init();
 
   for (auto& target : targets) {
     target.ResetTarget();
@@ -97,89 +95,40 @@ void Env::reset() {
   }
 }
 
-void Env::init(vector< size_t > index) {
-  init(historyStates[0], index);
-}
-
-double Env::currentReward() const {
-  if (rewards.size() == 0) {
-    return 0;
-  }
-
-  return rewards[rewards.size() - 1];
-}
-
-double Env::latestStepReward() const {
-  double previousReward = rewards.size() > 1 ? rewards[rewards.size() - 2] : 0;
-  return currentReward() - previousReward;
-}
-
-double Env::estimateRewardOfStep(vector<State> nextStep) {
-  vector< Target > backupTargets = targets;
-  vector< Agent* > backupAgents;
-  for (const auto& a : agents) {
-    Agent* copy = a->copyAgent();
-    backupAgents.push_back(copy);
-  }
-  
-  Env rollOut(world, backupAgents, backupTargets, teamSize);
-  rollOut.init(getCurrentStates(), teamIndex);
-  rollOut.applyStep(nextStep);
-
-  return rollOut.currentReward();
-}
-
-// For reasons I don't understand, this does not work.
-double Env::estimateRewardOfNextStep() {
-  return estimateRewardOfStep(nextStep());
+void Env::init() {
+  init(historyStates[0]);
 }
 
 void Env::applyNewStateEffects() {
   for (size_t i = 0; i < agents.size(); i++) {
     agents[i]->move(currentStates[i]);
   }
-  for (const auto& state : currentStates) {
-    applyStateEffect(state);
-  }
 
-  double reward = calculateG();
-  rewards.push_back(reward);
-} 
-
-double Env::calculateG() const {
-  double G = 0.0;
-
-  for (auto& a : agents) {
-    G += a->getReward();
-  }
-
-  if (TeamFormingAgent* t = dynamic_cast<TeamFormingAgent*>(agents[0])) {
-    return G;
-  }
+  vector< Vector2d > locs;
   
-  for (auto& t : targets) {
-    G +=  t.IsObserved() ? (t.GetValue() / max(t.GetNearestObs(), 1.0)) : 0.0;
-  }
-
-  return G;
-}
-
-void Env::applyStateEffect(State s) {
-  Vector2d xy = s.pos();
-
-  for (auto& agent : agents) {
-    if (TeamFormingAgent* t = dynamic_cast<TeamFormingAgent*>(agent)) {
-      Vector2d otherLoc = t->getCurrentXY();
-      if (!(otherLoc(0) == xy(0) && otherLoc(1) == xy(1))) {
-	t->ObserveTarget(s.pos(), curTime);
-      }
-    }
+  for (const auto& state : currentStates) {
+    locs.push_back(state.pos());
   }
 
   for (auto& target : targets) {
-    target.ObserveTarget(xy, curTime);
+    target.observeTargetMultiple(locs);
   }
-}
+
+  for (auto& agent : agents) {
+    if (TeamFormingAgent* t = dynamic_cast<TeamFormingAgent*>(agent)) {
+      locs.clear();
+      Vector2d xy = t->getCurrentXY();
+      for (const auto& other : agents) {
+	Vector2d otherLoc = other->getCurrentXY();
+	if (!(otherLoc(0) == xy(0) && otherLoc(1) == xy(1))) {
+	  locs.push_back(otherLoc);
+	}
+      }
+
+      t->observeTargetMultiple(locs);
+    }
+  }
+} 
 
 void Env::setTargetLocations(vector< Target > locs) {
   // If this environment has no targets, add none
@@ -201,4 +150,30 @@ void Env::setTargetLocations(vector< Target > locs) {
   for (size_t i = 0; i < locs.size(); i++) {
     targets[0].setLocation(locs[i].GetLocation());
   }
+}
+
+void Env::randomStep() {
+  vector<State> perturbedStates;
+  for (const auto& s : currentStates) {
+    perturbedStates.push_back(perturbState(s));
+  }
+
+  applyStep(perturbedStates);
+}
+
+State Env::perturbState(const State s) const {
+    std::random_device rd;
+    std::mt19937 e2(rd());
+    std::normal_distribution<> dist(0,1);
+
+    double dx = dist(e2);
+    double dy = dist(e2);
+
+    Vector2d newXY = s.pos();
+    newXY(0) += dx;
+    newXY(1) += dy;
+
+    State newS(newXY, s.psi());
+
+    return newS;
 }

@@ -46,60 +46,52 @@ class Env {
   
   // Returns the result of stepping the simulation forward one step. Does not
   //   actually step the simulation forward.
-  vector<State> nextStep() const;
+  vector<State> nextStep(vector< size_t >) const;
 
   // Steps the simulation forward into the passed jointState (note,
   // the input is NOT a delta)
   void applyStep(vector<State>);
 
   // Steps the simulation forward one step, and returns the new jointState.
-  vector<State> step();
+  // Each agent will use neural net specified by index vector.
+  vector<State> step(vector<size_t>);
   
   // Resets all agents to starting location, clears history
   void reset();
 
   // Resets, to a specified set of starting locations and angles.
-  // Each agent will use neural net specified by index vector.
-  void init(vector<State>, vector<size_t>);
+
+  void init(vector<State>);
 
   // Resets, preserves starting locations.
-  void init(vector<size_t>);
+  void init();
   
-  double currentReward() const;
-  double latestStepReward() const;
-  double estimateRewardOfStep(vector<State>);
-  double estimateRewardOfNextStep();
-
   string getID() const { return idstring; }
   void setID(string label) { idstring = label; }
   
   vector< Agent* > getAgents()    const { return agents; }
   vector< double > getWorld()     const { return world; }
   vector< Target > getTargets()   const { return targets; };
-  vector< size_t > getTeamIndex() const { return teamIndex; }
-
 
   vector< State >         getCurrentStates() const { return currentStates; }
   vector< vector<State> > getHistoryStates() const { return historyStates; }
 
   void setTargetLocations(vector< Target > locs);
+
+  void randomStep();
  private:
   size_t teamSize;
-  vector< double > rewards;
   vector< double > world;
   vector< Agent* > agents;
   vector< Target > targets;
-  vector< size_t> teamIndex;
   vector<State> currentStates;
   vector< vector<State> > historyStates;
-
-  double calculateG() const;
 
   size_t curTime;
   string idstring;
 
   void applyNewStateEffects();
-  void applyStateEffect(State);
+  State perturbState(const State) const;
 };
 
 #endif // ENV_H_

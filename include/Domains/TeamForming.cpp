@@ -1,8 +1,7 @@
 /*******************************************************************************
-State.h
+TeamForming.cpp
 
-A state is a tuple of Vector2d position and double orientation. Defined in
-header file.
+Rover domain classic reward.
 
 Authors: Eric Klinkhammer
 
@@ -25,36 +24,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef STATE_H_
-#define STATE_H_
-
-#include <vector>
-#include <Eigen/Eigen>
+#include "TeamForming.h"
 #include <iostream>
+TeamForming::TeamForming() : TeamForming(-1, -1, -1) {}
+	 
+TeamForming::TeamForming(int c, double observationR, double minR)
+  : Objective(), coupling(c), observationRadius(observationR), minRadius(minR) {}
 
-using namespace Eigen;
-
-class State {
- public:
-  State() {
-    Vector2d originVec(0,0);
-    _pos = originVec;
-    _psi = 0;
-  }
+double TeamForming::operator() (Env* env) {
+  vector< Agent* > agents = env->getAgents();
+  double reward = 0.0;
   
- State(Vector2d position, double angle) : _pos(position), _psi(angle) {};
-
-  Vector2d pos() const { return _pos; }
-  double psi() const { return _psi; }
-
-  friend std::ostream& operator<<(std::ostream &strm, const State &state) {
-    return strm << "(" << state.pos()(0) << "," << state.pos()(1) << ")," << state.psi();
+  for (auto& agent : agents) {
+    TeamFormingAgent* t = (TeamFormingAgent*) agent;
+    t->setObservationRadius(observationRadius);
+    reward += t->rewardAtCoupling(coupling);
   }
- private:
-  Vector2d _pos;
-  double _psi;
-};
 
-#endif // STATE_H_
-
- 
+  return reward;
+}

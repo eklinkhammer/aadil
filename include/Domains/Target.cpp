@@ -26,20 +26,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
+#include <iostream>
 #include "Target.h"
 
 Target::Target(Vector2d xy, double value, int couple, double obsR, bool obs)
   : loc(xy), val(value), obsRadius(obsR), nearestObs(DBL_MAX), observed(obs),
-    curTime(-1), coupling(couple) {
+    curTime(-1), coupling(couple), maxConsideredCouple(3) {
   
   nearestObsVector.reserve(coupling);
   
-  for (int i = 0; i < coupling; i++) {
-    nearestObsVector.push_back(DBL_MAX);
+  resetNearestObs();
+
+  for (int i = 0; i <= maxConsideredCouple; i++) {
+    nearestObservations.push_back(DBL_MAX);
   }
 }
 
 void Target::ObserveTarget(Vector2d xy) {
+  nearestObs = GetNearestObs();
   Vector2d diff = xy - GetLocation();
   double d = diff.norm();
 
@@ -70,7 +74,7 @@ void Target::ObserveTarget(Vector2d xy) {
   				   nearestObsVector.end(),
   				   0.0) / nearestObsVector.size();
 
-  nearestObs = meanObs < nearestObs ? meanObs : nearestObs;
+  nearestObs = meanObs < GetNearestObs() ? meanObs : GetNearestObs();
   observed = true;
 }
 
@@ -90,11 +94,63 @@ void Target::ResetTarget(){
 }
 
 void Target::resetNearestObs() {
-  for (size_t i = 0; i < nearestObsVector.size(); i++) {
-    nearestObsVector[i] = DBL_MAX;
+  nearestObsVector.clear();
+  for (int i = 0; i < coupling; i++) {
+    nearestObsVector.push_back(DBL_MAX);
   }
 }
 
+void Target::setObservationRadius(double newRadius) {
+  if (GetNearestObs() > newRadius) {
+    ResetTarget();
+  }
+
+  obsRadius = newRadius;
+}
 std::ostream& operator<<(std::ostream &strm, const Target &t) {
   return strm << t.loc(0) << "," << t.loc(1) << "," << t.val;
+}
+
+void Target::observeTargetMultiple(std::vector<Vector2d> agentLocs) {
+  for (int i = 1; i <= maxConsideredCouple; i++) {
+    setCoupling(i);
+    resetNearestObs();
+    for (const auto& loc : agentLocs) {
+      ObserveTarget(loc);
+    }
+
+    nearestObservations[i] = nearestObs;
+  }
+}
+
+void Target::observeTarget(std::vector<State> jointState) {
+  for (const auto& s : jointState) {
+    ObserveTarget(s.pos());
+  }
+
+  nearestObservations[coupling] = nearestObs;
+}
+
+double Target::GetNearestObs() const {
+  if (nearestObservations.empty()) {
+    return nearestObs;
+  } else {
+    return nearestObservations[coupling];
+  }
+}
+
+double Target::rewardAtCoupling(int c) {
+  if (nearestObservations[c] > obsRadius) {
+    return 0;
+  }
+
+  // for (const auto& i : nearestObservations) {
+  //   std::cout << i << " ";
+  // }
+  // std::cout << std::endl;
+  if (nearestObservations[c] > DBL_MAX - 1) {
+    return 0;
+  }
+  double reward = GetValue() / (1 > nearestObservations[c] ? 1 : nearestObservations[c]);
+  return reward;
 }

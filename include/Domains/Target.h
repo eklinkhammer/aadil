@@ -31,6 +31,7 @@ SOFTWARE.
 #include <float.h>
 #include <Eigen/Eigen>
 #include <vector>
+#include "State.h"
 
 using namespace Eigen;
 
@@ -59,7 +60,7 @@ class Target{
   
   virtual Vector2d GetLocation() const { return loc; }
   double GetValue() const { return val; }
-  double GetNearestObs() const { return nearestObs; }
+  double GetNearestObs() const;
   bool IsObserved() const { return observed; }
 
   // The target is observed by an object at position xy. If this observer is
@@ -85,14 +86,35 @@ class Target{
   //   function has the same effects as ObserveTarget(Vector).
   void ObserveTarget(Vector2d xy, size_t t);
 
+  void observeTarget(std::vector<State>);
+  //void observeTarget(std::vector<State>);
   // Resetting a target sets it to back to being a target that has not yet been
   //   observed by any observer. Its current list of observations is empty. It
   //   has no nearest observation.
   void ResetTarget();
   friend std::ostream& operator<<(std::ostream&, const Target&);
 
+  // The reward of the target at a certain coupling value
+  double rewardAtCoupling(int);
+
+  double reward();
+  
+  void observeTargetMultiple(std::vector<Vector2d>);
+  
   void setLocation(Vector2d newLoc) { loc = newLoc; }
   int getCoupling() const { return coupling; }
+  double getObservationRadius() const { return obsRadius; }
+
+  // Sets the observation radius of the target. If the old nearestObs was
+  //   less than the newRadius, reset.
+  void setObservationRadius(double newRadius);
+  
+  void setCoupling(int newCoupling) {
+    coupling = newCoupling;
+    if (maxConsideredCouple < coupling) {
+      maxConsideredCouple = coupling;
+    }
+  }
  private:
     Vector2d loc ;
     double val ;
@@ -103,9 +125,12 @@ class Target{
     int coupling ;
     
     std::vector<double> nearestObsVector;
+    
+    std::vector<double> nearestObservations;
 
+    
     void resetNearestObs();
-
+    int maxConsideredCouple;
  protected:
     void setObserved(bool obs) { observed = obs; }
     void setNearestObs(double nearest) { nearestObs = nearest; }

@@ -18,6 +18,7 @@ VectorXd Rover::ComputeNNInput(vector<Vector2d> jointState) const {
   
   VectorXd s;
   s.setZero(numIn,1) ;
+  currentPsi = 0;
   MatrixXd Global2Body = RotationMatrix(-currentPsi) ;
   
   // Compute POI observation states
@@ -65,7 +66,6 @@ VectorXd Rover::ComputeNNInput(vector<Vector2d> jointState) const {
       s(q) += 1.0/max(d,1.0) ;
     }
   }
-  
   return s ;
 }
 

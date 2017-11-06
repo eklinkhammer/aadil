@@ -20,6 +20,8 @@
 #include "Agents/Controlled.h"
 
 #include "Env.h"
+#include "Objective.h"
+#include "G.h"
 
 using std::string ;
 using std::vector ;
@@ -57,11 +59,11 @@ class MultiRover{
 
     void InitialiseEpochFromVectors(vector<Target>, vector<Vector2d>);
     
-    void SimulateEpoch(bool train = true) ;
+    void SimulateEpoch(bool train, Objective* o) ;
 
     // Runs a simulation in an environment for the set number of steps.
     // Returns the reward of that environment
-    double runSim(Env* env);
+    double runSim(Env* env, vector< size_t > teamIndex, Objective* o);
 
     Env* createSim(size_t teamSize);
     
@@ -131,9 +133,6 @@ class MultiRover{
     vector<Env*> createEnvs(vector< vector< Agent* >>,vector<string>, size_t);
     vector< vector< Agent* >> duplicateAll(vector< vector< Agent* >>);
     vector< Agent* > duplicate(vector< Agent* >, size_t);
-    void simulateWithAlignment(bool, vector< vector< Agent* >>,vector< string >);
-
-    void simulateWithAlignment(bool, vector<Env*>);
   private:
     // Objective Functions
     double objectiveRoverObservePOI();

@@ -174,213 +174,32 @@ vector< Agent* > MultiRover::duplicate(vector< Agent* > agents, size_t n) {
   return agents;
 }
 
-void MultiRover::simulateWithAlignment(bool train, vector< vector< Agent* >> agents,
-				       vector< string > labels) {
-  size_t teamSize = train ? 2*nPop : nPop;
-  std::cout << "Creating envs: " << std::endl;
-  vector<Env*> envs = createEnvs(agents, labels, teamSize);
-
-  vector< vector<size_t> > teams = RandomiseTeams(teamSize);
-
-  vector< State > jointState ;
-  vector< size_t > teamIndex;
-  for (size_t i = 0; i < teamSize; i++) {
-    for (size_t j = 0; j < nRovers; j++) {
-      State s(initialXYs[j], initialPsis[j]);
-      jointState.push_back(s);
-      teamIndex.push_back(teams[j][i]);
-    }
-  }
-  
-  Env env(world, roverTeam, POIs, teamSize);
-  env.init(jointState, teamIndex);
-
-  for (auto& e : envs) {
-    e->init(jointState, teamIndex);
-  }
-
-  vector< State > bestMove;
-  double bestResult = 0;
-  
+double MultiRover::runSim(Env* env, vector< size_t > teamIndex, Objective* o) {
   for (size_t t = 0; t < nSteps; t++) {
-    for (auto& e : envs) {
-      std::cout << "Using Env: " << e->getID() << std::endl;
-      std::cout << "Last step: " << e->latestStepReward() << std::endl;
-      double estimate = e->estimateRewardOfStep(e->nextStep());
-      std::cout << "Estimate of following: " << estimate << std::endl;
-      std::cout << "Estimate margin: " << estimate - e->currentReward() << std::endl;
-    }
-  }
-}
-
-void MultiRover::simulateWithAlignment(bool train, vector<Env*> envs) {
-  size_t teamSize = train ? 2*nPop : nPop;
-    
-  // grab first network from each sim
-  vector< size_t > index;
-  for (size_t i = 0; i < nRovers; i++) {
-    index.push_back(0);
-  }
-  
-  Env* env = createSim(teamSize);
-  for (auto& e : envs) {
-    e->init(env->getCurrentStates(), index);
-    e->setTargetLocations(POIs);
-  }
-
-  //envs.push_back(env);
-
-  double equalCount = 0.0;
-  double moveCount = 0.0;
-  for (size_t t = 0; t < nSteps; t++) {
-    double maxLast = 0;
-    double maxEstimateMargin = 0;
-    double maxEstimateActual = env->currentReward();
-    std::cout << "Step: " << t << " Current Reward: " << maxEstimateActual << std::endl;
-    std::cout << *this << std::endl;
-    // std::cout << "Env current states:" << std::endl;
-    // for (auto& s : env->getCurrentStates()) {
-    // 	std::cout << s << " ";
-    // }
-    // std::cout << std::endl;
-    std::cout << "ID        LastStep  NextStep  NextG" << std::endl;
-
-    // I need three because nextStep has super weird behavior
-    // I can't use an index because nextStep is not pure (??????)
-    vector< State > nextM;
-    vector< State > nextR;
-    vector< State > nextE;
-    vector< State > nextG;
-    string nextMS;
-    string nextRS;
-    string nextES;
-    string nextGS;
-
-    auto rng = std::default_random_engine {};
-    std::shuffle(std::begin(envs), std::end(envs), rng);
-
-    string name;
-    vector< State > next;
-    for (size_t i = 0; i < envs.size(); i++) {
-
-      
-      Env* e = envs[i];
-      name = e->getID();
-      double lastR = e->latestStepReward();
-      next = e->nextStep();
-      double estimate = e->estimateRewardOfStep(next);
-      double estimateActual = env->estimateRewardOfStep(next);
-      double estimateMargin = estimate - e->currentReward();
-      printf("%.*s\t%.2f\t%.2f\t%.2f\n", 10, (name + "          ").c_str(), lastR, estimateMargin, estimateActual);
-
-      
-      if (lastR > maxLast) {
-	maxLast = lastR;
-	nextR = next;
-	nextRS = name;
-      } 
-
-      // if (estimate > maxEstimate) {
-      // 	maxEstimate = estimate;
-      // 	nextE = next;
-      // 	nextES = name;
-      // }
-
-      if (estimateMargin > maxEstimateMargin) {
-	maxEstimateMargin = estimateMargin;
-	nextM = next;
-	nextMS = name;
-      }
-
-      if (estimateActual > maxEstimateActual) {
-	maxEstimateActual = estimateActual;
-	nextG = next;
-	nextGS = name;
-      }
-    }
-    
-    vector< State > nextMove;
-    string choice;
-    string choiceNoG;
-    if (nextM.size() > 0) {
-      nextMove = nextM;
-      choice = nextMS;
-      choiceNoG = choice;
-    } else if (nextR.size() > 0) {
-      nextMove = nextR;
-      choice = nextRS;
-      choiceNoG = choice;
-    // } else if (nextE.size() > 0) {
-    //   nextMove = nextE;
-    //   choice = nextES;
-    } else {
-      nextMove = next;
-      choice = "default pick of " + name;
-      choiceNoG = choice;
-    }
-
-    if (nextG.size() > 0) {
-      nextMove = nextG;
-      choice = nextGS;
-    }
-
-    moveCount++;
-    std::cout << "The pick with access to G is: " << choice << std::endl;
-    std::cout << "The pick without access is: " << choiceNoG << std::endl;
-    if (choice.compare(choiceNoG) != 0) {
-      std::cout << "The choices were not equal." << std::endl;
-    } else {
-      equalCount++;
-    }
-    if (rand() % 100 < 3) {
-      nextMove = next;
-      choice = "random pick of " + name;
-    }
-
-    // std::cout << "Choice nextMove: " << std::endl;
-    // for (auto& s : nextMove) {
-    //   std::cout << s << " ";
-    // }
-    std::cout << "Choice nextMove: " << choice << std::endl;
-    
-    for (auto& e : envs) {
-      e->applyStep(nextMove);
-    }
-
-    env->applyStep(nextMove);
-  }
-
-  std::cout << "Final alignment percentage: " << equalCount / moveCount << std::endl;
-  std::cout << "Final reward: " << env->currentReward() << std::endl;
-}
-
-double MultiRover::runSim(Env* env) {
-  for (size_t t = 0; t < nSteps; t++) {
-    vector< State > jointState = env->step();
+    vector< State > jointState = env->step(teamIndex);
 
     if (outputTrajs) {
       printJointState(jointState);
     }
   }
 
-  return env->currentReward();
+  return (*o)(env);
 }
 
 Env* MultiRover::createSim(size_t teamSize) {
   Env* env = new Env(world, roverTeam, POIs, teamSize);
 
   vector< State > initState;
-  vector< size_t > netPerAgent;
   for (size_t j = 0; j < nRovers; j++) {
     State s(initialXYs[j], initialPsis[j]);
     initState.push_back(s);
   }
 
-  env->init(initState, netPerAgent);
+  env->init(initState);
 
   return env;
 }
-void MultiRover::SimulateEpoch(bool train){
+void MultiRover::SimulateEpoch(bool train, Objective* o){
   size_t teamSize = train ? 2*nPop : nPop;
     
   // each row is the population for a single agent
@@ -404,14 +223,12 @@ void MultiRover::SimulateEpoch(bool train){
       netEachAgentUses.push_back(teams[j][i]);
     }
 
-    env->init(netEachAgentUses);
-    
     if (outputTrajs && i == teamSize - 1) {
       printJointState(jointState);
       toggleAgentOutput(true);
     }
     
-    double eval = runSim(env);
+    double eval = runSim(env, netEachAgentUses, o);
     env->reset();
     maxEval = max(eval, maxEval);
     
@@ -536,7 +353,7 @@ void MultiRover::ExecutePolicies(string readFile, string storeTraj,
   OutputPerformance(storeEval) ;
   OutputTrajectories(storeTraj, storePOI, "d") ;
   ResetEpochEvals() ;
-  SimulateEpoch(false) ; // simulate in test mode
+  //SimulateEpoch(false) ; // simulate in test mode
 }
 
 void MultiRover::loadNNs(string nnFile, size_t numIn, size_t numHidden,
@@ -637,7 +454,7 @@ void MultiRover::ExecutePolicies(string expFile, string novFile,
   OutputPerformance(storeEval) ;
   OutputTrajectories(storeTraj, storePOI, "d") ;
   ResetEpochEvals() ;
-  SimulateEpoch(false) ; // simulate in test mode
+  //SimulateEpoch(false) ; // simulate in test mode
   
   for (size_t i = 0; i < expLoadedNN.size(); i++){
     delete expLoadedNN[i] ;

@@ -8,6 +8,10 @@
 #include "experimentalSetup.h"
 #include "experimentUtil.h"
 
+//#include "Domains/Objective.h"
+#include "Domains/G.h"
+#include "Domains/TeamForming.h"
+
 using std::vector ;
 using std::string ;
 using namespace Eigen ;
@@ -44,7 +48,7 @@ AgentType stringToAgentType(std::string type) {
 }
 
 void trainDomain(MultiRover* domain, size_t epochs, bool output, int outputPeriod,
-		 string exp, string topDir, string id) {
+		 string exp, string topDir, string id, bool init) {
   for (size_t n = 0; n < epochs; n++) {
     if (output && (n % outputPeriod == 0 || n == epochs - 1)) {
       std::cout << "Training " << id << " Episode " << n << "...";
@@ -56,22 +60,26 @@ void trainDomain(MultiRover* domain, size_t epochs, bool output, int outputPerio
       configureOutput(domain, topDir, id);
     }
 
-    trainDomainOnce(domain, (n==0));
+    trainDomainOnce(domain, (n==0), init);
   }
 }
 
-void trainDomainOnce(MultiRover* domain, bool evolve) {
+void trainDomainOnce(MultiRover* domain, bool evolve, bool init) {
   domain->EvolvePolicies(evolve);
-  domain->InitialiseEpoch();
+  if (init) {
+    domain->InitialiseEpoch();
+  }
   domain->ResetEpochEvals();
-  domain->SimulateEpoch();
+  G g(2,4,1);
+  TeamForming t(1,4,1);
+  domain->SimulateEpoch(true, &t);
 }
 
 void testDomainOnce(MultiRover* domain, bool output) {
   domain->setVerbose(output);
   domain->InitialiseEpoch();
   domain->ResetEpochEvals();
-  domain->SimulateEpoch();
+  //  domain->SimulateEpoch(false);
 }
 // Initialises a MultiRover domain according to the specifications in the node
 void setDomain(MultiRover* domain, YAML::Node root) {
@@ -117,39 +125,6 @@ std::vector<NeuralNet> getTeam(MultiRover* domain) {
   return returnNets;
 }
 
-std::vector<NeuralNet> trainAndGetTeam(YAML::Node root, std::string key, std::string topDir) {
-  // Get variables from node to construct domain
-  size_t nRovs  = size_tFromYAML(root, nRovsS);
-  size_t nPOIs  = size_tFromYAML(root, nPOIsS);
-  size_t nSteps = size_tFromYAML(root, nStepsS);
-  int coupling  = intFromYAML(root, couplingS);
-
-  string type = stringFromYAML(root, typeS);
-  AgentType t = stringToAgentType(type);
-
-  size_t cceaPop = size_tFromYAML(root, cceaPopS);
-  size_t nEps = size_tFromYAML(root, nEpsS);
-
-
-  double xmin = fromYAML<double>(root, xminS);
-  double ymin = fromYAML<double>(root, yminS);
-  double xmax = fromYAML<double>(root, xmaxS);
-  double ymax = fromYAML<double>(root, ymaxS);
-  std::vector<double> world = {xmin, xmax, ymin, ymax};
-  
-  MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, t);
-
-  int biasStart = intFromYAML(root, biasStartS);
-  if (biasStart == 0) {
-    domain.setBias(false);
-  }
-
-  int output = intFromYAML(root, outputS);
-  trainDomain(&domain, nEps, (output == 1), 20, type, topDir, key);
-
-  return getTeam(&domain);
-}
-
 Env* trainAndGetEnv(YAML::Node root, std::string key, std::string topDir) {
   // Get variables from node to construct domain
   size_t nRovs  = size_tFromYAML(root, nRovsS);
@@ -177,10 +152,19 @@ Env* trainAndGetEnv(YAML::Node root, std::string key, std::string topDir) {
     domain.setBias(false);
   }
 
-  int output = intFromYAML(root, outputS);
-  trainDomain(&domain, nEps, (output == 1), 20, type, topDir, key);
+  int staticOrRandom = intFromYAML(root, staticOrRandomS);
+  if (staticOrRandom == 0) {
+    YAML::Node targetNode = nodeFromYAML(root, targetsS);
+    YAML::Node agentNode = nodeFromYAML(root, agentsS);
+    vector<Target> targets = targetsFromYAML(targetNode);
+    vector<Vector2d> initXYs = vector2dsFromYAML(agentNode);
+    domain.InitialiseEpochFromVectors(targets, initXYs);
+  }
 
-  vector<Agent*> agents = domain.getAgents();
+
+  
+  int output = intFromYAML(root, outputS);
+  trainDomain(&domain, nEps, (output == 1), 20, type, topDir, key, (staticOrRandom == 1));
   Env* env = domain.createSim(nRovs);
   env->setID(key);
   return env;
@@ -219,50 +203,73 @@ int main() {
     YAML::Node expNode = nodeFromYAML(config, expKey);
     
     Env* env = trainAndGetEnv(expNode, expKey, fileDir);
+
+    vector< Agent* > agents = env->getAgents();
+    for (int i = 0; i < 10; i++) {
+      std::cout << "Mutation: " << i << std::endl;
+      
+      env->reset();
+      std::cout << "Agent locations: " << std::endl;
+      for (const auto& a : agents) {
+	std::cout << a->getCurrentState() << std::endl;
+      }
+
+      std::cout << "Env currentStates: " << std::endl;
+      for (const auto& s : env->getCurrentStates()) {
+	std::cout << s << std::endl;
+      }
+      
+      env->randomStep();
+
+      std::cout << "Agent locations after random step: " << std::endl;
+      for (const auto& a : agents) {
+	std::cout << a->getCurrentState() << std::endl;
+      }
+    }
     vector<size_t> ind = fromYAML<vector<size_t>>(expNode, "ind");
     envs.push_back(env);
     inds.push_back(ind);
   }
 
-  YAML::Node root = nodeFromYAML(config, "NeuralRover");
+  // YAML::Node root = nodeFromYAML(config, "NeuralRover");
 
-    // Get variables from node to construct domain
-  size_t nRovs  = size_tFromYAML(root, nRovsS);
-  size_t nPOIs  = size_tFromYAML(root, nPOIsS);
-  size_t nSteps = size_tFromYAML(root, nStepsS);
-  int coupling  = intFromYAML(root, couplingS);
+  //   // Get variables from node to construct domain
+  // size_t nRovs  = size_tFromYAML(root, nRovsS);
+  // size_t nPOIs  = size_tFromYAML(root, nPOIsS);
+  // size_t nSteps = size_tFromYAML(root, nStepsS);
+  // int coupling  = intFromYAML(root, couplingS);
 
-  string type = stringFromYAML(root, typeS);
-  AgentType t = stringToAgentType(type);
+  // string type = stringFromYAML(root, typeS);
+  // AgentType t = stringToAgentType(type);
 
-  size_t cceaPop = size_tFromYAML(root, cceaPopS);
-  size_t nEps = size_tFromYAML(root, nEpsS);
+  // size_t cceaPop = size_tFromYAML(root, cceaPopS);
+  // size_t nEps = size_tFromYAML(root, nEpsS);
 
 
-  double xmin = fromYAML<double>(root, xminS);
-  double ymin = fromYAML<double>(root, yminS);
-  double xmax = fromYAML<double>(root, xmaxS);
-  double ymax = fromYAML<double>(root, ymaxS);
-  std::vector<double> world = {xmin, xmax, ymin, ymax};
+  // double xmin = fromYAML<double>(root, xminS);
+  // double ymin = fromYAML<double>(root, yminS);
+  // double xmax = fromYAML<double>(root, xmaxS);
+  // double ymax = fromYAML<double>(root, ymaxS);
+  // std::vector<double> world = {xmin, xmax, ymin, ymax};
 
-  bool controlled = false;
-  int controlInt = intFromYAML(root, "input");
-  if (controlInt == 1) {
-    controlled = true;
-  }
+  // bool controlled = false;
+  // int controlInt = intFromYAML(root, "input");
+  // if (controlInt == 1) {
+  //   controlled = true;
+  // }
 
-  std::cout << "Got to domain creation." << std::endl;
-  MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, t);
-  //MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, neuralNets, inds, controlled);
+  // std::cout << "Got to domain creation." << std::endl;
+  // MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, t);
+  // //MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, neuralNets, inds, controlled);
 
-  int biasStart = intFromYAML(root, biasStartS);
-  if (biasStart == 0) {
-    domain.setBias(false);
-  }
+  // int biasStart = intFromYAML(root, biasStartS);
+  // if (biasStart == 0) {
+  //   domain.setBias(false);
+  // }
 
-  domain.setVerbose(true);
-  domain.InitialiseEpoch();
-  domain.ResetEpochEvals();
-  domain.simulateWithAlignment(false, envs);
+  // domain.setVerbose(true);
+  // domain.InitialiseEpoch();
+  // domain.ResetEpochEvals();
+  // domain.simulateWithAlignment(false, envs);
   return 0 ;
 }
