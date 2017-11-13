@@ -1,7 +1,9 @@
 /*******************************************************************************
-NeuralRovers.cpp
+AlignmentAgent.cpp
 
-See header file for documentation.
+Rover that has as input the full state space (4 agent quads, 4 poi quads), the
+same reward structure as a normal rover, but it uses alignment to choose between
+a set of neural nets (policies).
 
 Authors: Eric Klinkhammer
 
@@ -24,35 +26,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#include "NeuralRover.h"
+#include "AlignmentAgent.h"
 
-NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet*> ns, vector<vector<size_t> > indices, size_t nOut)
-  : Rover(n, nPop, 8, 16, nOut, f), netsX(ns), index(indices) {}
+AlignmentAgent::AlignmentAgent(Fitness f, std::vector<NeuralNet> ns, Alignment* as,
+			       std::vector< std::vector<size_t>> indices, size_t nOut)
+  : NeuralRover(1,0,f,ns,indices,nOut), alignmentMap(as) {}
 
-State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
-  vector<Vector2d> justPos;
-  for (const auto& s : jointState) {
-    justPos.push_back(s.pos());
+State AlignmentAgent::getNextState(size_t i, std::vector<State> jointState) const {
+  std::vector<double> key = getVectorState(jointState);
+  std::vector< Alignment > alignments = alignmentMap->getAlignmentsNN(key);
+
+  if (alignments.size() < 1) {
+    return getCurrentState();
   }
-
-  VectorXd inp = ComputeNNInput(justPos);
-  NeuroEvo* AgentNE = GetNEPopulation();
   
-  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
-
-
-  int max_index = 0;
-  for (int i = 0; i < out.size(); i++) {
-    if (out(i) > out(max_index)) {
-      max_index = i;
+  Alignment max;
+  size_t bestAlign = -1;
+  for (size_t align_i = 0; align_i < alignments.size(); align_i++) {
+    if (alignments[align_i].alignScore() > max.alignScore() ||
+	(alignments[align_i].alignScore() == max.alignScore() &&
+	 alignments[align_i].alignMag() > max.alignMag())) {
+      max = alignments[align_i];
+      bestAlign = align_i;
     }
   }
 
-  if (printOutput) {
-    //outputFile << max_index << std::endl;
-  }
-  
-  vector<size_t> inds = index[max_index];
+  NeuralNet* policy = netsX[align_i];
+  std::vector< size_t > indices = index[align_i];
+
+    vector<size_t> inds = index[max_index];
 
   VectorXd newInp;
   newInp.setZero(inds.size(),1); // set to size inds
@@ -63,9 +65,8 @@ State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
     index_input++;
   }
 
-  out = netsX[max_index]->EvaluateNN(newInp).normalized();
+  VectorXd out = policy->EvaluateNN(newInp).normalized();
 
-  
   // Transform to global frame
   Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
   Vector2d deltaXY = Body2Global*out;
@@ -79,10 +80,3 @@ State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
   State s(currentXY, currentPsi);
   return s;
 }
-
-Agent* NeuralRover::copyAgent() const {
-  NeuralRover* copy = new NeuralRover(getSteps(), getPop(), getFitness(), netsX, index, netsX.size());
-  copy->setNets(GetNEPopulation());
-  return copy;
-}
-

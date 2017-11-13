@@ -41,12 +41,15 @@ SOFTWARE.
 //   the node to reset and train without having to edit constants file.
 void setDomain(MultiRover* domain, YAML::Node root);
 
+MultiRover* getDomain(YAML::Node root);
+
+void trainDomain(MultiRover* domain, YAML::Node root, std::string key, std::string topDir,  Objective* o);
 // Trains domain for specified number of epochs
 void trainDomain(MultiRover*, size_t, bool, int, std::string, std::string,
-		 std::string, bool);
+		 std::string, bool, Objective*);
 
 // Trains domain a single epoch.
-void trainDomainOnce(MultiRover*, bool, bool);
+void trainDomainOnce(MultiRover*, bool, bool, Objective*);
 
 // Extracts and copies a team of neural nets from a domain
 std::vector<NeuralNet> getTeam(MultiRover* domain);

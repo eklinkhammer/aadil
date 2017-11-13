@@ -68,6 +68,7 @@ class Agent {
   // This function is a pure virtual function.
   virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const = 0;
 
+  vector< double > getVectorState(vector<State>);
   // Calculates the new State from the ith neural network in the CCEA pool
   //   using the result of ComputeNNInput with the jointstate as input.
   //

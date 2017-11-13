@@ -54,7 +54,7 @@ class TeamForming : public Objective {
 
     Returns the reward of the current state of the environment.
    **/
-  virtual double operator() (Env* env);
+  virtual double reward(Env* env);
 
  private:
   int coupling;

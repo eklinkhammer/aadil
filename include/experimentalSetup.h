@@ -34,7 +34,10 @@ SOFTWARE.
 #include <string>
 #include <iostream>
 #include "Domains/Target.h"
-
+#include "Domains/Objective.h"
+#include "Domains/G.h"
+#include "Domains/TeamForming.h"
+#include "yaml_constants.h"
 
 using std::vector;
 using std::string;
@@ -52,6 +55,7 @@ string stringFromYAML(YAML::Node, string);
 double doubleFromYAML(YAML::Node, string);
 YAML::Node nodeFromYAML(YAML::Node, string);
 
+Objective* objFromYAML(YAML::Node, string);
 
 template<class T> T fromYAML(const YAML::Node node, string s) {
   T result;

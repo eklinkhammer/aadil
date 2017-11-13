@@ -2,7 +2,6 @@
 #define _YAML_CONSTANTS_H
 
 #include "yaml-cpp/yaml.h"
-#include "experimentalSetup.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,7 +9,7 @@
 using std::string;
 using std::vector;
 
-YAML::Node config = YAML::LoadFile("../input/config.yaml");
+
 
 // YAML file uses the following keys under a root node to describe an
 //   experiment.
@@ -26,7 +25,10 @@ const string agentsS = "agents";
 const string cceaPopS = "ccea_pop";
 const string biasStartS = "biasStart";
 const string outputS = "output";
-
+const string objectiveS = "objective";
+const string obsRS = "obsR";
+const string teamS = "T";
+const string globalS = "G";
 // Accessor methods are overloaded to accept vectors -> will nest
 const vector<string> xminS = {"world", "xmin"};
 const vector<string> yminS = {"world", "ymin"};

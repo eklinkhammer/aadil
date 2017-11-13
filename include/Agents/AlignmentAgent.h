@@ -1,7 +1,9 @@
 /*******************************************************************************
-G.h
+AlignmentAgent.h
 
-Rover domain classic reward.
+Rover that has as input the full state space (4 agent quads, 4 poi quads), the
+same reward structure as a normal rover, but it uses alignment to choose between
+a set of neural nets (policies).
 
 Authors: Eric Klinkhammer
 
@@ -24,42 +26,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef G_H_
-#define G_H_
+#ifndef ALIGNMENT_AGENT_H
+#define ALIGNMENT_AGENT_H
 
-#include "Objective.h"
-#include <vector>
+#include "Learning/NeuralNet.h"
+#include "NeuralRover.h"
+#include "alignments.h"
+
 #include <iostream>
-
-using std::vector;
-
-class G : public Objective {
+#include <string>
+#include <vector>
+class AlignmentAgent : public NeuralRover {
  public:
-  G();
-  G(int c, double observationR, double minR);
+  AlignmentAgent(Fitness f, std::vector<NeuralNet*> ns, Alignments* as,
+		 std::vector< <std::vector<size_t> > indices, size_t nOut);
+
+  virtual State getNextState(size_t i, std::vector<State> jointState) const;
   
-  /**
-    The classic rover domain reward, as described in <paper>. The reward is the
-       sum of the value, per poi, of the closest c agents to the poi scaled by
-       their average distance to the poi. Only observations within some radius
-       r are counted. No reward is given if less than c agents observe a poi,
-       and no additional reward is given for additional agents.
+ protected:
+  Alignments* alignmentMap;
+}
 
-    The coupling (c) value is determined either by the coupling member variable,
-      or if set to a default value (-1) will use the target's values.
-
-    The observational radius (r) value is determined by the observationRadius
-      member variable, of if set to a default value (less than 0) will use the
-      target's observation radius.
-
-    Returns the reward of the current state of the environment.
-   **/
-  virtual double reward(Env* env);
-
- private:
-  int coupling;
-  double observationRadius;
-  double minRadius;
-};
-
-#endif//G_H_
+#endif // ALIGNMENT_AGENT_H

@@ -42,6 +42,15 @@ Agent::~Agent() {
   AgentNE = 0;
 }
 
+vector<double> Agent::getVectorState(vector<State> jointState) {
+  vector<Vector2d> locs;
+  for (const auto& s : jointState) {
+    locs.push_back(s.pos());
+  }
+  VectorXd state = ComputeNNInput(locs);
+  vector<double> stateV(state.data(), state.data() + state.rows() * state.cols());
+  return stateV;
+}
 State Agent::executeNNControlPolicy(size_t i, vector<State> jointState) {
   State newState = getNextState(i, jointState);
   move(newState);

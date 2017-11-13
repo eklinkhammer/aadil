@@ -46,7 +46,7 @@ class MultiRover{
 
     // MultiRover with NeuralRovers
     MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
-	       Fitness f, size_t rovs, int c, vector<vector<NeuralNet>>,
+	       Fitness f, size_t rovs, int c, vector<vector<NeuralNet*>>,
 	       vector< vector<size_t> >, bool controlled = false);
     ~MultiRover();
 
@@ -124,6 +124,7 @@ class MultiRover{
     int            getCoupling() { return coupling; }
     vector<double> getWorld()    { return world; }
     vector< Agent* > getAgents() { return roverTeam; }
+    vector< Target > getPOIs()   { return POIs; }
     bool           getVerbose()  { return verbose; }
     bool           getBias()     { return biasStart; }
 
@@ -133,6 +134,8 @@ class MultiRover{
     vector<Env*> createEnvs(vector< vector< Agent* >>,vector<string>, size_t);
     vector< vector< Agent* >> duplicateAll(vector< vector< Agent* >>);
     vector< Agent* > duplicate(vector< Agent* >, size_t);
+
+    vector< State > getInitialStates();
   private:
     // Objective Functions
     double objectiveRoverObservePOI();

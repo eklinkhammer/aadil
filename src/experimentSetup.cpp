@@ -75,3 +75,19 @@ double doubleFromYAML(YAML::Node node, string key) {
 YAML::Node nodeFromYAML(YAML::Node node, string key) {
   return fromYAML<YAML::Node>(node, key);
 }
+
+Objective* objFromYAML(YAML::Node node, string key) {
+  YAML::Node objNode = nodeFromYAML(node, key);
+  string objLabel = stringFromYAML(objNode, typeS);
+  int coupling = intFromYAML(objNode, couplingS);
+  double observationR = doubleFromYAML(objNode, obsRS);
+
+  if (objLabel.compare(globalS) == 0) {
+    return new G(coupling, observationR, 1);
+  } else if (objLabel.compare(teamS) == 0) {
+    //std::cout << teamS << std::endl;
+    return new TeamForming(coupling, observationR, 1);
+  }
+
+  return NULL;
+}

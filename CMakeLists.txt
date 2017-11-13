@@ -12,7 +12,7 @@ set (INCLUDE_DIRS include ${YAML_INCLUDE})
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -Wno-reorder -I ~/resources/eigen")
 add_subdirectory(include)
 
-set( LIBS_TO_LINK Utilities Learning Domains Agents POMDPs)
+set( LIBS_TO_LINK Utilities Learning Domains Agents POMDPs stdc++)
 
 ## Create executable
 file(GLOB_RECURSE EXEC_SRC

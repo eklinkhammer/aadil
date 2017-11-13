@@ -83,7 +83,6 @@ void Env::init(vector<State> initStates) {
 
 void Env::reset() {
   init();
-
   for (auto& target : targets) {
     target.ResetTarget();
   }

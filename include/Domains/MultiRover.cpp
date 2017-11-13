@@ -12,7 +12,7 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 
 MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 		       numPOIs, Fitness f, size_t rovs, int c,
-		       vector< vector<NeuralNet> > nets, vector<vector<size_t>> inds,
+		       vector< vector<NeuralNet*> > nets, vector<vector<size_t>> inds,
 		       bool controlled)
   : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
     coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
@@ -21,13 +21,13 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
 
   size_t nOut = inds.size();
   for (size_t i = 0; i < nRovers; i++) {
-    vector<NeuralNet> netsAgent;
+    vector<NeuralNet*> netsAgent;
     for (size_t j = 0; j < nets.size(); j++) {
       int netI = nets[j].size() == rovs ? i : 0;
       netsAgent.push_back(nets[j][netI]);
     }
     if (controlled) {
-      roverTeam.push_back(new Controlled(nSteps, nPop, fitness, netsAgent, inds, nOut));
+      // roverTeam.push_back(new Controlled(nSteps, nPop, fitness, netsAgent, inds, nOut));
       type = AgentType::C;
     } else {
       roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, netsAgent, inds, nOut));
@@ -183,7 +183,7 @@ double MultiRover::runSim(Env* env, vector< size_t > teamIndex, Objective* o) {
     }
   }
 
-  return (*o)(env);
+  return o->reward(env);
 }
 
 Env* MultiRover::createSim(size_t teamSize) {
@@ -400,10 +400,10 @@ void MultiRover::loadNNsNeuralRover(vector<string> nnFiles, vector<size_t> nIns,
   
   size_t nOut = inds.size();
   for (size_t i = 0; i < getNRovers(); i++) {
-    vector<NeuralNet> netsAgent;
+    vector<NeuralNet*> netsAgent;
     for (auto& net : nets) {
       int netI = net.size() == getNRovers() ? i : 0;
-      netsAgent.push_back(*net[netI]);
+      netsAgent.push_back(net[netI]);
     }
     roverTeam.push_back(new NeuralRover(getNSteps(), getNPop(), getFitness(),
 					netsAgent, inds, nOut));
@@ -632,4 +632,14 @@ std::ostream& operator<<(std::ostream &strm, const MultiRover &d) {
   }
   
   return strm;
+}
+
+vector< State > MultiRover::getInitialStates() {
+  vector< State > states;
+  for (size_t i = 0; i < initialXYs.size(); i++) {
+    State s(initialXYs[i], initialPsis[i]);
+    states.push_back(s);
+  }
+
+  return states;
 }

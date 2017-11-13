@@ -27,7 +27,7 @@ SOFTWARE.
 
 #include "Controlled.h"
 
-Controlled::Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns,
+Controlled::Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet*> ns,
 	     vector<vector<size_t>> indices, size_t nOut)
     : NeuralRover(n, nPop, f, ns, indices, nOut) {}
 
@@ -55,7 +55,7 @@ State Controlled::getNextState(size_t i, vector<State> jointState) const {
       index_input++;
     }
 
-    VectorXd out = netsX[i].EvaluateNN(newInp).normalized();
+    VectorXd out = netsX[i]->EvaluateNN(newInp).normalized();
 
     // Transform to global frame
     Matrix2d Body2Global = RotationMatrix(getCurrentPsi());

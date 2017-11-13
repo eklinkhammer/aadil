@@ -38,7 +38,7 @@ using std::vector;
 
 class Controlled : public NeuralRover {
  public:
-  Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet> ns,
+  Controlled(size_t n, size_t nPop, Fitness f, vector<NeuralNet*> ns,
 	       vector<vector<size_t>> indices, size_t nOut);
 
   // Rover prompts user to select from among the vectors provided

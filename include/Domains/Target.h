@@ -115,6 +115,11 @@ class Target{
       maxConsideredCouple = coupling;
     }
   }
+
+  bool equals(Target t) {
+    Vector2d other = t.GetLocation();
+    return other(0) == loc(0) && other(1) == loc(1);
+  }
  private:
     Vector2d loc ;
     double val ;
@@ -125,9 +130,6 @@ class Target{
     int coupling ;
     
     std::vector<double> nearestObsVector;
-    
-    std::vector<double> nearestObservations;
-
     
     void resetNearestObs();
     int maxConsideredCouple;

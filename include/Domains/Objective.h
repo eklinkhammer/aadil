@@ -31,6 +31,7 @@ SOFTWARE.
 
 class Objective {
 public:
-  virtual double operator() (Env* e) = 0;
+  virtual double reward(Env* e) = 0;
+  virtual std::string getName() { return "Objective"; }
 };
 #endif//OBJ_H_

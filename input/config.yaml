@@ -16,7 +16,7 @@ agentstate:
     xmax: 20.0
     ymax: 20.0
   ccea_pop: 15
-  nRovs: 2
+  nRovs: 3
   nPOIs: 1
   targets:
     - x: 2
@@ -26,12 +26,12 @@ agentstate:
   agents:
     - x: 5
       y: 2
-  coupling: 2
-  nEps: 5
-  nSteps: 15
+  coupling: 1
+  nEps: 1
+  nSteps: 20
   biasStart: 0
   staticOrRandom: 1
-  type: A
+  type: R
   ind:
     - 0
     - 1
@@ -42,6 +42,10 @@ agentstate:
     - 6
     - 7
   output: 1
+  objective:
+    type: T
+    coupling: 2
+    obsR: 4
   
 threeagent:
   world:
