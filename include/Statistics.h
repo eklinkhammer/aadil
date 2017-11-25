@@ -1,9 +1,7 @@
 /*******************************************************************************
-AlignmentAgent.h
+Statistics.h
 
-Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but it uses alignment to choose between
-a set of neural nets (policies).
+Calculation of statistics. Intended for use in reportd.
 
 Authors: Eric Klinkhammer
 
@@ -26,21 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENT_AGENT_H
-#define ALIGNMENT_AGENT_H
+#include <vector>
+#include <math.h>
 
-#include "NeuralRover.h"
-#include "alignments.h"
+double mean(std::vector<double>);
 
-class AlignmentAgent : public NeuralRover {
- public:
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
-    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
+double stddev(std::vector<double>);
 
-  virtual State getNextState(size_t i, vector<State> jointState) const;
-  Alignments* alignmentMap;
- protected:
-  virtual Agent* copyAgent() const;
-};
+double variance(std::vector<double>);
 
-#endif // ALIGNMENT_AGENT_H
+double statstderr(std::vector<double>);

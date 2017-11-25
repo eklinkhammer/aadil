@@ -38,21 +38,9 @@ class TeamForming : public Objective {
   TeamForming();
   TeamForming(int c, double observationR, double minR);
   
+
   /**
-    The classic rover domain reward, as described in <paper>. The reward is the
-       sum of the value, per poi, of the closest c agents to the poi scaled by
-       their average distance to the poi. Only observations within some radius
-       r are counted. No reward is given if less than c agents observe a poi,
-       and no additional reward is given for additional agents.
-
-    The coupling (c) value is determined either by the coupling member variable,
-      or if set to a default value (-1) will use the target's values.
-
-    The observational radius (r) value is determined by the observationRadius
-      member variable, of if set to a default value (less than 0) will use the
-      target's observation radius.
-
-    Returns the reward of the current state of the environment.
+     The reward if agents were treated as POIs.
    **/
   virtual double reward(Env* env);
 

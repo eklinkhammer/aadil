@@ -28,9 +28,11 @@ SOFTWARE.
 #define ALIGNMENTS_H_
 
 #include "alignment.h"
-#include "Domains/MultiRover.h"
 #include "Domains/Env.h"
 #include "Domains/Objective.h"
+#include "Domains/MultiRover.h"
+
+#include "Agents/Rover.h"
 
 #include <unordered_map> // in place of kdtree (O(nd) nn search)
 
@@ -69,7 +71,7 @@ class Alignments {
   void addAlignments(MultiRover* domain);
   void addAlignments(Env* env);
 
-  std::vector< Alignment > getAlignmentsNN(std::vector< double >);
+  std::vector< Alignment > getAlignmentsNN(std::vector< double > inputState);
   
  private:
   std::unordered_map< std::vector< double >, std::vector< Alignment >, KeyHash, KeyEqual > alignments;

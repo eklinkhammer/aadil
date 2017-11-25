@@ -36,7 +36,8 @@ Env::Env(vector<double> w, vector<Agent*> team, vector<Target> pois, size_t nPop
 vector<State> Env::nextStep(vector< size_t > teamIndex) const {
   vector<State> jointState;
   for (size_t a = 0; a < agents.size(); a++) {
-    State aS = agents[a]->executeNNControlPolicy(teamIndex[a], currentStates);
+    State aS = agents[a]->getNextState(teamIndex[a], currentStates);//
+    //executeNNControlPolicy(teamIndex[a], currentStates);
     jointState.push_back(aS);
   }
 
@@ -62,22 +63,36 @@ vector<State> Env::step(vector< size_t > teamIndex)  {
 }
 
 void Env::init(vector<State> initStates) {
+  //  std::cout << "Env init" << std::endl;
   historyStates.clear();
   currentStates = initStates;
   historyStates.push_back(currentStates);
-
+  //std::cout << "Env init 2" << std::endl;
+  //if (agents.size() == 0) {
+  //  return;
+  //}
+  size_t numA = agents.size();
+  if (numA == 0) {
+    //std::cout << "Returning." << std::endl;
+    return;
+  }
+  // std::cout << numA << std::endl;
   while(agents.size() < initStates.size()) {
+    //std::cout << "Env init 2.2" << std::endl;
+    Agent* a = agents[0];
+    //std::cout << "Env init 2.3" << std::endl;
+    Agent* copy = a->copyAgent();
     agents.push_back(agents[0]->copyAgent());
   }
-
+  //std::cout << "Env init 3" << std::endl;
   while(agents.size() > initStates.size()) {
     agents.pop_back();
   }
-  
+  //std::cout << "Env init 4" << std::endl;
   for (size_t a = 0; a < initStates.size(); a++) {
     agents[a]->initialiseNewLearningEpoch(currentStates[a], targets);
   }
-
+  //std::cout << "Env init 5" << std::endl;
   curTime = 0;
 }
 

@@ -37,6 +37,7 @@ SOFTWARE.
 #include "Domains/Objective.h"
 #include "Domains/G.h"
 #include "Domains/TeamForming.h"
+#include "Domains/TeamObjective.h"
 #include "yaml_constants.h"
 
 using std::vector;

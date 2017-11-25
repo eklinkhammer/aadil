@@ -26,6 +26,9 @@ SOFTWARE.
 
 #include "TeamForming.h"
 #include <iostream>
+#include <queue>
+#include <unordered_map>
+
 TeamForming::TeamForming() : TeamForming(-1, -1, -1) {}
 	 
 TeamForming::TeamForming(int c, double observationR, double minR)
@@ -48,6 +51,8 @@ double TeamForming::reward(Env* env) {
     maxR += 10;
   }
 
+
+  // This scores each agent if it is part of a team
   for (size_t agent = 0; agent < teamFormingAgents.size(); agent++) {
     Target currentAgent = teamFormingAgents[agent];
     for (size_t t = 0; t < allJointStates.size(); t++) {
@@ -55,15 +60,15 @@ double TeamForming::reward(Env* env) {
       currentAgent.setLocation(currentStepStates[agent].pos());
       Vector2d currentLoc = currentAgent.GetLocation();
       for (size_t other = 0; other < agents.size(); other++) {
-	if (other != agent) {
-	  Vector2d otherLoc = currentStepStates[other].pos();
-	  currentAgent.ObserveTarget(otherLoc, t);
-	}
+  	if (other != agent) {
+  	  Vector2d otherLoc = currentStepStates[other].pos();
+  	  currentAgent.ObserveTarget(otherLoc, t);
+  	}
       }
     }
 
     double currentR = currentAgent.rewardAtCoupling(coupling);
-    std::cout << currentR << std::endl;
+    // std::cout << currentR << std::endl;
     reward += currentAgent.rewardAtCoupling(coupling);
   }
 

@@ -68,7 +68,7 @@ class Agent {
   // This function is a pure virtual function.
   virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const = 0;
 
-  vector< double > getVectorState(vector<State>);
+  vector< double > getVectorState(vector<State>) const;
   // Calculates the new State from the ith neural network in the CCEA pool
   //   using the result of ComputeNNInput with the jointstate as input.
   //
@@ -78,6 +78,10 @@ class Agent {
   //   a new position (ie, when it chooses between two other networks).
   virtual State executeNNControlPolicy(size_t, vector<State>);
   virtual State getNextState(size_t, vector<State>) const;
+
+  virtual State getNextState(size_t, VectorXd) const;
+
+  vector< State > allNextGetNextState(VectorXd) const;
   void move(State);
   
   // Sets initial simulation parameters, including rover positions. Clears

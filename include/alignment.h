@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef Alignment_H_
-#define Alignment_H_
+#ifndef alignment_H_
+#define alignment_H_
 
 #include <float.h>
 #include <vector>
@@ -107,4 +107,4 @@ class Alignment {
   double align_mag;
 };
 
-#endif //Alignment_H_
+#endif //alignment_H_

@@ -1,9 +1,9 @@
 /*******************************************************************************
-AlignmentAgent.h
+TeamObjective.h
 
-Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but it uses alignment to choose between
-a set of neural nets (policies).
+Team formation reward. A reward is given for the number of teams formed, as 
+  defined by proximity to a team leader. An agent can only be a member of one
+  team.
 
 Authors: Eric Klinkhammer
 
@@ -26,21 +26,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENT_AGENT_H
-#define ALIGNMENT_AGENT_H
+#ifndef TeamObjective_H_
+#define TeamObjective_H_
 
-#include "NeuralRover.h"
-#include "alignments.h"
+#include "Objective.h"
+#include <vector>
 
-class AlignmentAgent : public NeuralRover {
+using std::vector;
+
+class TeamObjective : public Objective {
  public:
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
-    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
+  TeamObjective();
+  TeamObjective(int c, double observationR, double minR);
+  
 
-  virtual State getNextState(size_t i, vector<State> jointState) const;
-  Alignments* alignmentMap;
- protected:
-  virtual Agent* copyAgent() const;
+  /**
+     The reward if agents were treated as POIs.
+   **/
+  virtual double reward(Env* env);
+
+ private:
+  int coupling;
+  double observationRadius;
+  double minRadius;
 };
 
-#endif // ALIGNMENT_AGENT_H
+#endif//TeamObjective_H_

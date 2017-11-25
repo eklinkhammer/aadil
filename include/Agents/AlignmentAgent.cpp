@@ -28,22 +28,17 @@ SOFTWARE.
 
 #include "AlignmentAgent.h"
 
-AlignmentAgent::AlignmentAgent(Fitness f, std::vector<NeuralNet> ns, Alignment* as,
-			       std::vector< std::vector<size_t>> indices, size_t nOut)
-  : NeuralRover(1,0,f,ns,indices,nOut), alignmentMap(as) {}
-
-State AlignmentAgent::getNextState(size_t i, std::vector<State> jointState) const {
-  std::vector<double> key = getVectorState(jointState);
+State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
+  std::vector<double> key = getVectorState(jointState);  
   std::vector< Alignment > alignments = alignmentMap->getAlignmentsNN(key);
-
   if (alignments.size() < 1) {
     return getCurrentState();
   }
-  
+
   Alignment max;
-  size_t bestAlign = -1;
+  size_t bestAlign = 0;
   for (size_t align_i = 0; align_i < alignments.size(); align_i++) {
-    if (alignments[align_i].alignScore() > max.alignScore() ||
+    if (alignments[align_i].alignScore() < max.alignScore() ||
 	(alignments[align_i].alignScore() == max.alignScore() &&
 	 alignments[align_i].alignMag() > max.alignMag())) {
       max = alignments[align_i];
@@ -51,14 +46,24 @@ State AlignmentAgent::getNextState(size_t i, std::vector<State> jointState) cons
     }
   }
 
-  NeuralNet* policy = netsX[align_i];
-  std::vector< size_t > indices = index[align_i];
+  // for (const auto& i : netsX) {
+  //   std::cout << i << std::endl;
+  // }
 
-    vector<size_t> inds = index[max_index];
+  // std::cout << bestAlign << " " << alignments.size() << std::endl;
+  // std::cout << netsX.size() << " " << index.size() << std::endl;
+  NeuralNet* policy = netsX[bestAlign];
+  std::vector<size_t> inds = index[bestAlign];
 
+  vector<Vector2d> justPos;
+  for (const auto& s : jointState) {
+    justPos.push_back(s.pos());
+  }
+
+  VectorXd inp = ComputeNNInput(justPos);
   VectorXd newInp;
   newInp.setZero(inds.size(),1); // set to size inds
-  
+
   int index_input = 0;
   for (size_t i : inds) {
     newInp(index_input) = inp(i);
@@ -79,4 +84,9 @@ State AlignmentAgent::getNextState(size_t i, std::vector<State> jointState) cons
 
   State s(currentXY, currentPsi);
   return s;
+}
+
+Agent* AlignmentAgent::copyAgent() const {
+  AlignmentAgent* copy = new AlignmentAgent(netsX, alignmentMap, index);
+  return copy;
 }

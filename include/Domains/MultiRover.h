@@ -17,7 +17,6 @@
 #include "Agents/TeamFormingAgent.h"
 #include "Agents/ExploringAgent.h"
 #include "Agents/OnlyPOIRover.h"
-#include "Agents/Controlled.h"
 
 #include "Env.h"
 #include "Objective.h"
@@ -45,11 +44,19 @@ class MultiRover{
 	       Fitness f, size_t rovs, int c, AgentType);
 
     // MultiRover with NeuralRovers
-    MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t numPOIs,
-	       Fitness f, size_t rovs, int c, vector<vector<NeuralNet*>>,
-	       vector< vector<size_t> >, bool controlled = false);
-    ~MultiRover();
+    /* MultiRover(vector<double> w, size_t numSteps, size_t numPOIs, */
+    /* 	       size_t rovs, vector<vector<NeuralNet*>>, */
+    /* 	       vector< vector<size_t> >, Alignments*); */
 
+    
+    MultiRover(vector<double> w, size_t numSteps, size_t numPOIs,
+    			   size_t rovs, vector<Agent*> agents)
+      : world(w), nSteps(numSteps), nPop(1), nPOIs(numPOIs), nRovers(rovs),
+      coupling(1), fitness(Fitness::G), outputEvals(false), outputTrajs(false),
+      outputQury(false), outputBlf(false), gPOIObs(false), verbose(true),
+      biasStart(true), roverTeam(agents), type(AgentType::C) {};
+    
+    ~MultiRover();
 
     // Gets each agent's first neural net. Does not get the best net.
     vector<NeuralNet*> getNNTeam();
@@ -58,8 +65,9 @@ class MultiRover{
     void InitialiseEpoch();
 
     void InitialiseEpochFromVectors(vector<Target>, vector<Vector2d>);
+    void InitialiseEpochFromOtherDomain(MultiRover* domain);
     
-    void SimulateEpoch(bool train, Objective* o) ;
+    double SimulateEpoch(bool train, Objective* o) ;
 
     // Runs a simulation in an environment for the set number of steps.
     // Returns the reward of that environment
@@ -190,6 +198,7 @@ class MultiRover{
     std::ofstream trajChoiceFile;
     
     vector< vector<size_t> > RandomiseTeams(size_t) ;
+
 } ;
 
 #endif // MULTIROVER_H_

@@ -42,7 +42,38 @@ Agent::~Agent() {
   AgentNE = 0;
 }
 
-vector<double> Agent::getVectorState(vector<State> jointState) {
+State Agent::getNextState(size_t i, VectorXd inp) const {
+  //std::cout << "Get Next State Vector" << std::endl;
+
+  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
+
+  // Transform to global frame
+  Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
+  Vector2d deltaXY = Body2Global*out;
+  double deltaPsi = atan2(out(1),out(0));
+  
+  // Move
+  //std::cout << "Current State: " << getCurrentState();
+  //std::cout << " Delta State: " << State(deltaXY, deltaPsi);
+  Vector2d currentXY = getCurrentXY() + deltaXY;
+  double currentPsi = getCurrentPsi() + deltaPsi;
+  currentPsi = pi_2_pi(currentPsi);
+
+  State s(currentXY, currentPsi);
+  return s;
+}
+
+vector<State> Agent::allNextGetNextState(VectorXd inp) const {
+  vector<State> states;
+  
+  for (size_t i = 0; i < popSize; i++) {
+    states.push_back(getNextState(i, inp));
+  }
+
+  return states;
+}
+
+vector<double> Agent::getVectorState(vector<State> jointState) const {
   vector<Vector2d> locs;
   for (const auto& s : jointState) {
     locs.push_back(s.pos());
@@ -64,22 +95,7 @@ State Agent::getNextState(size_t i, vector<State> jointState) const {
   }
 
   VectorXd inp = ComputeNNInput(justPos);
-  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
-
-  // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
-  Vector2d deltaXY = Body2Global*out;
-  double deltaPsi = atan2(out(1),out(0));
-  
-  // Move
-  //std::cout << "Current State: " << getCurrentState();
-  //std::cout << " Delta State: " << State(deltaXY, deltaPsi);
-  Vector2d currentXY = getCurrentXY() + deltaXY;
-  double currentPsi = getCurrentPsi() + deltaPsi;
-  currentPsi = pi_2_pi(currentPsi);
-
-  State s(currentXY, currentPsi);
-  return s;
+  return getNextState(i, inp);
 }
 
 void Agent::move(State newState) {

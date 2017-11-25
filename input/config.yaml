@@ -1,37 +1,40 @@
 # A list of all experiments to run
 # All entries in this list must be a top level node in 
 experiments:
-  - agentstate
+  #- agentstate
   #- twoagent
   #- threeagent
   #- onepoi
+  #- coupled
   #- rover
   #- exploreone
   #- exploretwo
+  #- teamforming2
+  #- teamforming3
+  #- teamforming4
+  #- teams2
+  #- teams3
+  #- teams4
+  - coupled
+  - coupledNoBias
+  #- control
 
-agentstate:
+control:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 20.0
-    ymax: 20.0
+    xmax: 40.0
+    ymax: 40.0
   ccea_pop: 15
-  nRovs: 3
-  nPOIs: 1
-  targets:
-    - x: 2
-      y: 3
-      coupling: 1
-      value: 10
-  agents:
-    - x: 5
-      y: 2
+  nRovs: 6
+  nPOIs: 4
   coupling: 1
-  nEps: 1
-  nSteps: 20
-  biasStart: 0
+  nEps: 200
+  nSteps: 25
+  biasStart: 1
   staticOrRandom: 1
   type: R
+  output: 1
   ind:
     - 0
     - 1
@@ -41,24 +44,23 @@ agentstate:
     - 5
     - 6
     - 7
-  output: 1
   objective:
-    type: T
-    coupling: 2
+    type: G
+    coupling: 3
     obsR: 4
-  
-threeagent:
+    
+teamforming2:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
+    xmax: 40.0
+    ymax: 40.0
   ccea_pop: 15
-  nRovs: 6
+  nRovs: 2
   nPOIs: 0
-  coupling: 3
+  coupling: 1
   nEps: 200
-  nSteps: 15
+  nSteps: 20
   biasStart: 0
   staticOrRandom: 1
   type: A
@@ -68,20 +70,172 @@ threeagent:
     - 2
     - 3
   output: 1
+  objective:
+    type: T
+    coupling: 1
+    obsR: 4
 
-# Coupling for POI only is fixed at 1
-onepoi:
+teamforming3:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 3
+  nPOIs: 0
+  coupling: 1
+  nEps: 200
+  nSteps: 30
+  biasStart: 0
+  staticOrRandom: 1
+  type: A
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+  output: 1
+  objective:
+    type: T
+    coupling: 2
+    obsR: 4
+
+teamforming4:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 4
+  nPOIs: 0
+  coupling: 1
+  nEps: 200
+  nSteps: 35
+  biasStart: 0
+  staticOrRandom: 1
+  type: A
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+  output: 1
+  objective:
+    type: T
+    coupling: 3
+    obsR: 4
+
+teams2:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 6
+  nPOIs: 0
+  coupling: 1
+  nEps: 200
+  nSteps: 20
+  biasStart: 0
+  staticOrRandom: 1
+  type: A
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+  output: 1
+  objective:
+    type: UT
+    coupling: 2
+    obsR: 4
+
+teams3:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 9
+  nPOIs: 0
+  coupling: 1
+  nEps: 200
+  nSteps: 25
+  biasStart: 0
+  staticOrRandom: 1
+  type: A
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+  output: 1
+  objective:
+    type: UT
+    coupling: 3
+    obsR: 4
+
+teams4:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 12
+  nPOIs: 0
+  coupling: 1
+  nEps: 200
+  nSteps: 30
+  biasStart: 0
+  staticOrRandom: 1
+  type: A
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+  output: 1
+  objective:
+    type: UT
+    coupling: 4
+    obsR: 4
+
+
+NeuralRover:
   world:
     xmin: 0.0
     ymin: 0.0
     xmax: 30.0
     ymax: 30.0
   ccea_pop: 15
+  nRovs: 4
+  nPOIs: 4
+  coupling: 6
+  nEps: 200
+  nSteps: 20
+  biasStart: 0
+  staticOrRandom: 1
+  type: R
+  output: 1
+  input: 0
+    
+onepoi:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
   nRovs: 1
-  nPOIs: 2
-  coupling: 1 
-  nEps: 100
-  nSteps: 15
+  nPOIs: 3
+  coupling: 1
+  nEps: 200
+  nSteps: 20
   biasStart: 1
   staticOrRandom: 1
   type: P
@@ -91,22 +245,27 @@ onepoi:
     - 5
     - 6
     - 7
+  objective:
+    type: G
+    coupling: 1
+    obsR: 4
 
-rover:
+coupled:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
+    xmax: 40.0
+    ymax: 40.0
   ccea_pop: 15
-  nRovs: 2
-  nPOIs: 2
+  nRovs: 4
+  nPOIs: 4
   coupling: 1
   nEps: 200
-  nSteps: 20
+  nSteps: 25
   biasStart: 1
   staticOrRandom: 1
   type: R
+  output: 1
   ind:
     - 0
     - 1
@@ -116,7 +275,42 @@ rover:
     - 5
     - 6
     - 7
+  objective:
+    type: G
+    coupling: 2
+    obsR: 4
+
+coupledNoBias:
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 4
+  nPOIs: 4
+  coupling: 1
+  nEps: 200
+  nSteps: 30
+  biasStart: 0
+  staticOrRandom: 1
+  type: R
   output: 1
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 2
+    obsR: 4
+
+# Coupling for POI only is fixed at 1
 
 exploretwo:
   world:
@@ -162,20 +356,3 @@ exploreone:
     - 2
     - 3
     
-NeuralRover:
-  world:
-    xmin: 0.0
-    ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
-  ccea_pop: 1
-  nRovs: 12
-  nPOIs: 4
-  coupling: 6
-  nEps: 1
-  nSteps: 20
-  biasStart: 1
-  staticOrRandom: 1
-  type: R
-  output: 1
-  input: 0

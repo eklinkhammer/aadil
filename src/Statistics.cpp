@@ -1,9 +1,8 @@
 /*******************************************************************************
-AlignmentAgent.h
+Statistics.h
 
-Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but it uses alignment to choose between
-a set of neural nets (policies).
+Calculation of statistics. Intended for use in reportd.
+
 
 Authors: Eric Klinkhammer
 
@@ -26,21 +25,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENT_AGENT_H
-#define ALIGNMENT_AGENT_H
+#include "Statistics.h"
 
-#include "NeuralRover.h"
-#include "alignments.h"
+double mean(std::vector<double> xs) {
+  double sum = 0.0;
+  double num = (double) xs.size();
 
-class AlignmentAgent : public NeuralRover {
- public:
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
-    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
+  if (num < 1) {
+    return 0;
+  }
+    
+  for (const auto& x : xs) {
+    sum += x;
+  }
 
-  virtual State getNextState(size_t i, vector<State> jointState) const;
-  Alignments* alignmentMap;
- protected:
-  virtual Agent* copyAgent() const;
-};
+  return sum / num;
+}
 
-#endif // ALIGNMENT_AGENT_H
+double variance(std::vector<double> xs) {
+
+  double u = mean(xs);
+  double n = (double) xs.size();
+  double sum = 0.0;
+  
+  if (n < 1) {
+    return 0;
+  }
+
+  for (const auto& x : xs) {
+    sum += pow(x - u, 2);
+  }
+
+  return sum / n;
+}
+
+double stddev(std::vector<double> xs) {
+  double n = (double) xs.size();
+  if (n < 1) {
+    return 0;
+  }
+
+  return sqrt(variance(xs));
+}
+
+double statstderr(std::vector<double> xs) {
+  double n = (double) xs.size();
+  if (n < 1) {
+    return 0;
+  }
+
+  return stddev(xs) / sqrt(n);
+}

@@ -31,6 +31,7 @@ SOFTWARE.
 #include <vector>
 #include <Eigen/Eigen>
 #include <iostream>
+#include <math.h>
 
 using namespace Eigen;
 
@@ -47,6 +48,10 @@ class State {
   Vector2d pos() const { return _pos; }
   double psi() const { return _psi; }
 
+  double distance (const State other) const {
+    return (_pos - other.pos()).norm();
+  };
+  
   friend std::ostream& operator<<(std::ostream &strm, const State &state) {
     return strm << "(" << state.pos()(0) << "," << state.pos()(1) << ")," << state.psi();
   }

@@ -29,11 +29,7 @@ SOFTWARE.
 #ifndef NEURAL_ROVER_H
 #define NEURAL_ROVER_H
 
-#include "Learning/NeuralNet.h"
 #include "Rover.h"
-
-#include <iostream>
-#include <string>
 
 using std::string;
 using std::vector;

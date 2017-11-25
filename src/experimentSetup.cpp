@@ -87,6 +87,8 @@ Objective* objFromYAML(YAML::Node node, string key) {
   } else if (objLabel.compare(teamS) == 0) {
     //std::cout << teamS << std::endl;
     return new TeamForming(coupling, observationR, 1);
+  } else if (objLabel.compare(teamOS) == 0) {
+    return new TeamObjective(coupling, observationR, 1);
   }
 
   return NULL;

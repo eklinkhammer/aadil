@@ -79,17 +79,17 @@ void Alignments::addAlignments(Env* env) {
     alignments.insert(keyVal);
   }
 }
-  
-void Alignments::addAlignments(MultiRover* domain) {
-  Env env(domain->getWorld(), domain->getAgents(), domain->getPOIs(), domain->getNPop());
-  env.init(domain->getInitialStates());
-  addAlignments(&env);
-}
 
 void Alignments::addAlignments(int num) {
   for (int i = 0; i < num; i++) {
     addAlignments();
   }
+}
+
+void Alignments::addAlignments(MultiRover* domain) {
+  Env env(domain->getWorld(), domain->getAgents(), domain->getPOIs(), domain->getNPop());
+  env.init(domain->getInitialStates());
+  addAlignments(&env);
 }
 
 void Alignments::addAlignments() {
@@ -110,6 +110,65 @@ void Alignments::addAlignments() {
   addAlignments(&domain);
 }
 
+// void Alignments::addAlignments() {
+//   std::random_device rd;     // only used once to initialise (seed) engine
+//   std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
+//   std::uniform_int_distribution<int> uni(3,10); // guaranteed unbiased
+//   std::uniform_real_distribution<double> und(10,100);
+  
+//   double max_x = und(rng);
+//   double max_y = und(rng);
+//   std::vector<double> world = {0, max_x, 0, max_y};
+  
+//   int rovs = uni(rng);
+//   int pois = uni(rng);
+
+//   std::vector<Agent*> agents;
+//   for (size_t i = 0; i < rovs; i++) {
+//     agents.push_back(new Rover(1,1,Fitness::G));
+//   }
+
+//   double rangeX = world[1] - world[0] ;
+//   double rangeY = world[3] - world[2] ;
+
+//   std::vector<State> initialStates;
+//   for (size_t i = 0; i < rovs; i++){
+//     Vector2d initialXY ;
+//     initialXY(0) = rand_interval(world[0]+rangeX/3.0,world[1]-rangeX/3.0);
+//     initialXY(1) = rand_interval(world[2]+rangeY/3.0,world[3]-rangeX/3.0);
+//     double initialPsi = rand_interval(-PI,PI) ;
+//     State s(initialXY, initialPsi);
+//     initialStates.push_back(s);
+//   }
+  
+//   std::vector<Target> POIs;
+//   for (size_t p = 0; p < pois; p++) {
+//     Vector2d xy ;
+//     double x, y ;
+//     bool accept = false ;
+//     while (!accept){
+//       x = rand_interval(world[0],world[1]) ;
+//       y = rand_interval(world[2],world[3]) ;
+      
+//       accept = !(x > world[0]+rangeX/3.0 &&
+// 		 x < world[1]-rangeX/3.0 &&
+// 		 y > world[2]+rangeY/3.0 &&
+// 		 y < world[3]-rangeX/3.0);
+//     }
+    
+//     xy(0) = x ; // x location
+//     xy(1) = y ; // y location
+//     double v = rand_interval(1,10) ; // value
+//     POIs.push_back(Target(xy, 1, 1));
+//   }
+
+//   Env env(world, agents, POIs, 1);
+//   env.init(initialStates);
+//   addAlignments(&env);
+// }
+
+
+// This linearly searches. Should be using a K-d tree. Convert at later date
 std::vector< Alignment > Alignments::getAlignmentsNN(std::vector< double > inputState) {
   double minDistance = DBL_MAX;
   std::vector< Alignment > bestAlign;

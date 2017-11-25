@@ -27,14 +27,18 @@ SOFTWARE.
 #include <string>
 #include <Eigen/Eigen>
 
-#include "Domains/MultiRover.h"
 #include "experimentUtil.h"
 
 #include "Domains/Objective.h"
 #include "Domains/G.h"
 #include "Domains/TeamForming.h"
+#include "Domains/TeamObjective.h"
 
+#include "Agents/AlignmentAgent.h"
 #include "alignments.h"
+#include "Statistics.h"
+
+#include <time.h>
 
 using std::vector ;
 using std::string ;
@@ -190,7 +194,7 @@ void trainDomain(MultiRover* domain, YAML::Node root, std::string key, std::stri
   bool toOutput = (output == 1);
   
   string type = stringFromYAML(root, typeS);
-  AgentType t = stringToAgentType(type);
+  // AgentType t = stringToAgentType(type);
 
   int staticOrRandom = intFromYAML(root, staticOrRandomS);
   bool random = staticOrRandom == 1;
@@ -207,25 +211,38 @@ void configureOutput(MultiRover* domain, string fileDir, string id) {
   domain->OutputTrajectories(trajFile, poiFile, choiceFile);
 }
 
+void inspectAgent(MultiRover* domain, VectorXd input) {
+  vector<Agent*> agents = domain->getAgents();
+
+  for (const auto& agent : agents) {
+    vector<State> states = agent->allNextGetNextState(input);
+    std::cout << "Current State" << std::endl;
+    std::cout << agent->getCurrentState() << std::endl;
+    for (const auto& state : states) {
+      std::cout << state << std::endl;
+    }
+  }
+}
 int main() {
+  time_t time_before, time_after;
+  // I want to find the number of episodes after which an objective is
+  // within a certain percetange of its maximum value
+
+
   // Configure IO, ask for user input, and output config files
   // std::cout << "Experiment configs file: " << std::endl;
   // std::cout << config << std::endl;
 
   YAML::Node config = YAML::LoadFile("../input/config.yaml");
   
+
   int trialNum = 1;//readTrialNum();
   string fileDir = "Results/" + std::to_string(trialNum);
   makeDir(fileDir);
 
-  // vector< Objective* > objs;
-  // G g(1,100,1);
-  // TeamForming t(2,2,1);
-  // objs.push_back(&g);
-  // objs.push_back(&t);
-
-  // Alignments as(objs,10);
-  // as.addAlignments();
+  vector< Objective* > objs;
+  G global(4,4,1);
+  objs.push_back(&global);
 
   
   YAML::Node experiments = nodeFromYAML(config, "experiments");
@@ -237,42 +254,118 @@ int main() {
   }
 
   vector< Env* > envs;
+  
   vector< vector<size_t>> inds;
-
+  vector< vector< NeuralNet* > > teams;
+  
   MultiRover* domain;
-  Objective* g;
+  Objective* o;
+
+  VectorXd input;
   for (auto& expKey : experimentStrings) {
     YAML::Node expNode = nodeFromYAML(config, expKey);
+    
+    o = objFromYAML(expNode, objectiveS);
+    string type = stringFromYAML(expNode, typeS);
 
-    domain = getDomain(expNode);
-    g = objFromYAML(expNode, objectiveS);
-    trainDomain(domain, expNode, expKey, fileDir, g);
-    //    Env* env = trainAndGetEnv(expNode, expKey, fileDir);
-    // vector<size_t> ind = fromYAML<vector<size_t>>(expNode, "ind");
-    //envs.push_back(env);
-    //inds.push_back(ind);
-  }
+    // Section to find best episode length
+    for (size_t eps = 100; eps <= 500; eps+=50) {
+      vector<double> epScores;
+      vector<double> times;
+      std::cout << "Training " << expKey << " for " << eps << " episodes ";
+      for (size_t repsEp = 0; repsEp < 10; repsEp++) {
+    	std::cout << ".";
+    	std::flush(std::cout);
+    	domain = getDomain(expNode);
+    	domain->setVerbose(false);
+    	time(&time_before);
+    	trainDomain(domain, eps, false, 20, type, fileDir, expKey, true, o);
+    	time(&time_after);
+    	double diff = difftime(time_after, time_before);
+    	times.push_back(diff);
 
-  // YAML::Node root = nodeFromYAML(config, "NeuralRover");
+    	vector<size_t> agents(domain->getNRovers(), 0);;
+    	vector<double> scores;
+    	// Test this trained domain with a random team and get rewards
+    	for (size_t reps = 0; reps < 25; reps++) {
+    	  domain->InitialiseEpoch();
+    	  domain->ResetEpochEvals();
+    	  scores.push_back(domain->runSim(domain->createSim(domain->getNPop()), agents, o));
+    	} // For test reps
 
-  //   // Get variables from node to construct domain
-  // size_t nRovs  = size_tFromYAML(root, nRovsS);
-  // size_t nPOIs  = size_tFromYAML(root, nPOIsS);
-  // size_t nSteps = size_tFromYAML(root, nStepsS);
-  // int coupling  = intFromYAML(root, couplingS);
+    	epScores.push_back(mean(scores));
+      } // Running multiple trials per epsidoe length (for repsEp)
+      std::cout << " Mean: " << mean(epScores) << "Stddev: " << stddev(epScores)
+		<< " Time: " << mean(times) << std::endl;
+    } // For eps
+    
+    // End section to find best episode length
 
-  // string type = stringFromYAML(root, typeS);
-  // AgentType t = stringToAgentType(type);
+    // Begin section to find best agent team
+    vector< NeuralNet* > bestTeam;
+    vector<size_t> agents(domain->getNRovers(), 0);
+    vector<double> scores;
+    double bestScore = 0.0;
 
-  // size_t cceaPop = size_tFromYAML(root, cceaPopS);
-  // size_t nEps = size_tFromYAML(root, nEpsS);
+    std::cout << "Training neural network team for " << expKey;
+    for (size_t t = 0; t < 10; t++) {
+      std::cout << ".";
+      std::flush(std::cout);
+      domain = getDomain(expNode);
+      domain->setVerbose(false);
+      trainDomain(domain, expNode, expKey, fileDir, o);
+      for (size_t reps = 0; reps < 25; reps++) {
+	domain->InitialiseEpoch();
+	domain->ResetEpochEvals();
+	scores.push_back(domain->runSim(domain->createSim(domain->getNPop()), agents, o));
+      }
+      
+      double newScore = mean(scores);
+      if (newScore > bestScore) {
+	bestScore = newScore;
+	bestTeam = domain->getNNTeam();
+      }
+      
+    }
+    std::cout << " Done." << std::endl;
+    teams.push_back(bestTeam);
+    // End section that finds best agent team
+    //trainDomain(domain, expNode, expKey, fileDir, o);
+    vector<size_t> ind = fromYAML<vector<size_t>>(expNode, "ind");
+    inds.push_back(ind);
+    //teams.push_back(domain->getNNTeam());
+    objs.push_back(o);
+  } // for each experiment
+  
+   //input.setZero(4,1);
+  //input(0) = 2;
+  //    input(4) = 1;
+  
+  //inspectAgent(domain, input);
 
+  // Control World
+  std::cout << "Training control..." << std::endl;
+  YAML::Node root = nodeFromYAML(config, "NeuralRover");
+  domain = getDomain(root);
+  trainDomain(domain, root, "Control", fileDir, &global);
+  
+  Alignments as(objs, 10);
+  
 
-  // double xmin = fromYAML<double>(root, xminS);
-  // double ymin = fromYAML<double>(root, yminS);
-  // double xmax = fromYAML<double>(root, xmaxS);
-  // double ymax = fromYAML<double>(root, ymaxS);
-  // std::vector<double> world = {xmin, xmax, ymin, ymax};
+  // Alignment Domain
+  // Get variables from node to construct domain
+  size_t nRovs  = size_tFromYAML(root, nRovsS);
+  size_t nPOIs  = size_tFromYAML(root, nPOIsS);
+  size_t nSteps = size_tFromYAML(root, nStepsS);
+  int coupling  = intFromYAML(root, couplingS);
+
+  string type = stringFromYAML(root, typeS);
+
+  double xmin = fromYAML<double>(root, xminS);
+  double ymin = fromYAML<double>(root, yminS);
+  double xmax = fromYAML<double>(root, xmaxS);
+  double ymax = fromYAML<double>(root, ymaxS);
+  std::vector<double> world = {xmin, xmax, ymin, ymax};
 
   // bool controlled = false;
   // int controlInt = intFromYAML(root, "input");
@@ -280,18 +373,53 @@ int main() {
   //   controlled = true;
   // }
 
-  // std::cout << "Got to domain creation." << std::endl;
-  // MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, t);
-  // //MultiRover domain(world, nSteps, cceaPop, nPOIs, Fitness::G, nRovs, coupling, neuralNets, inds, controlled);
+  vector< Agent* > roverTeam;
+  for (size_t i = 0; i < nRovs; i++) {
+    vector<NeuralNet*> netsAgent;
+    for (size_t j = 0; j < teams.size(); j++) {
+      int netI = teams[j].size() > i ? i : 0;
+      netsAgent.push_back(teams[j][netI]);
+    }
 
-  // int biasStart = intFromYAML(root, biasStartS);
-  // if (biasStart == 0) {
-  //   domain.setBias(false);
-  // }
+    roverTeam.push_back(new AlignmentAgent(netsAgent, &as, inds));
+  }
+  
+  std::cout << "Creating domain with alignment agents." << std::endl;
+  MultiRover domainD(world, nSteps, nPOIs, nRovs, roverTeam);
 
-  // domain.setVerbose(true);
-  // domain.InitialiseEpoch();
-  // domain.ResetEpochEvals();
-  // domain.simulateWithAlignment(false, envs);
+  int biasStart = intFromYAML(root, biasStartS);
+  if (biasStart == 0) {
+    domainD.setBias(false);
+  }
+
+  vector< size_t > agentsForSim(nRovs, 0);
+  for (int m = 1; m < 17; m++) {
+    std::cout << "Adding alignment values to map... " << m*50 << std::endl;
+    as.addAlignments(50);
+    domainD.setVerbose(false);
+    domain->setVerbose(false);
+    std::vector<double> alignScores;
+    std::vector<double> policyScores;
+
+    for (int reps = 0; reps < 100; reps++) {
+      //std::cout << "Aignment Score: ";
+      domainD.InitialiseEpoch();
+      domain->InitialiseEpochFromOtherDomain(&domainD);
+
+      
+      alignScores.push_back(domainD.runSim(domainD.createSim(domainD.getNPop()),
+					   agentsForSim, o));
+      policyScores.push_back(domain->runSim(domain->createSim(domain->getNPop()),
+					    agentsForSim, o));
+      domainD.ResetEpochEvals();
+      domain->ResetEpochEvals();
+    }
+
+    std::cout << "Alignment Mean: " << mean(alignScores) << " StdDev: "
+	      << stddev(alignScores) << " StdErr: " << statstderr(alignScores) << std::endl;
+    
+    std::cout << "Policy Mean:    " << mean(policyScores) << " StdDev: "
+	      << stddev(policyScores) << " StdErr: " << statstderr(policyScores) << std::endl;
+  }
   return 0 ;
 }

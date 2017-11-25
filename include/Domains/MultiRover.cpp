@@ -10,31 +10,26 @@ MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
   initRovers();
 }
 
-MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t numPop, size_t
-		       numPOIs, Fitness f, size_t rovs, int c,
-		       vector< vector<NeuralNet*> > nets, vector<vector<size_t>> inds,
-		       bool controlled)
-  : world(w), nSteps(numSteps), nPop(numPop), nPOIs(numPOIs), nRovers(rovs),
-    coupling(c), fitness(f), outputEvals(false), outputTrajs(false),
-    outputQury(false), outputBlf(false), gPOIObs(false), verbose(true),
-    biasStart(true) {
+// MultiRover::MultiRover(vector<double> w, size_t numSteps, size_t
+// 		       numPOIs, size_t rovs,
+// 		       vector< vector<NeuralNet*> > nets, vector<vector<size_t>> inds,
+// 		       Alignments* alignmentMap)
+//   : world(w), nSteps(numSteps), nPop(1), nPOIs(numPOIs), nRovers(rovs),
+//     coupling(1), fitness(Fitness::G), outputEvals(false), outputTrajs(false),
+//     outputQury(false), outputBlf(false), gPOIObs(false), verbose(true),
+//     biasStart(true) {
 
-  size_t nOut = inds.size();
-  for (size_t i = 0; i < nRovers; i++) {
-    vector<NeuralNet*> netsAgent;
-    for (size_t j = 0; j < nets.size(); j++) {
-      int netI = nets[j].size() == rovs ? i : 0;
-      netsAgent.push_back(nets[j][netI]);
-    }
-    if (controlled) {
-      // roverTeam.push_back(new Controlled(nSteps, nPop, fitness, netsAgent, inds, nOut));
-      type = AgentType::C;
-    } else {
-      roverTeam.push_back(new NeuralRover(nSteps, nPop, fitness, netsAgent, inds, nOut));
-      type = AgentType::M;
-    }
-  }
-}
+//   size_t nOut = inds.size();
+//   for (size_t i = 0; i < nRovers; i++) {
+//     vector<NeuralNet*> netsAgent;
+//     for (size_t j = 0; j < nets.size(); j++) {
+//       int netI = nets[j].size() > i ? i : 0;
+//       netsAgent.push_back(nets[j][netI]);
+//     }
+//     roverTeam.push_back(new AlignmentAgent(netsAgent, alignmentMap, inds));
+//     type = AgentType::C;
+//   }
+// }
 
 MultiRover::~MultiRover() {
   // for (size_t i = 0; i < nRovers; i++){
@@ -120,6 +115,20 @@ void MultiRover::InitialiseEpochFromVectors(vector<Target> targets,
   }
 }
 
+void MultiRover::InitialiseEpochFromOtherDomain(MultiRover* domain) {
+  vector< State > otherStates = domain->getInitialStates();
+  initialXYs.clear();
+  initialPsis.clear();
+  POIs.clear();
+
+  for (const auto& state : otherStates) {
+    initialXYs.push_back(state.pos());
+    initialPsis.push_back(state.psi());
+  }
+
+  POIs = domain->getPOIs();
+}
+
 
 vector< vector<size_t> > MultiRover::RandomiseTeams(size_t n){
   vector< vector<size_t> > teams ;
@@ -187,33 +196,32 @@ double MultiRover::runSim(Env* env, vector< size_t > teamIndex, Objective* o) {
 }
 
 Env* MultiRover::createSim(size_t teamSize) {
+  //std::cout << "Create sim" << std::endl;
   Env* env = new Env(world, roverTeam, POIs, teamSize);
-
+  //std::cout << "Create sim 2" << std::endl;
   vector< State > initState;
   for (size_t j = 0; j < nRovers; j++) {
     State s(initialXYs[j], initialPsis[j]);
     initState.push_back(s);
   }
 
+  //std::cout << "Create sim 3" << std::endl;
   env->init(initState);
-
+  //std::cout << "Create sim 4" << std::endl;
   return env;
 }
-void MultiRover::SimulateEpoch(bool train, Objective* o){
+
+double MultiRover::SimulateEpoch(bool train, Objective* o) {
   size_t teamSize = train ? 2*nPop : nPop;
-    
   // each row is the population for a single agent
   vector< vector<size_t> > teams = RandomiseTeams(teamSize) ; 
-
   if (outputTrajs) {
     printPOIs();
   }
-
   Env* env = createSim(teamSize);
-  
   double maxEval = 0.0 ;
   vector< size_t > netEachAgentUses;
-  
+  double eval = 0.0;
   for (size_t i = 0; i < teamSize; i++) { // looping across the columns of 'teams'
     // Initialise world and reset rovers and POIs
     vector< State > jointState ;
@@ -227,16 +235,18 @@ void MultiRover::SimulateEpoch(bool train, Objective* o){
       printJointState(jointState);
       toggleAgentOutput(true);
     }
-    
-    double eval = runSim(env, netEachAgentUses, o);
+
+    eval = runSim(env, netEachAgentUses, o);
     env->reset();
     maxEval = max(eval, maxEval);
-    
+
     // Assign fitness
     for (size_t j = 0; j < nRovers; j++) {
-      roverTeam[j]->SetEpochPerformance(eval, teams[j][i]) ;
+      if (type != AgentType::C) {
+	roverTeam[j]->SetEpochPerformance(eval, teams[j][i]) ;
+      }
     }
-    
+
     if (outputEvals) {
       evalFile << eval << "," ;
     }
@@ -250,6 +260,8 @@ void MultiRover::SimulateEpoch(bool train, Objective* o){
   if (verbose) {
     std::cout << "max achieved value: " << maxEval << "..." << std::endl;
   }
+
+  return eval;
 }
 
 void MultiRover::EvolvePolicies(bool init){
