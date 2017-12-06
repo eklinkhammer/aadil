@@ -14,9 +14,9 @@ experiments:
   #- teamforming4
   #- teams2
   #- teams3
-  #- teams4
-  - coupled
-  - coupledNoBias
+  - teams4
+  #- coupled
+  #- coupledNoBias
   #- control
 
 control:
@@ -26,15 +26,15 @@ control:
     xmax: 40.0
     ymax: 40.0
   ccea_pop: 15
-  nRovs: 6
-  nPOIs: 4
+  nRovs: 18
+  nPOIs: 6
   coupling: 1
-  nEps: 200
-  nSteps: 25
+  nEps: 1
+  nSteps: 15
   biasStart: 1
   staticOrRandom: 1
   type: R
-  output: 1
+  output: 0
   ind:
     - 0
     - 1
@@ -59,7 +59,7 @@ teamforming2:
   nRovs: 2
   nPOIs: 0
   coupling: 1
-  nEps: 200
+  nEps: 350
   nSteps: 20
   biasStart: 0
   staticOrRandom: 1
@@ -69,7 +69,7 @@ teamforming2:
     - 1
     - 2
     - 3
-  output: 1
+  output: 0
   objective:
     type: T
     coupling: 1
@@ -85,7 +85,7 @@ teamforming3:
   nRovs: 3
   nPOIs: 0
   coupling: 1
-  nEps: 200
+  nEps: 450
   nSteps: 30
   biasStart: 0
   staticOrRandom: 1
@@ -95,7 +95,7 @@ teamforming3:
     - 1
     - 2
     - 3
-  output: 1
+  output: 0
   objective:
     type: T
     coupling: 2
@@ -121,7 +121,7 @@ teamforming4:
     - 1
     - 2
     - 3
-  output: 1
+  output: 0
   objective:
     type: T
     coupling: 3
@@ -137,7 +137,7 @@ teams2:
   nRovs: 6
   nPOIs: 0
   coupling: 1
-  nEps: 200
+  nEps: 500
   nSteps: 20
   biasStart: 0
   staticOrRandom: 1
@@ -147,7 +147,7 @@ teams2:
     - 1
     - 2
     - 3
-  output: 1
+  output: 0
   objective:
     type: UT
     coupling: 2
@@ -163,7 +163,7 @@ teams3:
   nRovs: 9
   nPOIs: 0
   coupling: 1
-  nEps: 200
+  nEps: 500
   nSteps: 25
   biasStart: 0
   staticOrRandom: 1
@@ -173,7 +173,7 @@ teams3:
     - 1
     - 2
     - 3
-  output: 1
+  output: 0
   objective:
     type: UT
     coupling: 3
@@ -199,7 +199,7 @@ teams4:
     - 1
     - 2
     - 3
-  output: 1
+  output: 0
   objective:
     type: UT
     coupling: 4
@@ -239,7 +239,7 @@ onepoi:
   biasStart: 1
   staticOrRandom: 1
   type: P
-  output: 1
+  output: 0
   ind:
     - 4
     - 5

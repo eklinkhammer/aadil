@@ -65,7 +65,7 @@ class Alignment {
 	align_score = 6;
 	align_mag = reward1;
       } else {
-	align_score = 6;
+	align_score = 5;
 	align_mag = reward2 / reward1;
       }
     }

@@ -35,6 +35,20 @@ State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
     return getCurrentState();
   }
 
+  if (printOutput) {
+    std::cout << "Beginning output for alignment movement." << std::endl;
+    std::cout << "Input state (as vector): < ";
+    for (const auto& i : key) {
+      std::cout << i << " ";
+    }
+    std::cout << ">" << std::endl;
+
+    std::cout << "Alignment values for objectives: " << std::endl;
+    for (const auto& a : alignments) {
+      std::cout << a;
+    }
+  }
+  
   Alignment max;
   size_t bestAlign = 0;
   for (size_t align_i = 0; align_i < alignments.size(); align_i++) {
@@ -83,6 +97,12 @@ State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
   currentPsi = pi_2_pi(currentPsi);
 
   State s(currentXY, currentPsi);
+
+  if (printOutput) {
+    std::cout << "Chosen objective: " << bestAlign << std::endl;
+    std::cout << "Initial State: " << getCurrentState() << std::endl;
+    std::cout << "Next State: " << s << std::endl;
+  }
   return s;
 }
 
