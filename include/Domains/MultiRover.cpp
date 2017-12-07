@@ -240,13 +240,16 @@ double MultiRover::SimulateEpoch(bool train, Objective* o) {
     env->reset();
     maxEval = max(eval, maxEval);
 
-    // Assign fitness
+    // Assign fitness (G)
     for (size_t j = 0; j < nRovers; j++) {
       if (type != AgentType::C) {
 	roverTeam[j]->SetEpochPerformance(eval, teams[j][i]) ;
       }
     }
 
+    // If fitness is D -> eval is a vector
+    // eval / maxEval average
+    
     if (outputEvals) {
       evalFile << eval << "," ;
     }

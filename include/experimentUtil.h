@@ -35,6 +35,7 @@ SOFTWARE.
 #include "Domains/MultiRover.h"
 #include "yaml_constants.h"
 #include "experimentalSetup.h"
+#include "Learning/NeuroEvo.h"
 
 // Resets domain according to parameters in YAML Node
 // Note that a loop over YAML nodes can repeatedly call this function with
@@ -64,5 +65,10 @@ std::vector<NeuralNet> trainAndGetTeam(YAML::Node root, std::string, std::string
 AgentType stringToAgentType(std::string);
 
 void configureOutput(MultiRover*, std::string, std::string);
+
+std::vector<NeuroEvo*> readNetworksFromFile(const std::string filename,
+					    size_t numIn, size_t numH,
+					    size_t numOut, size_t numA,
+					    size_t numPop);
 
 #endif // _EXPERIMENT_UTIL_H

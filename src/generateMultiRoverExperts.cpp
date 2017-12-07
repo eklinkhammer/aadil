@@ -39,6 +39,7 @@ SOFTWARE.
 #include "Statistics.h"
 
 #include <time.h>
+#include <sys/stat.h>
 
 using std::vector ;
 using std::string ;
@@ -223,6 +224,92 @@ void inspectAgent(MultiRover* domain, VectorXd input) {
       //}
     //}
 }
+
+inline bool exists_test3 (const std::string& name) {
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); 
+}
+
+// Given an experiment node, finds the highest performing neural network
+//   team to satisfy that objective.
+vector< NeuralNet* > bestTeamForObjective(YAML::Node expNode, std::string expKey,
+					  MultiRover* domain, Objective* o,
+					  std::string fileDir) {
+  vector< NeuralNet* > bestTeam;
+
+  domain = getDomain(expNode);
+  
+  std::cout << "Getting the best team for " << expKey << std::endl;
+
+  bool train = boolFromYAML(expNode, trainS);
+  std::string filename = stringFromYAML(expNode, netfileS);
+  if (!train && exists_test3(filename)) {
+    std::cout << "Reading in training policies from " << filename << std::endl;
+    Agent* agent = domain->getAgents()[0];
+    size_t numIn = agent->getNumIn();
+    size_t numHidden = agent->getNumHidden();
+    size_t numOut = agent->getNumOut();
+    domain->loadNNs(filename, numIn, numHidden, numOut);
+    bestTeam = domain->getNNTeam();
+  } else {
+    vector<double> scores;
+    double bestScore = 0.0;
+    std::cout << "Training neural network team for " << expKey;
+    std::flush(std::cout);
+    for (size_t trial = 0; trial < 10; trial++) {
+      domain = getDomain(expNode);
+      vector<size_t> agents(domain->getNRovers(), 0);
+      trainDomain(domain, expNode, expKey, fileDir, o);
+      for (size_t reps = 0; reps < 1; reps++) {
+      	domain->InitialiseEpoch();
+      	domain->ResetEpochEvals();
+      	scores.push_back(domain->runSim(domain->createSim(domain->getNPop()), agents, o));
+      }
+      
+      double newScore = mean(scores);
+      if (newScore >= bestScore) {
+	bestScore = newScore;
+	bestTeam = domain->getNNTeam();
+	if (exists_test3(filename)) {
+	  std::string command = "rm " + filename;
+	  system(command.c_str());
+	}
+	domain->OutputControlPolicies(filename);
+      }
+      std::cout << ".";
+      std::flush(std::cout);
+    }
+    std::cout << " Done." << std::endl;
+  }
+  
+  return bestTeam;
+}
+vector<NeuroEvo*> readNetworksFromFile(const std::string filename, size_t numIn,
+				       size_t numH, size_t numOut, size_t numA,
+				       size_t numPop) {
+  
+  vector<NeuralNet*> loadedNN = NeuralNet::loadNNFromFile(filename, numIn,
+							  numH, numOut);
+
+  vector<NeuroEvo*> agentsNNs;
+  for (size_t i = 0; i < numA; i++) {
+
+    NeuroEvo* agentNNs = new NeuroEvo(numIn, numOut, numH, numPop);
+    for (size_t j = 0; j < numPop; j++) {
+      agentNNs->GetNNIndex(j)->SetWeights(loadedNN[i]->GetWeightsA(),
+					  loadedNN[i]->GetWeightsB());
+    }
+    agentsNNs.push_back(agentNNs);
+  }
+
+  for (size_t i = 0; i < loadedNN.size(); i++) {
+    delete loadedNN[i];
+    loadedNN[i] = NULL;
+  }
+
+  return agentsNNs;
+}
+
 int main() {
   time_t time_before, time_after;
   // I want to find the number of episodes after which an objective is
@@ -262,47 +349,21 @@ int main() {
   VectorXd input;
   for (auto& expKey : experimentStrings) {
     YAML::Node expNode = nodeFromYAML(config, expKey);
+
     o = objFromYAML(expNode, objectiveS);
+    teams.push_back(bestTeamForObjective(expNode, expKey, domain, o, fileDir));
 
-    // Begin section to find best agent team
-    vector< NeuralNet* > bestTeam;
-
-    vector<double> scores;
-    double bestScore = 0.0;
-
-    // Train a network team on the sub-objective. The best representative
-    //   team from 10 pools (as based on 25 test runs) will be chosen.
-    std::cout << "Training neural network team for " << expKey;
-    for (size_t t = 0; t < 1; t++) {
-      std::cout << ".";
-      std::flush(std::cout);
-      domain = getDomain(expNode);
-      vector<size_t> agents(domain->getNRovers(), 0);
-      trainDomain(domain, expNode, expKey, fileDir, o);
-      for (size_t reps = 0; reps < 1; reps++) {
-      	domain->InitialiseEpoch();
-      	domain->ResetEpochEvals();
-      	scores.push_back(domain->runSim(domain->createSim(domain->getNPop()), agents, o));
-      }
-      
-      double newScore = mean(scores);
-      if (newScore >= bestScore) {
-	bestScore = newScore;
-	bestTeam = domain->getNNTeam();
-      }
-      
-    }
-    std::cout << " Done." << std::endl;
-    teams.push_back(bestTeam);
-    for (size_t test = 0; test < 100; test++) {
-      input.setZero(4,1);
-      input(0) = 1.24;
-      input(1) = 0.39;
-      input(2) = test * 0.02;
-      input(3) = 0.13;
-      std::cout << "A3 is: " << input(2) << std::endl;
-      inspectAgent(domain, input);
-    }
+    // std::cout << " Done." << std::endl;
+    // teams.push_back(bestTeam);
+    // for (size_t test = 0; test < 100; test++) {
+    //   input.setZero(4,1);
+    //   input(0) = 1.24;
+    //   input(1) = 0.39;
+    //   input(2) = test * 0.02;
+    //   input(3) = 0.13;
+    //   std::cout << "A3 is: " << input(2) << std::endl;
+    //   inspectAgent(domain, input);
+    // }
     vector<size_t> ind = fromYAML<vector<size_t>>(expNode, "ind");
     inds.push_back(ind);
     objs.push_back(o);

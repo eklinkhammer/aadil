@@ -60,6 +60,8 @@ class Agent {
   Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t nOutput,
 	Fitness f);
 
+  Agent(NeuroEvo*, Fitness f);
+  
   virtual ~Agent();
   // Computes the input to the neural network using a list of actor joint states
   //
@@ -134,6 +136,10 @@ class Agent {
   void setOutputBool(bool toggle) { printOutput = toggle; }
   void openOutputFile(std::string filename);
   virtual Agent* copyAgent() const = 0;
+
+  size_t getNumIn()     const { return numIn; }
+  size_t getNumHidden() const { return numHidden; }
+  size_t getNumOut()    const { return numOut; }
   
   friend std::ostream& operator<<(std::ostream&, const Agent&);
   

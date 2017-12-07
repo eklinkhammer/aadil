@@ -4,7 +4,7 @@ experiments:
   #- agentstate
   #- twoagent
   #- threeagent
-  #- onepoi
+  - onepoi
   #- coupled
   #- rover
   #- exploreone
@@ -14,12 +14,21 @@ experiments:
   #- teamforming4
   #- teams2
   #- teams3
-  - teams4
+  #- teams4
   #- coupled
   #- coupledNoBias
   #- control
 
+# Explanation of variables for a single experiment
+# train : 1 - will train the neural nets regardless of if pre-trained nets are present.
+#         0 - will only train neural nets if pre-trained nets are not present
+# netfile: string - location neural nets will be stored and read from. Nets are
+#                      stored regardless of reading policy.
+# biasStart: 1 - Agents will start in center noc-tant. POIs are not in center noc-tant.
+#            0 - Agents are randomly placed in all of grid
 control:
+  train: 0
+  netfile: control.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -225,6 +234,8 @@ NeuralRover:
   input: 0
     
 onepoi:
+  train: true
+  netfile: onepoi.nets
   world:
     xmin: 0.0
     ymin: 0.0

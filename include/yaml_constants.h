@@ -30,6 +30,9 @@ const string obsRS = "obsR";
 const string teamS = "T";
 const string globalS = "G";
 const string teamOS = "UT";
+const string trainS = "train";
+const string netfileS = "netfile";
+
 // Accessor methods are overloaded to accept vectors -> will nest
 const vector<string> xminS = {"world", "xmin"};
 const vector<string> yminS = {"world", "ymin"};

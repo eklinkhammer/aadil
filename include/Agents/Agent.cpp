@@ -37,6 +37,19 @@ Agent::Agent(size_t n, size_t nPop, size_t nInput, size_t nHidden, size_t
   id = std::chrono::system_clock::now().time_since_epoch().count() % 100000;
 }
 
+Agent::Agent(NeuroEvo* nets, Fitness f) : nSteps(0), AgentNE(nets), fitness(f),
+					  printOutput(false) {
+  popSize = nets->GetCurrentPopSize();
+  if (popSize == 0) {
+    std::cerr << "The neuro evo passed did not have any neural networks" << std::endl;
+  }
+  
+  NeuralNet* net = nets->GetNNIndex(0);
+  numIn = net->getNI();
+  numHidden = net->getNH();
+  numOut = net->getNO();
+}
+
 Agent::~Agent() {
   delete(AgentNE);
   AgentNE = 0;
