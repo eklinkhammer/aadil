@@ -1,0 +1,7 @@
+Training objective G with coupling: 3 and obsR: 4.000000
+Eps: 0 Mean: 0.0581488 stddev: 0.0741856
+Eps: 50 Mean: 0.0643081 stddev: 0.083192
+Eps: 100 Mean: 0.0633293 stddev: 0.0798593
+Eps: 150 Mean: 0.0686785 stddev: 0.081078
+Eps: 200 Mean: 0.057407 stddev: 0.0784449
+Eps: 250 Mean: 0.0551407 stddev: 0.0724616

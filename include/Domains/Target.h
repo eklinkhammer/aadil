@@ -32,6 +32,7 @@ SOFTWARE.
 #include <Eigen/Eigen>
 #include <vector>
 #include "State.h"
+#include <queue>
 
 using namespace Eigen;
 
@@ -120,23 +121,35 @@ class Target{
     Vector2d other = t.GetLocation();
     return other(0) == loc(0) && other(1) == loc(1);
   }
+
+  void reset();
+  void resetObs();
+  void addObservation(State s) { addObservation(s.pos()); };
+  void addObservation(Vector2d xy);
+  double getScore(bool update);
+  void updateScore();
+  void resetNearestObs();
+  
  private:
-    Vector2d loc ;
-    double val ;
-    double obsRadius ;
-    double nearestObs ;
-    bool observed ;
-    size_t curTime ;
-    int coupling ;
-    
-    std::vector<double> nearestObsVector;
-    
-    void resetNearestObs();
-    int maxConsideredCouple;
+  std::priority_queue<double, std::vector<double>, std::greater<double>> obs;
+  double currentScore;
+  
+  Vector2d loc ;
+  double val ;
+  double obsRadius ;
+  double nearestObs ;
+  bool observed ;
+  size_t curTime ;
+  int coupling ;
+  
+  std::vector<double> nearestObsVector;
+  
+
+  int maxConsideredCouple;
  protected:
-    void setObserved(bool obs) { observed = obs; }
-    void setNearestObs(double nearest) { nearestObs = nearest; }
-    
+  void setObserved(bool obs) { observed = obs; }
+  void setNearestObs(double nearest) { nearestObs = nearest; }
+  
 };
 
 #endif // TARGET_H_

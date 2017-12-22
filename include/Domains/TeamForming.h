@@ -44,6 +44,7 @@ class TeamForming : public Objective {
    **/
   virtual double reward(Env* env);
 
+  virtual std::string getName() { return "TeamForming with coupling: " + std::to_string(coupling) + " and observation: " + std::to_string(observationRadius); };
  private:
   int coupling;
   double observationRadius;

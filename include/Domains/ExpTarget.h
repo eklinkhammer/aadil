@@ -1,9 +1,7 @@
 /*******************************************************************************
-AlignmentAgent.h
+ExpTarget.h
 
-Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but it uses alignment to choose between
-a set of neural nets (policies).
+Exponential for each additional POI an agent observes.
 
 Authors: Eric Klinkhammer
 
@@ -26,21 +24,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENT_AGENT_H
-#define ALIGNMENT_AGENT_H
+#ifndef EXP_TARGET_H
+#define EXP_TARGET_H
 
-#include "NeuralRover.h"
-#include "alignments.h"
+#include "Objective.h"
 
-class AlignmentAgent : public NeuralRover {
+#include <vector>
+#include <iostream>
+
+class ExpTarget : public Objective {
  public:
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
-    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
+  ExpTarget();
+  ExpTarget(double observationR);
 
-  virtual State getNextState(size_t i, vector<State> jointState) const;
-  Alignments* alignmentMap;
- protected:
-  virtual Agent* copyAgent() const;
+  virtual std::vector<double> rewardV(Env* env);
+
+  virtual std::string getName() { return "Exp target with observation radius: " + std::to_string(observationRadius); };
+
+ private:
+  double observationRadius;
 };
 
-#endif // ALIGNMENT_AGENT_H
+#endif

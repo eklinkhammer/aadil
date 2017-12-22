@@ -1,5 +1,6 @@
 #include "experimentalSetup.h"
 
+
 Target targetFromYAML(YAML::Node node) {
   Vector2d xy = vector2dFromYAML(node);
   int coupling = 1;
@@ -89,6 +90,10 @@ Objective* objFromYAML(YAML::Node node, string key) {
     return new TeamForming(coupling, observationR, 1);
   } else if (objLabel.compare(teamOS) == 0) {
     return new TeamObjective(coupling, observationR, 1);
+  } else if (objLabel.compare("D") == 0) {
+    return new D(coupling, observationR, 1);
+  } else if (objLabel.compare("Exp") == 0) {
+    return new ExpTarget(observationR);
   }
 
   return NULL;

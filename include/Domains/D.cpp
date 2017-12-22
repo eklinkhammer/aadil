@@ -26,48 +26,67 @@ SOFTWARE.
 
 #include "D.h"
 
+
 // Default values support heterogenous POIs
-G::G() : G(-1, -1, -1) {}
+D::D() : D(-1, -1, -1) {}
 	 
-G::G(int c, double observationR, double minR)
+D::D(int c, double observationR, double minR)
   : Objective(), coupling(c), observationRadius(observationR), minRadius(minR) {}
 
-// There are two ways to approach this. The first is the one below, where
-//   target's keep track of the best approach at each coupling. The alternative
-//   is to use Env's history of states and just apply them, in order, to the poi's
-double G::reward(Env* env) {
-  vector< Target > targets = env->getTargets(); // copied
+double D::reward(Env* env) {
 
+  G g(coupling, observationRadius, minRadius);
+
+  return g.reward(env);
+}
+
+vector<double> D::rewardV(Env* env) {
+  vector< Target > targets = env->getTargets(); // copied
+  vector< Agent* > agents = env->getAgents();
+  vector< double > rewards;
+  
   double reward = 0.0;
 
+  G g(coupling, observationRadius, minRadius);
+  double gR = g.reward(env);
+  
   double maxR = 0.0;
   //std::cout << "Number of agents: " << env->getHistoryStates()[0].size() << std::endl;
   //std::cout << "Number of pois: " << targets.size() << std::endl;
   // std::cout << "G Operator " << targets.size() << std::endl;
-  for (auto& target : targets) {
 
-    target.ResetTarget();
+  for (size_t agent = 0; agent < agents.size(); agent++) {
+
+    reward = 0;
+    maxR = 0;
     
-    if (coupling != -1) {
-      target.setCoupling(coupling);
-    }
+    for (auto& target : targets) {
 
-    if (observationRadius != -1) {
-      target.setObservationRadius(observationRadius);
-    }
-
-    // std::cout << "G Operator - History of states" << std::endl;
-    //std::cout << target.GetLocation() << std::endl;
-    for (const auto& ss : env->getHistoryStates()) {
-      //      target.observeTarget(ss);
-      for (const auto& s : ss) {
-	target.ObserveTarget(s.pos());
+      if (coupling != -1) {
+	target.setCoupling(coupling);
       }
+
+      if (observationRadius != -1) {
+	target.setObservationRadius(observationRadius);
+      }
+
+      target.ResetTarget();
+      
+      for (const auto& ss : env->getHistoryStates()) {
+	for (size_t a = 0; a < ss.size(); a++) {
+	  if (a != agent) {
+	    target.ObserveTarget(ss[a].pos());
+	  }
+	}
+	target.resetNearestObs();
+      }
+
+      maxR += target.GetValue();
+      reward += target.rewardAtCoupling(0);
     }
-    
-    reward += target.rewardAtCoupling(coupling);
-    maxR += target.GetValue();
+
+    rewards.push_back(gR - reward / maxR);
   }
 
-  return reward / maxR;
+  return rewards;
 }

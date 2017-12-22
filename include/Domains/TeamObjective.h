@@ -45,6 +45,8 @@ class TeamObjective : public Objective {
    **/
   virtual double reward(Env* env);
 
+  virtual std::string getName() { return "TeamObjective with team size of: " + std::to_string(coupling) + " observationRadius of " + std::to_string(observationRadius); };
+
  private:
   int coupling;
   double observationRadius;

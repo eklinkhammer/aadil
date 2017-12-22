@@ -1,0 +1,36 @@
+Training objective G
+Eps: 0 Mean: 0.053266 stddev: 0.136092
+Eps: 50 Mean: 0.183128 stddev: 0.233949
+Eps: 100 Mean: 0.20714 stddev: 0.2324
+Eps: 150 Mean: 0.277398 stddev: 0.25538
+Eps: 200 Mean: 0.203494 stddev: 0.237811
+Eps: 250 Mean: 0.174288 stddev: 0.236123
+Eps: 300 Mean: 0.294588 stddev: 0.24511
+Eps: 350 Mean: 0.259556 stddev: 0.244594
+Eps: 400 Mean: 0.223754 stddev: 0.246637
+Eps: 450 Mean: 0.160619 stddev: 0.22261
+Eps: 500 Mean: 0.208712 stddev: 0.251855
+Eps: 550 Mean: 0.223991 stddev: 0.248027
+Eps: 600 Mean: 0.280527 stddev: 0.2536
+Eps: 650 Mean: 0.22807 stddev: 0.247223
+Eps: 700 Mean: 0.178322 stddev: 0.241009
+Eps: 750 Mean: 0.286764 stddev: 0.240952
+Eps: 800 Mean: 0.221932 stddev: 0.243577
+Eps: 850 Mean: 0.292165 stddev: 0.24276
+Eps: 900 Mean: 0.285119 stddev: 0.257365
+Eps: 950 Mean: 0.283053 stddev: 0.242914
+Eps: 1000 Mean: 0.312028 stddev: 0.259374
+Training objective G
+Eps: 0 Mean: 0.116788 stddev: 0.117221
+Eps: 50 Mean: 0.311244 stddev: 0.229587
+Eps: 100 Mean: 0.321772 stddev: 0.232781
+Eps: 150 Mean: 0.305213 stddev: 0.217051
+Eps: 200 Mean: 0.280849 stddev: 0.218516
+Eps: 250 Mean: 0.375419 stddev: 0.213203
+Eps: 300 Mean: 0.331727 stddev: 0.227063
+Eps: 350 Mean: 0.389475 stddev: 0.219677
+Eps: 400 Mean: 0.397268 stddev: 0.220561
+Eps: 450 Mean: 0.395286 stddev: 0.218045
+Eps: 500 Mean: 0.393273 stddev: 0.20845
+Eps: 550 Mean: 0.348235 stddev: 0.224283
+Eps: 600 Mean: 0.422463 stddev: 0.218435

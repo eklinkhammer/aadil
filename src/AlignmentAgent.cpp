@@ -64,8 +64,6 @@ State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
   //   std::cout << i << std::endl;
   // }
 
-  // std::cout << bestAlign << " " << alignments.size() << std::endl;
-  // std::cout << netsX.size() << " " << index.size() << std::endl;
   NeuralNet* policy = netsX[bestAlign];
   std::vector<size_t> inds = index[bestAlign];
 

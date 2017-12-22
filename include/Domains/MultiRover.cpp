@@ -127,6 +127,9 @@ void MultiRover::InitialiseEpochFromOtherDomain(MultiRover* domain) {
   }
 
   POIs = domain->getPOIs();
+  for (auto& p : POIs) {
+    p.ResetTarget();
+  }
 }
 
 
@@ -196,19 +199,60 @@ double MultiRover::runSim(Env* env, vector< size_t > teamIndex, Objective* o) {
 }
 
 Env* MultiRover::createSim(size_t teamSize) {
+
   //std::cout << "Create sim" << std::endl;
   Env* env = new Env(world, roverTeam, POIs, teamSize);
+
   //std::cout << "Create sim 2" << std::endl;
   vector< State > initState;
+
   for (size_t j = 0; j < nRovers; j++) {
     State s(initialXYs[j], initialPsis[j]);
     initState.push_back(s);
   }
 
+
   //std::cout << "Create sim 3" << std::endl;
   env->init(initState);
+
   //std::cout << "Create sim 4" << std::endl;
   return env;
+}
+
+vector< NeuralNet* > MultiRover::getBestNNTeam(Objective* o) {
+  vector< vector<size_t> > teams = RandomiseTeams(nPop);
+
+
+  Env* env = createSim(nPop);
+
+  double maxEval = 0, currentEval = 0;
+  vector< size_t > netEachAgentUses;
+  vector< NeuralNet* > bestNets;
+
+  for (size_t i = 0; i < nPop; i++) {
+    netEachAgentUses.clear();
+    vector< State > jointState;
+
+    for (size_t rov = 0; rov < nRovers; rov++) {
+      netEachAgentUses.push_back(teams[rov][i]);
+    }
+
+    currentEval = runSim(env, netEachAgentUses, o);
+    env->reset();
+
+    if (currentEval >= maxEval) {
+      bestNets.clear();
+      maxEval = currentEval;
+
+      for (size_t rov = 0; rov < nRovers; rov++) {
+	Agent* rover = roverTeam[rov];
+	size_t ind = netEachAgentUses[rov]; // teams[rov][i]
+	bestNets.push_back(rover->GetNEPopulation()->GetNNIndex(ind));
+      }
+    }
+  }
+
+  return bestNets;
 }
 
 double MultiRover::SimulateEpoch(bool train, Objective* o) {
@@ -241,6 +285,13 @@ double MultiRover::SimulateEpoch(bool train, Objective* o) {
     maxEval = max(eval, maxEval);
 
     // Assign fitness (G)
+
+    vector<double> rewards = o->rewardV(env);
+    
+    for (size_t j = 0; j < nRovers; j++) {
+      roverTeam[j]->SetEpochPerformance(rewards[j], teams[j][i]);
+    }
+    
     for (size_t j = 0; j < nRovers; j++) {
       if (type != AgentType::C) {
 	roverTeam[j]->SetEpochPerformance(eval, teams[j][i]) ;

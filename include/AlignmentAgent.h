@@ -1,7 +1,9 @@
 /*******************************************************************************
-Objective.h
+AlignmentAgent.h
 
-Receives an award from an environment (memoryless)
+Rover that has as input the full state space (4 agent quads, 4 poi quads), the
+same reward structure as a normal rover, but it uses alignment to choose between
+a set of neural nets (policies).
 
 Authors: Eric Klinkhammer
 
@@ -24,46 +26,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef OBJ_H_
-#define OBJ_H_
+#ifndef ALIGNMENT_AGENT_H
+#define ALIGNMENT_AGENT_H
 
-#include "Env.h"
-#include <float.h>
-#include <vector>
-#include <string>
+#include "Agents/NeuralRover.h"
+#include "alignments.h"
 
-class Objective {
-public:
+class AlignmentAgent : public NeuralRover {
+ public:
+  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
+    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
 
-  /**
-     Reward and rewardV are overloaded for difference reward and regular objectives.
-
-     When there is one reward for the team (that will be passed to all agents), reward 
-       returns that reward and rewardV returns that reward duplicated.
-
-     When there is a reward per agent, reward returns the max * mean of rewardV, and rewardV
-       returns the per agent reward.
-   **/
-  virtual double reward(Env* e) {
-    std::vector<double> rewards = rewardV(e);
-
-    double sum = 0, maxR = DBL_MIN;
-    for (const auto& r : rewards) {
-      sum += r;
-      if (r > maxR) {
-	maxR = r;
-      }
-    }
-
-    double mean = sum / ((double) rewards.size());
-    return maxR * mean;
-  }
-  
-  virtual std::vector<double> rewardV(Env* e) {
-    std::vector<double> rewards(e->getAgents().size(), reward(e));
-    return rewards;
-  }
-  
-  virtual std::string getName() { return "Objective"; }
+  virtual State getNextState(size_t i, vector<State> jointState) const;
+  Alignments* alignmentMap;
+ protected:
+  virtual Agent* copyAgent() const;
 };
-#endif//OBJ_H_
+
+#endif // ALIGNMENT_AGENT_H

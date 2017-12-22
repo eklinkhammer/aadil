@@ -60,6 +60,12 @@ class MultiRover{
 
     // Gets each agent's first neural net. Does not get the best net.
     vector<NeuralNet*> getNNTeam();
+
+    /**
+       Get the best neural net team satisfying objective. Chooses amongst
+         the team combinations of RandomiseTeams.
+     **/
+    vector< NeuralNet* > getBestNNTeam(Objective*);
     void initRovers();
     
     void InitialiseEpoch();

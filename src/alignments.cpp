@@ -1,5 +1,5 @@
 /*******************************************************************************
-alignments.h
+alignments.cpp
 
 Given objectives, computes alignment values between them.
 
@@ -26,8 +26,10 @@ SOFTWARE.
 
 #include "alignments.h"
 
-Alignments::Alignments(std::vector< Objective* > objectives, int numberSamples)
-  : objs(objectives), numSamples(numberSamples) {}
+
+
+Alignments::Alignments(std::vector< Objective* > objectives, int numberSamples, double b)
+  : objs(objectives), numSamples(numberSamples), biasT(b) {}
 
 void Alignments::addAlignments(Env* env) {
   std::vector<Alignment> scores;
@@ -75,8 +77,8 @@ void Alignments::addAlignments(Env* env) {
 
   for (const auto& agent : env->getAgents()) {
     std::vector<double> stateV = agent->getVectorState(env->getCurrentStates());
-    std::pair<std::vector<double>, std::vector<Alignment>> keyVal(stateV, scores);
-    alignments.insert(keyVal);
+    Point point{ {stateV[0], stateV[1], stateV[2], stateV[3], stateV[4], stateV[5], stateV[6], stateV[7]} };
+    tree[point] = scores;
   }
 }
 
@@ -93,10 +95,13 @@ void Alignments::addAlignments(MultiRover* domain) {
 }
 
 void Alignments::addAlignments() {
+  double lower = 10;
+  double upper = 40;
+  
   std::random_device rd;     // only used once to initialise (seed) engine
   std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
   std::uniform_int_distribution<int> uni(3,10); // guaranteed unbiased
-  std::uniform_real_distribution<double> und(10,100);
+  std::uniform_real_distribution<double> und(lower,upper);
   
   double max_x = und(rng);
   double max_y = und(rng);
@@ -106,94 +111,20 @@ void Alignments::addAlignments() {
   int pois = uni(rng);
 
   MultiRover domain(world, 1, 1, pois, "", rovs);
+
+  double r = und(rng);
+  if (r > (biasT * (upper - lower) + lower)) {
+    domain.setBias(true);
+  }
   domain.InitialiseEpoch();
   addAlignments(&domain);
 }
 
-// void Alignments::addAlignments() {
-//   std::random_device rd;     // only used once to initialise (seed) engine
-//   std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
-//   std::uniform_int_distribution<int> uni(3,10); // guaranteed unbiased
-//   std::uniform_real_distribution<double> und(10,100);
-  
-//   double max_x = und(rng);
-//   double max_y = und(rng);
-//   std::vector<double> world = {0, max_x, 0, max_y};
-  
-//   int rovs = uni(rng);
-//   int pois = uni(rng);
-
-//   std::vector<Agent*> agents;
-//   for (size_t i = 0; i < rovs; i++) {
-//     agents.push_back(new Rover(1,1,Fitness::G));
-//   }
-
-//   double rangeX = world[1] - world[0] ;
-//   double rangeY = world[3] - world[2] ;
-
-//   std::vector<State> initialStates;
-//   for (size_t i = 0; i < rovs; i++){
-//     Vector2d initialXY ;
-//     initialXY(0) = rand_interval(world[0]+rangeX/3.0,world[1]-rangeX/3.0);
-//     initialXY(1) = rand_interval(world[2]+rangeY/3.0,world[3]-rangeX/3.0);
-//     double initialPsi = rand_interval(-PI,PI) ;
-//     State s(initialXY, initialPsi);
-//     initialStates.push_back(s);
-//   }
-  
-//   std::vector<Target> POIs;
-//   for (size_t p = 0; p < pois; p++) {
-//     Vector2d xy ;
-//     double x, y ;
-//     bool accept = false ;
-//     while (!accept){
-//       x = rand_interval(world[0],world[1]) ;
-//       y = rand_interval(world[2],world[3]) ;
-      
-//       accept = !(x > world[0]+rangeX/3.0 &&
-// 		 x < world[1]-rangeX/3.0 &&
-// 		 y > world[2]+rangeY/3.0 &&
-// 		 y < world[3]-rangeX/3.0);
-//     }
-    
-//     xy(0) = x ; // x location
-//     xy(1) = y ; // y location
-//     double v = rand_interval(1,10) ; // value
-//     POIs.push_back(Target(xy, 1, 1));
-//   }
-
-//   Env env(world, agents, POIs, 1);
-//   env.init(initialStates);
-//   addAlignments(&env);
-// }
-
-
-// This linearly searches. Should be using a K-d tree. Convert at later date
-std::vector< Alignment > Alignments::getAlignmentsNN(std::vector< double > inputState) {
-  double minDistance = DBL_MAX;
-  std::vector< Alignment > bestAlign;
-  
-  for (auto it = alignments.begin(); it != alignments.end(); ++it) {
-    double dist = distance(inputState, it->first);
-    if (dist < minDistance) {
-      bestAlign = it->second;
-      minDistance = dist;
-    }
-  }
-
+std::vector< Alignment > Alignments::getAlignmentsNN(std::vector< double > input) {
+  Point point{ {input[0], input[1], input[2], input[3], input[4], input[5], input[6], input[7]} };
+  typename Tree::iterator it = tree.find_nearest_neighbor(point);
+  std::vector< Alignment > bestAlign = tree[it->first];
   return bestAlign;
-}
-
-double Alignments::distance(std::vector<double> vec1, std::vector<double> vec2) {
-  if (vec1.size() != vec2.size()) return DBL_MAX;
-
-  double squared_dist = 0;
-  for (size_t i = 0; i < vec1.size(); i++) {
-    double diff = vec2[i] - vec1[i];
-    squared_dist += diff*diff;
-  }
-
-  return squared_dist;
 }
 
 

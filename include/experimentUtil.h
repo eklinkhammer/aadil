@@ -31,11 +31,27 @@ SOFTWARE.
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <Eigen/Eigen>
+#include <time.h>
+#include <sys/stat.h>
 
+#include "AlignmentAgent.h"
+
+#include "Domains/D.h"
+#include "Domains/G.h"
 #include "Domains/MultiRover.h"
-#include "yaml_constants.h"
-#include "experimentalSetup.h"
+#include "Domains/Objective.h"
+#include "Domains/TeamForming.h"
+#include "Domains/TeamObjective.h"
+
 #include "Learning/NeuroEvo.h"
+
+#include "alignments.h"
+#include "experimentalSetup.h"
+#include "experimentUtil.h"
+#include "Statistics.h"
+#include "yaml_constants.h"
 
 // Resets domain according to parameters in YAML Node
 // Note that a loop over YAML nodes can repeatedly call this function with
@@ -70,5 +86,16 @@ std::vector<NeuroEvo*> readNetworksFromFile(const std::string filename,
 					    size_t numIn, size_t numH,
 					    size_t numOut, size_t numA,
 					    size_t numPop);
+
+vector< NeuralNet* > bestTeamForObjective(YAML::Node expNode, std::string expKey,
+					  MultiRover* domain, Objective* o,
+					  std::string fileDir);
+
+void configureOutput(MultiRover* domain, string fileDir, string id);
+void inspectAgent(MultiRover* domain, VectorXd input);
+void trainDomainEps(MultiRover*, YAML::Node, Objective*, size_t);
+void trainingCurves(YAML::Node, size_t, size_t, size_t);
+
+inline bool exists_test3 (const std::string& name);
 
 #endif // _EXPERIMENT_UTIL_H

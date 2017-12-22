@@ -1,20 +1,19 @@
 # A list of all experiments to run
 # All entries in this list must be a top level node in 
 experiments:
-  #- agentstate
-  #- twoagent
-  #- threeagent
+  - exptarget
   - onepoi
+  - farpoi
   #- coupled
   #- rover
   #- exploreone
   #- exploretwo
-  #- teamforming2
-  #- teamforming3
+  - teamforming2
+  - teamforming3
   #- teamforming4
-  #- teams2
-  #- teams3
-  #- teams4
+  - teams2
+  - teams3
+  - teams4
   #- coupled
   #- coupledNoBias
   #- control
@@ -27,20 +26,20 @@ experiments:
 # biasStart: 1 - Agents will start in center noc-tant. POIs are not in center noc-tant.
 #            0 - Agents are randomly placed in all of grid
 control:
-  train: 0
+  train: false
   netfile: control.nets
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 40.0
-    ymax: 40.0
+    xmax: 20.0
+    ymax: 20.0
   ccea_pop: 15
   nRovs: 18
   nPOIs: 6
   coupling: 1
   nEps: 1
-  nSteps: 15
-  biasStart: 1
+  nSteps: 30
+  biasStart: 0
   staticOrRandom: 1
   type: R
   output: 0
@@ -55,10 +54,40 @@ control:
     - 7
   objective:
     type: G
-    coupling: 3
+    coupling: 4
     obsR: 4
+
+exptarget:
+  train: false
+  netfile: expnets.nets
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 40.0
+    ymax: 40.0
+  ccea_pop: 15
+  nRovs: 1
+  nPOIs: 10
+  coupling: 1
+  nEps: 1000
+  nSteps: 40
+  biasStart: 0
+  staticOrRandom: 1
+  type: P
+  output: 0
+  ind:
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: Exp
+    coupling: 4
+    obsR: 2
     
 teamforming2:
+  train: false
+  netfile: teamforming2.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -68,7 +97,7 @@ teamforming2:
   nRovs: 2
   nPOIs: 0
   coupling: 1
-  nEps: 350
+  nEps: 1000
   nSteps: 20
   biasStart: 0
   staticOrRandom: 1
@@ -85,6 +114,8 @@ teamforming2:
     obsR: 4
 
 teamforming3:
+  train: false
+  netfile: teamforming3.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -94,7 +125,7 @@ teamforming3:
   nRovs: 3
   nPOIs: 0
   coupling: 1
-  nEps: 450
+  nEps: 1000
   nSteps: 30
   biasStart: 0
   staticOrRandom: 1
@@ -111,6 +142,8 @@ teamforming3:
     obsR: 4
 
 teamforming4:
+  train: false
+  netfile: teamforming4.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -137,6 +170,8 @@ teamforming4:
     obsR: 4
 
 teams2:
+  train: false
+  netfile: teams2.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -146,7 +181,7 @@ teams2:
   nRovs: 6
   nPOIs: 0
   coupling: 1
-  nEps: 500
+  nEps: 1000
   nSteps: 20
   biasStart: 0
   staticOrRandom: 1
@@ -160,9 +195,11 @@ teams2:
   objective:
     type: UT
     coupling: 2
-    obsR: 4
+    obsR: 2
 
 teams3:
+  train: false
+  netfile: teams3.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -172,7 +209,7 @@ teams3:
   nRovs: 9
   nPOIs: 0
   coupling: 1
-  nEps: 500
+  nEps: 1000
   nSteps: 25
   biasStart: 0
   staticOrRandom: 1
@@ -186,9 +223,11 @@ teams3:
   objective:
     type: UT
     coupling: 3
-    obsR: 4
+    obsR: 3
 
 teams4:
+  train: false
+  netfile: teams4.nets
   world:
     xmin: 0.0
     ymin: 0.0
@@ -198,7 +237,7 @@ teams4:
   nRovs: 12
   nPOIs: 0
   coupling: 1
-  nEps: 200
+  nEps: 1000
   nSteps: 30
   biasStart: 0
   staticOrRandom: 1
@@ -234,7 +273,7 @@ NeuralRover:
   input: 0
     
 onepoi:
-  train: true
+  train: false
   netfile: onepoi.nets
   world:
     xmin: 0.0
@@ -245,8 +284,8 @@ onepoi:
   nRovs: 1
   nPOIs: 3
   coupling: 1
-  nEps: 200
-  nSteps: 20
+  nEps: 1000
+  nSteps: 25
   biasStart: 1
   staticOrRandom: 1
   type: P
@@ -261,22 +300,52 @@ onepoi:
     coupling: 1
     obsR: 4
 
-coupled:
+farpoi:
+  train: false
+  netfile: farpoi.nets
   world:
     xmin: 0.0
     ymin: 0.0
     xmax: 40.0
     ymax: 40.0
   ccea_pop: 15
-  nRovs: 4
-  nPOIs: 4
+  nRovs: 1
+  nPOIs: 3
   coupling: 1
-  nEps: 200
+  nEps: 1000
+  nSteps: 25
+  biasStart: 1
+  staticOrRandom: 1
+  type: P
+  output: 0
+  ind:
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 1
+    obsR: 20
+
+coupled:
+  train: true
+  netfile: coupled.nets
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 20.0
+    ymax: 20.0
+  ccea_pop: 15
+  nRovs: 2
+  nPOIs: 2
+  coupling: 1
+  nEps: 1000
   nSteps: 25
   biasStart: 1
   staticOrRandom: 1
   type: R
-  output: 1
+  output: 0
   ind:
     - 0
     - 1
@@ -287,26 +356,28 @@ coupled:
     - 6
     - 7
   objective:
-    type: G
+    type: D
     coupling: 2
-    obsR: 4
+    obsR: 6
 
 coupledNoBias:
+  train: true
+  netfile: coupledNoBias.nets
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 40.0
-    ymax: 40.0
+    xmax: 20.0
+    ymax: 20.0
   ccea_pop: 15
-  nRovs: 4
-  nPOIs: 4
+  nRovs: 2
+  nPOIs: 2
   coupling: 1
-  nEps: 200
+  nEps: 1000
   nSteps: 30
   biasStart: 0
   staticOrRandom: 1
   type: R
-  output: 1
+  output: 0
   ind:
     - 0
     - 1
@@ -317,9 +388,9 @@ coupledNoBias:
     - 6
     - 7
   objective:
-    type: G
+    type: D
     coupling: 2
-    obsR: 4
+    obsR: 6
 
 # Coupling for POI only is fixed at 1
 

@@ -7,7 +7,8 @@ set (LIB_NAME aadil)
 set (MAIN_EXEC generateMultiRoverExperts)
 set (TEST_EXEC runTests)
 set (YAML_INCLUDE ~/resources/yaml-cpp/include)
-set (INCLUDE_DIRS include ${YAML_INCLUDE})
+set (KD_INCLUDE  ~/resources/libssrckdtree-1.0.8)
+set (INCLUDE_DIRS include ${YAML_INCLUDE} ${KD_INCLUDE})
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -Wno-reorder -I ~/resources/eigen")
 add_subdirectory(include)
@@ -46,7 +47,8 @@ file(GLOB_RECURSE TEST_SRC
   "test/*.cpp"
 )
 
-# enable_testing()
-# add_executable(${TEST_EXEC} ${TEST_SRC})
-# target_link_libraries(${TEST_EXEC} gtest gtest_main ${LIB_NAME})
-# add_test(NAME gtest-lib_name COMMAND ${TEST_EXEC})
+enable_testing()
+add_executable(${TEST_EXEC} ${TEST_SRC})
+target_link_libraries(${TEST_EXEC} gtest gtest_main ${LIB_NAME} ${LIBS_TO_LINK})
+target_include_directories(${TEST_EXEC} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${INCLUDE_DIRS})
+add_test(NAME gtest-lib_name COMMAND ${TEST_EXEC})

@@ -34,51 +34,37 @@ SOFTWARE.
 
 #include "Agents/Rover.h"
 
-#include <unordered_map> // in place of kdtree (O(nd) nn search)
-
 #include <vector>
 #include <random>
 
-struct KeyHash {
-  std::size_t operator()(const std::vector<double>& vec) const {
-    std::size_t seed = 0;
-    for (const auto& v_i : vec) {
-      seed ^= std::hash<double>{}(v_i) + 0x9e37779b9 + (seed << 6) + (seed >> 2);
-    }
-    
-    return seed;
-  }
-};
+#include "ssrc/spatial/kd_tree.h"
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <algorithm>
+#include <cassert>
 
-struct KeyEqual {
-  bool operator() (const std::vector<double> & lhs, const std::vector<double> & rhs) const {
-    if (lhs.size() != rhs.size()) return false;
-
-    for (size_t i = 0; i < lhs.size(); i++) {
-      if (lhs[i] != rhs[i]) return false;
-    }
-    
-    return true;
-  }
-};
+typedef std::array<double, 8> Point;
+typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
 
 class Alignments {
  public:
-  Alignments(std::vector< Objective* >, int numberSamples);
+  Alignments(std::vector< Objective* >, int numberSamples, double b);
 
   void addAlignments(int);
   void addAlignments();
   void addAlignments(MultiRover* domain);
   void addAlignments(Env* env);
 
-  std::vector< Alignment > getAlignmentsNN(std::vector< double > inputState);
+  std::vector< Alignment > getAlignmentsNN(std::vector< double > input);
   
  private:
-  std::unordered_map< std::vector< double >, std::vector< Alignment >, KeyHash, KeyEqual > alignments;
   std::vector< Objective* > objs;
-  
-  double distance(std::vector<double>, std::vector<double>);
+
   int numSamples;
+  double biasT;
+
+  Tree tree;
 };
 
 

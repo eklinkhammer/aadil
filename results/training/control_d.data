@@ -1,0 +1,4 @@
+Training objective D with coupling: 3 observationRadius: 4.000000
+Eps: 0 Mean: 0.0581488 stddev: 0.0741856
+Eps: 50 Mean: 0.0655673 stddev: 0.0800283
+Eps: 100 Mean: 0.0552795 stddev: 0.0740893

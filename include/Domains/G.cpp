@@ -32,22 +32,17 @@ G::G() : G(-1, -1, -1) {}
 G::G(int c, double observationR, double minR)
   : Objective(), coupling(c), observationRadius(observationR), minRadius(minR) {}
 
-// There are two ways to approach this. The first is the one below, where
-//   target's keep track of the best approach at each coupling. The alternative
-//   is to use Env's history of states and just apply them, in order, to the poi's
 double G::reward(Env* env) {
   vector< Target > targets = env->getTargets(); // copied
 
   double reward = 0.0;
-
   double maxR = 0.0;
+  
   //std::cout << "Number of agents: " << env->getHistoryStates()[0].size() << std::endl;
   //std::cout << "Number of pois: " << targets.size() << std::endl;
   // std::cout << "G Operator " << targets.size() << std::endl;
-  for (auto& target : targets) {
 
-    target.ResetTarget();
-    
+  for (auto& target : targets) {
     if (coupling != -1) {
       target.setCoupling(coupling);
     }
@@ -56,16 +51,14 @@ double G::reward(Env* env) {
       target.setObservationRadius(observationRadius);
     }
 
-    // std::cout << "G Operator - History of states" << std::endl;
-    //std::cout << target.GetLocation() << std::endl;
-    for (const auto& ss : env->getHistoryStates()) {
-      //      target.observeTarget(ss);
-      for (const auto& s : ss) {
-	target.ObserveTarget(s.pos());
-      }
-    }
+    target.ResetTarget();
     
-    reward += target.rewardAtCoupling(coupling);
+    for (const auto& ss : env->getHistoryStates()) {
+      target.observeTarget(ss);
+      target.resetNearestObs();
+    }
+
+    reward += target.rewardAtCoupling(1);
     maxR += target.GetValue();
   }
 

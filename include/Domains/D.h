@@ -1,7 +1,7 @@
 /*******************************************************************************
-G.h
+D.h
 
-Rover domain classic reward.
+Rover domain classic reward with difference reward
 
 Authors: Eric Klinkhammer
 
@@ -24,19 +24,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef G_H_
-#define G_H_
+#ifndef D_H_
+#define D_H_
 
 #include "Objective.h"
+#include "G.h"
 #include <vector>
 #include <iostream>
 
 using std::vector;
 
-class G : public Objective {
+class D : public Objective {
  public:
-  G();
-  G(int c, double observationR, double minR);
+  D();
+  D(int c, double observationR, double minR);
   
   /**
     The classic rover domain reward, as described in <paper>. The reward is the
@@ -54,13 +55,15 @@ class G : public Objective {
 
     Returns the reward of the current state of the environment.
    **/
+  virtual vector<double> rewardV(Env* env);
+
   virtual double reward(Env* env);
 
-  virtual std::string getName() { return "G with coupling: " + std::to_string(coupling) + " and obsR: " + std::to_string(observationRadius); };
+  virtual std::string getName() { return "D with coupling: " + std::to_string(coupling) + " observationRadius: " + std::to_string(observationRadius); };
  private:
   int coupling;
   double observationRadius;
   double minRadius;
 };
 
-#endif//G_H_
+#endif//D_H_

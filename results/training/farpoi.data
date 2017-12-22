@@ -1,0 +1,22 @@
+Training objective G with coupling: 1 and obsR: 20.000000
+Eps: 0 Mean: 0.118465 stddev: 0.130299
+Eps: 50 Mean: 0.321394 stddev: 0.222921
+Eps: 100 Mean: 0.344906 stddev: 0.220013
+Eps: 150 Mean: 0.331522 stddev: 0.237084
+Eps: 200 Mean: 0.337784 stddev: 0.217157
+Eps: 250 Mean: 0.38002 stddev: 0.210898
+Eps: 300 Mean: 0.347286 stddev: 0.216409
+Eps: 350 Mean: 0.304048 stddev: 0.228514
+Eps: 400 Mean: 0.411615 stddev: 0.217514
+Eps: 450 Mean: 0.317488 stddev: 0.220532
+Eps: 500 Mean: 0.362438 stddev: 0.217578
+Eps: 550 Mean: 0.381733 stddev: 0.216137
+Eps: 600 Mean: 0.378212 stddev: 0.217382
+Eps: 650 Mean: 0.382328 stddev: 0.212038
+Eps: 700 Mean: 0.423215 stddev: 0.204693
+Eps: 750 Mean: 0.412945 stddev: 0.216791
+Eps: 800 Mean: 0.344265 stddev: 0.220388
+Eps: 850 Mean: 0.370836 stddev: 0.219747
+Eps: 900 Mean: 0.375154 stddev: 0.21858
+Eps: 950 Mean: 0.415073 stddev: 0.208812
+Eps: 1000 Mean: 0.409832 stddev: 0.225103
