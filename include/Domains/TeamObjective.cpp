@@ -36,7 +36,6 @@ TeamObjective::TeamObjective(int c, double observationR, double minR)
 
 double TeamObjective::reward(Env* env) {
   vector< Agent* > agents = env->getAgents();
-  double reward = 0.0;
   // I could do this with team forming agents, but I want to reduce
   //  the dependence on agent types.
   vector< Target > teamFormingAgents;
@@ -62,7 +61,7 @@ double TeamObjective::reward(Env* env) {
 	q.push(currentStates[agent].distance(currentStates[other]));
       }
       
-      if (q.size() + 1 < c) {
+      if (((int) q.size()) + 1 < c) {
 	distanceSum.push_back(observationRadius*c + 1);
       } else {
 	double sum = 0.0;
@@ -103,9 +102,9 @@ double TeamObjective::reward(Env* env) {
 	indexOfDistance[dist] = other;
       }
       
-      if (dists.size() + 1 < c) continue;
+      if (((int)dists.size()) + 1 < c) continue;
       
-      for (size_t inteam = 1; inteam < c; inteam++) {
+      for (int inteam = 1; inteam < c; inteam++) {
 	size_t indexOther = indexOfDistance[dists.top()];
 	agentTaken[indexOther] = true;
 	dists.pop();

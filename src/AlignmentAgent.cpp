@@ -29,25 +29,28 @@ SOFTWARE.
 #include "AlignmentAgent.h"
 
 State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
+  return getNextStateWork(i, jointState);
+}
+State AlignmentAgent::getNextStateWork(size_t i, vector<State> jointState) const {
   std::vector<double> key = getVectorState(jointState);  
   std::vector< Alignment > alignments = alignmentMap->getAlignmentsNN(key);
   if (alignments.size() < 1) {
     return getCurrentState();
   }
 
-  if (printOutput) {
-    std::cout << "Beginning output for alignment movement." << std::endl;
-    std::cout << "Input state (as vector): < ";
-    for (const auto& i : key) {
-      std::cout << i << " ";
-    }
-    std::cout << ">" << std::endl;
+  // if (printOutput) {
+  //   std::cout << "Beginning output for alignment movement." << std::endl;
+  //   std::cout << "Input state (as vector): < ";
+  //   for (const auto& i : key) {
+  //     std::cout << i << " ";
+  //   }
+  //   std::cout << ">" << std::endl;
 
-    std::cout << "Alignment values for objectives: " << std::endl;
-    for (const auto& a : alignments) {
-      std::cout << a;
-    }
-  }
+  //   std::cout << "Alignment values for objectives: " << std::endl;
+  //   for (const auto& a : alignments) {
+  //     std::cout << a;
+  //   }
+  // }
   
   Alignment max;
   size_t bestAlign = 0;
@@ -96,11 +99,11 @@ State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
 
   State s(currentXY, currentPsi);
 
-  if (printOutput) {
-    std::cout << "Chosen objective: " << bestAlign << std::endl;
-    std::cout << "Initial State: " << getCurrentState() << std::endl;
-    std::cout << "Next State: " << s << std::endl;
-  }
+  // if (printOutput) {
+  //   std::cout << "Chosen objective: " << bestAlign << std::endl;
+  //   std::cout << "Initial State: " << getCurrentState() << std::endl;
+  //   std::cout << "Next State: " << s << std::endl;
+  // }
   return s;
 }
 

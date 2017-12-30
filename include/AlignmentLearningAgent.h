@@ -1,9 +1,11 @@
 /*******************************************************************************
-AlignmentAgent.h
+AlignmentLearningAgent.h
 
 Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but it uses alignment to choose between
-a set of neural nets (policies).
+same reward structure as a normal rover.
+
+It uses alignment to train agents over time (gradually lowering the percent
+of the time alignment is used).
 
 Authors: Eric Klinkhammer
 
@@ -26,26 +28,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENT_AGENT_H
-#define ALIGNMENT_AGENT_H
+#ifndef ALIGNMENT_LEARNING_AGENT_H
+#define ALIGNMENT_LEARNING_AGENT_H
 
-#include "Agents/NeuralRover.h"
-#include "alignments.h"
+#include "AlignmentAgent.h"
+#include "Agents/Agent.h"
 
-class AlignmentAgent : public NeuralRover {
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
+
+class AlignmentLearningAgent : public AlignmentAgent {
  public:
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds,
-		 size_t nPop)
-    : NeuralRover(1, nPop, Fitness::G, ns, inds, 1), alignmentMap(as) {};
-  
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
-    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
+ AlignmentLearningAgent(vector<NeuralNet*> ns, Alignments* as,
+			vector<vector<size_t>> inds, size_t nPop,
+			double r, double lr)
+   : AlignmentAgent(ns, as, inds, nPop), currentLearning(r), learningRate(lr) {};
 
-  virtual State getNextState(size_t i, vector<State> jointState) const;
-  Alignments* alignmentMap;
- protected:
-  virtual Agent* copyAgent() const;
-  State getNextStateWork(size_t i, vector<State> jointState) const;
+  inline virtual State getNextState(size_t i, vector<State> jointState) const;
+  
+  virtual void updateAgent() { currentLearning *= learningRate; };
+ private:
+  double currentLearning;
+  double learningRate;
 };
 
-#endif // ALIGNMENT_AGENT_H
+#endif // ALIGNMENT_LEARNING_AGENT_H

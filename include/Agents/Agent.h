@@ -83,6 +83,9 @@ class Agent {
 
   virtual State getNextState(size_t, VectorXd) const;
 
+  virtual void updateAgent() {};
+  virtual void resetAgent() {};
+  
   vector< State > allNextGetNextState(VectorXd) const;
   void move(State);
   
@@ -180,6 +183,9 @@ class Agent {
   size_t getSteps() const { return nSteps; }
   size_t getPop() const { return popSize; }
   Fitness getFitness() const { return fitness; }
+
+  State getDeltaState(VectorXd) const;
+  State getNewCurrent(VectorXd) const;
   
 };
 

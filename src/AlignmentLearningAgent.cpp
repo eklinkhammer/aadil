@@ -1,9 +1,11 @@
 /*******************************************************************************
-AlignmentAgent.h
+AlignmentLearningAgent.cpp
 
 Rover that has as input the full state space (4 agent quads, 4 poi quads), the
-same reward structure as a normal rover, but it uses alignment to choose between
-a set of neural nets (policies).
+same reward structure as a normal rover.
+
+It uses alignment to train agents over time (gradually lowering the percent
+of the time alignment is used).
 
 Authors: Eric Klinkhammer
 
@@ -26,26 +28,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENT_AGENT_H
-#define ALIGNMENT_AGENT_H
+#include "AlignmentLearningAgent.h"
 
-#include "Agents/NeuralRover.h"
-#include "alignments.h"
+State AlignmentLearningAgent::getNextState(size_t i, vector<State> jointState) const {
+  std::srand(std::time(nullptr));
+  int random_variable = std::rand();
+  double r = (double) random_variable / DBL_MAX;
 
-class AlignmentAgent : public NeuralRover {
- public:
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds,
-		 size_t nPop)
-    : NeuralRover(1, nPop, Fitness::G, ns, inds, 1), alignmentMap(as) {};
-  
-  AlignmentAgent(vector<NeuralNet*> ns, Alignments* as, vector<vector<size_t>> inds)
-    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
-
-  virtual State getNextState(size_t i, vector<State> jointState) const;
-  Alignments* alignmentMap;
- protected:
-  virtual Agent* copyAgent() const;
-  State getNextStateWork(size_t i, vector<State> jointState) const;
-};
-
-#endif // ALIGNMENT_AGENT_H
+  if (r < currentLearning) {
+    return getNextStateWork(i, jointState);
+  } else {
+    
+    vector<Vector2d> justPos;
+    for (const auto& s : jointState) {
+      justPos.push_back(s.pos());
+    }
+    
+    VectorXd inp = ComputeNNInput(justPos);
+    VectorXd out = GetNEPopulation()->GetNNIndex(i)->EvaluateNN(inp).normalized();
+    return getNewCurrent(out);
+  }
+}

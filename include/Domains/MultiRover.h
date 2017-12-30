@@ -48,9 +48,17 @@ class MultiRover{
     /* 	       size_t rovs, vector<vector<NeuralNet*>>, */
     /* 	       vector< vector<size_t> >, Alignments*); */
 
+
+
+    MultiRover(vector<double> w, size_t numSteps, size_t numPOIs,
+	       size_t rovs, vector<Agent*> agents, size_t nPop)
+      : world(w), nSteps(numSteps), nPop(nPop), nPOIs(numPOIs), nRovers(rovs),
+      coupling(1), fitness(Fitness::G), outputEvals(false), outputTrajs(false),
+      outputQury(false), outputBlf(false), gPOIObs(false), verbose(true),
+      biasStart(true), roverTeam(agents), type(AgentType::C) {};
     
     MultiRover(vector<double> w, size_t numSteps, size_t numPOIs,
-    			   size_t rovs, vector<Agent*> agents)
+	       size_t rovs, vector<Agent*> agents)
       : world(w), nSteps(numSteps), nPop(1), nPOIs(numPOIs), nRovers(rovs),
       coupling(1), fitness(Fitness::G), outputEvals(false), outputTrajs(false),
       outputQury(false), outputBlf(false), gPOIObs(false), verbose(true),

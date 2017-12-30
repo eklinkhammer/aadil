@@ -56,24 +56,8 @@ Agent::~Agent() {
 }
 
 State Agent::getNextState(size_t i, VectorXd inp) const {
-  //std::cout << "Get Next State Vector" << std::endl;
-
   VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
-
-  // Transform to global frame
-  Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
-  Vector2d deltaXY = Body2Global*out;
-  double deltaPsi = atan2(out(1),out(0));
-  
-  // Move
-  //std::cout << "Current State: " << getCurrentState();
-  //std::cout << " Delta State: " << State(deltaXY, deltaPsi);
-  Vector2d currentXY = getCurrentXY() + deltaXY;
-  double currentPsi = getCurrentPsi() + deltaPsi;
-  currentPsi = pi_2_pi(currentPsi);
-
-  State s(currentXY, currentPsi);
-  return s;
+  return getNewCurrent(out);
 }
 
 vector<State> Agent::allNextGetNextState(VectorXd inp) const {
@@ -207,11 +191,10 @@ void Agent::ResetEpochEvals(){
 }
 
 void Agent::SetEpochPerformance(double G, size_t i) {
-  if (fitness == Fitness::D) {
-    epochEvals[i] = stepwiseD;
-  } else if (fitness == Fitness::G) {
-    epochEvals[i] = G;
-  }
+  //std::cout << "setEpoch" << std::endl;
+  //std::cout << "epochEvals.size() " << epochEvals.size() << std::endl;
+  epochEvals[i] = G;
+  //std::cout << "setEpoch end" << std::endl;
 }
 
 void Agent::openOutputFile(std::string filename) {
@@ -226,4 +209,22 @@ void Agent::openOutputFile(std::string filename) {
 std::ostream& operator<<(std::ostream &strm, const Agent &a) {
   Vector2d currentXY = a.getCurrentXY();
   return strm << "ID: " << a.id << " Loc: (" << currentXY(0) << ", " << currentXY(1) << ")";
+}
+
+State Agent::getDeltaState(VectorXd out) const {
+  Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
+  Vector2d deltaXY = Body2Global*out;
+  double deltaPsi = atan2(out(1),out(0));
+  State s(deltaXY, deltaPsi);
+  return s;
+}
+
+State Agent::getNewCurrent(VectorXd out) const {
+  State deltaS = getDeltaState(out);
+  Vector2d currentXY = getCurrentXY() + deltaS.pos();
+  double currentPsi = getCurrentPsi() + deltaS.psi();
+  currentPsi = pi_2_pi(currentPsi);
+  
+  State s(currentXY, currentPsi);
+  return s;
 }

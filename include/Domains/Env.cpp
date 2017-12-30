@@ -79,9 +79,9 @@ void Env::init(vector<State> initStates) {
   // std::cout << numA << std::endl;
   while(agents.size() < initStates.size()) {
     //std::cout << "Env init 2.2" << std::endl;
-    Agent* a = agents[0];
+    //Agent* a = agents[0];
     //std::cout << "Env init 2.3" << std::endl;
-    Agent* copy = a->copyAgent();
+    //Agent* copy = a->copyAgent();
     agents.push_back(agents[0]->copyAgent());
   }
   //std::cout << "Env init 3" << std::endl;

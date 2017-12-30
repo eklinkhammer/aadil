@@ -58,7 +58,7 @@ double TeamForming::reward(Env* env) {
     for (size_t t = 0; t < allJointStates.size(); t++) {
       vector< State > currentStepStates = allJointStates[t];
       currentAgent.setLocation(currentStepStates[agent].pos());
-      Vector2d currentLoc = currentAgent.GetLocation();
+      //Vector2d currentLoc = currentAgent.GetLocation();
       for (size_t other = 0; other < agents.size(); other++) {
   	if (other != agent) {
   	  Vector2d otherLoc = currentStepStates[other].pos();
@@ -67,7 +67,7 @@ double TeamForming::reward(Env* env) {
       }
     }
 
-    double currentR = currentAgent.rewardAtCoupling(coupling);
+    //double currentR = currentAgent.rewardAtCoupling(coupling);
     // std::cout << currentR << std::endl;
     reward += currentAgent.rewardAtCoupling(coupling);
   }

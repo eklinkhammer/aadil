@@ -256,16 +256,19 @@ vector< NeuralNet* > MultiRover::getBestNNTeam(Objective* o) {
 }
 
 double MultiRover::SimulateEpoch(bool train, Objective* o) {
+  //std::cout << "Simulate Epoch" << std::endl;
   size_t teamSize = train ? 2*nPop : nPop;
   // each row is the population for a single agent
   vector< vector<size_t> > teams = RandomiseTeams(teamSize) ; 
   if (outputTrajs) {
     printPOIs();
   }
+  //std::cout << "Simulate Epoch" << std::endl;
   Env* env = createSim(teamSize);
   double maxEval = 0.0 ;
   vector< size_t > netEachAgentUses;
   double eval = 0.0;
+  //std::cout << "Simulate Epoch" << std::endl;
   for (size_t i = 0; i < teamSize; i++) { // looping across the columns of 'teams'
     // Initialise world and reset rovers and POIs
     vector< State > jointState ;
@@ -280,24 +283,26 @@ double MultiRover::SimulateEpoch(bool train, Objective* o) {
       toggleAgentOutput(true);
     }
 
+    //std::cout << "Simulate Epoch1" << std::endl;
     eval = runSim(env, netEachAgentUses, o);
     env->reset();
     maxEval = max(eval, maxEval);
-
+    //std::cout << "Simulate Epoch2" << std::endl;
     // Assign fitness (G)
 
     vector<double> rewards = o->rewardV(env);
-    
-    for (size_t j = 0; j < nRovers; j++) {
+    //std::cout << "Simulate Epoch3" << std::endl;
+    //std::cout << "rewards.size() " << rewards.size() << std::endl;
+    //std::cout << "teams.size() " << teams.size() << std::endl;
+
+    for (size_t j = 0; j < roverTeam.size(); j++) {
+      //std::cout << "j " << j << std::endl;
+      //std::cout << "rewards[j] " << rewards[j] << std::endl;
+      //std::cout << "teams[j].size() " << teams[j].size() << std::endl;
+      //std::cout << "teams[j][i] " << teams[j][i] << std::endl;
       roverTeam[j]->SetEpochPerformance(rewards[j], teams[j][i]);
     }
-    
-    for (size_t j = 0; j < nRovers; j++) {
-      if (type != AgentType::C) {
-	roverTeam[j]->SetEpochPerformance(eval, teams[j][i]) ;
-      }
-    }
-
+    //std::cout << "Simulate Epoch4" << std::endl;
     // If fitness is D -> eval is a vector
     // eval / maxEval average
     
@@ -314,7 +319,13 @@ double MultiRover::SimulateEpoch(bool train, Objective* o) {
   if (verbose) {
     std::cout << "max achieved value: " << maxEval << "..." << std::endl;
   }
-
+  //std::cout << "Simulate Epoch" << std::endl;
+  if (train) {
+    for (auto& rov : roverTeam) {
+      rov->updateAgent();
+    }
+  }
+  //std::cout << "Simulate Epoch end" << std::endl;
   return eval;
 }
 
