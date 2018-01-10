@@ -1,0 +1,146 @@
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0648895 stddev: 0.0719171
+... Eps: 50 Mean: 0.095108 stddev: 0.105082
+... Eps: 100 Mean: 0.120296 stddev: 0.121391
+... Eps: 150 Mean: 0.104583 stddev: 0.103897
+... Eps: 200 Mean: 0.0910653 stddev: 0.0787685
+... Eps: 250 Mean: 0.0884651 stddev: 0.0947997
+... Eps: 300 Mean: 0.0841799 stddev: 0.0822554
+... Eps: 350 Mean: 0.071678 stddev: 0.0861092
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0660598 stddev: 0.0835208
+... Eps: 50 Mean: 0.0595923 stddev: 0.0735104
+... Eps: 100 Mean: 0.0614895 stddev: 0.0983155
+... Eps: 150 Mean: 0.0672607 stddev: 0.0911048
+... Eps: 200 Mean: 0.0700347 stddev: 0.085756
+... Eps: 250 Mean: 0.0577335 stddev: 0.0706708
+... Eps: 300 Mean: 0.067696 stddev: 0.068823
+... Eps: 350 Mean: 0.0703732 stddev: 0.0915833
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0916572 stddev: 0.0667654
+... Eps: 50 Mean: 0.0988302 stddev: 0.0807053
+... Eps: 100 Mean: 0.0981683 stddev: 0.0733623
+... Eps: 150 Mean: 0.108872 stddev: 0.0721172
+... Eps: 200 Mean: 0.125037 stddev: 0.0721242
+... Eps: 250 Mean: 0.135239 stddev: 0.085399
+... Eps: 300 Mean: 0.090597 stddev: 0.0830861
+... Eps: 350 Mean: 0.0816561 stddev: 0.0549939
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0870852 stddev: 0.0758375
+... Eps: 50 Mean: 0.0519546 stddev: 0.0575593
+... Eps: 100 Mean: 0.0554728 stddev: 0.0595343
+... Eps: 150 Mean: 0.0446711 stddev: 0.0453472
+... Eps: 200 Mean: 0.0678863 stddev: 0.0587193
+... Eps: 250 Mean: 0.0579221 stddev: 0.0532904
+... Eps: 300 Mean: 0.0528665 stddev: 0.0705831
+... Eps: 350 Mean: 0.0527513 stddev: 0.0427817
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.126725 stddev: 0.125941
+... Eps: 50 Mean: 0.125384 stddev: 0.109404
+... Eps: 100 Mean: 0.102964 stddev: 0.0985862
+... Eps: 150 Mean: 0.107105 stddev: 0.122089
+... Eps: 200 Mean: 0.105752 stddev: 0.102413
+... Eps: 250 Mean: 0.159511 stddev: 0.124843
+... Eps: 300 Mean: 0.0740035 stddev: 0.0725728
+... Eps: 350 Mean: 0.112587 stddev: 0.0859844
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.079559 stddev: 0.102488
+... Eps: 50 Mean: 0.0624789 stddev: 0.0579658
+... Eps: 100 Mean: 0.046902 stddev: 0.0669173
+... Eps: 150 Mean: 0.0494186 stddev: 0.072372
+... Eps: 200 Mean: 0.0691332 stddev: 0.0781839
+... Eps: 250 Mean: 0.0610849 stddev: 0.0880822
+... Eps: 300 Mean: 0.0660204 stddev: 0.0723687
+... Eps: 350 Mean: 0.0757829 stddev: 0.0759163
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.102232 stddev: 0.069512
+... Eps: 50 Mean: 0.122721 stddev: 0.0874281
+... Eps: 100 Mean: 0.124739 stddev: 0.0739079
+... Eps: 150 Mean: 0.0991159 stddev: 0.0716207
+... Eps: 200 Mean: 0.116971 stddev: 0.079049
+... Eps: 250 Mean: 0.0852051 stddev: 0.0700595
+... Eps: 300 Mean: 0.0964801 stddev: 0.0637274
+... Eps: 350 Mean: 0.117577 stddev: 0.0954854
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0533851 stddev: 0.067811
+... Eps: 50 Mean: 0.0655491 stddev: 0.048591
+... Eps: 100 Mean: 0.0661177 stddev: 0.0618189
+... Eps: 150 Mean: 0.0776232 stddev: 0.056457
+... Eps: 200 Mean: 0.0618778 stddev: 0.0609019
+... Eps: 250 Mean: 0.086055 stddev: 0.0758007
+... Eps: 300 Mean: 0.078645 stddev: 0.0535086
+... Eps: 350 Mean: 0.0518324 stddev: 0.0676626
+World Size: 40 Bias: 1 Steps: 45 POIs: 6 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0324174 stddev: 0.0508067
+... Eps: 50 Mean: 0.0133207 stddev: 0.0304269
+... Eps: 100 Mean: 0.0160014 stddev: 0.0402016
+... Eps: 150 Mean: 0.033318 stddev: 0.0700817
+... Eps: 200 Mean: 0.0126465 stddev: 0.0331053
+... Eps: 250 Mean: 0.0303947 stddev: 0.0611361
+... Eps: 300 Mean: 0.0322163 stddev: 0.0554299
+... Eps: 350 Mean: 0.0164815 stddev: 0.0307442
+World Size: 40 Bias: 1 Steps: 45 POIs: 6 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0174335 stddev: 0.066434
+... Eps: 50 Mean: 0.0144732 stddev: 0.0379078
+... Eps: 100 Mean: 0.00334553 stddev: 0.0180163
+... Eps: 150 Mean: 0.00193977 stddev: 0.00616592
+... Eps: 200 Mean: 0.00875818 stddev: 0.0280208
+... Eps: 250 Mean: 0.0142221 stddev: 0.0350841
+... Eps: 300 Mean: 0.0156443 stddev: 0.0342915
+... Eps: 350 Mean: 0.0111889 stddev: 0.0349594
+World Size: 40 Bias: 1 Steps: 45 POIs: 10 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0123551 stddev: 0.033442
+... Eps: 50 Mean: 0.0118489 stddev: 0.0183981
+... Eps: 100 Mean: 0.0172299 stddev: 0.0256899
+... Eps: 150 Mean: 0.0171806 stddev: 0.0275086
+... Eps: 200 Mean: 0.0252402 stddev: 0.0556488
+... Eps: 250 Mean: 0.022778 stddev: 0.038401
+... Eps: 300 Mean: 0.0255227 stddev: 0.0474885
+... Eps: 350 Mean: 0.0341467 stddev: 0.0437719
+World Size: 40 Bias: 1 Steps: 45 POIs: 10 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.00530283 stddev: 0.0123443
+... Eps: 50 Mean: 0.0105761 stddev: 0.0217552
+... Eps: 100 Mean: 0.0071689 stddev: 0.0206926
+... Eps: 150 Mean: 0.015543 stddev: 0.0311212
+... Eps: 200 Mean: 0.00361233 stddev: 0.00941741
+... Eps: 250 Mean: 0.015899 stddev: 0.024865
+... Eps: 300 Mean: 0.0160375 stddev: 0.0273866
+... Eps: 350 Mean: 0.0108434 stddev: 0.024767
+World Size: 25 Bias: 0 Steps: 45 POIs: 6 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.149241 stddev: 0.130286
+... Eps: 50 Mean: 0.136407 stddev: 0.119896
+... Eps: 100 Mean: 0.144226 stddev: 0.135355
+... Eps: 150 Mean: 0.140117 stddev: 0.0865603
+... Eps: 200 Mean: 0.153811 stddev: 0.120275
+... Eps: 250 Mean: 0.130143 stddev: 0.094925
+... Eps: 300 Mean: 0.15794 stddev: 0.118359
+... Eps: 350 Mean: 0.131389 stddev: 0.106635
+World Size: 25 Bias: 0 Steps: 45 POIs: 6 Reward: D Coupling: 4
+Training objective D with coupling: 4 observationRadius: 4.000000
+... Eps: 0 Mean: 0.0645841 stddev: 0.0666438
+... Eps: 50 Mean: 0.027033 stddev: 0.0440214
+... Eps: 100 Mean: 0.0625751 stddev: 0.067632
+... Eps: 150 Mean: 0.0365177 stddev: 0.0497526
+... Eps: 200 Mean: 0.0661084 stddev: 0.0773789
+... Eps: 250 Mean: 0.0380787 stddev: 0.0551807
+... Eps: 300 Mean: 0.0606833 stddev: 0.0684144
+... Eps: 350 Mean: 0.0359068 stddev: 0.0519113
+World Size: 25 Bias: 0 Steps: 45 POIs: 10 Reward: D Coupling: 3
+Training objective D with coupling: 3 observationRadius: 4.000000
+... Eps: 0 Mean: 0.140946 stddev: 0.0803285
+... Eps: 50 Mean: 0.13584 stddev: 0.0702619
+... Eps: 100 Mean: 0.139145 stddev: 0.0700759
+.

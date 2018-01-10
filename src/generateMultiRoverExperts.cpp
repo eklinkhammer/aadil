@@ -76,21 +76,22 @@ int main() {
 
   YAML::Node controlNode = nodeFromYAML(config, "control");
 
-  vector<std::string> eRewards = {"G", "D"};
+  vector<std::string> eRewards = {"D"};
   vector<int> eBias = {1, 0};
   vector<int> eSteps = {30, 45};
   vector<int> eCoupling = {3,4};
   vector<double> eWorld = {25.0, 40.0};
   vector<int> ePOI = {6,10};
 
-
-  // Get all control data
+  //  Get all control data
   // for (const auto& eR : eRewards) {
   //   for (const auto& eB : eBias) {
   //     for (const auto& eS : eSteps) {
   // 	for (const auto& eW : eWorld) {
   // 	  for (const auto& eP : ePOI) {
   // 	    for (const auto& eC : eCoupling) {
+  // 	      if (eS < eW) continue;
+  // 	      if (eB == 0 && eS < 40) continue;
   // 	      std::cout << "World Size: " << eW << " Bias: " << eB
   // 			<< " Steps: " << eS << " POIs: " << eP
   // 			<< " Reward: " << eR << " Coupling: " << eC << std::endl;
@@ -102,7 +103,7 @@ int main() {
   // 	      controlNode["nPOIs"] = eP;
   // 	      controlNode["world"]["xmax"] = eW;
   // 	      controlNode["world"]["ymax"] = eW;
-  // 	      trainingCurves(controlNode, 350, 5, 10);
+  // 	      trainingCurves(controlNode, 350, 3, 10);
   // 	    }
   // 	  }
   // 	}
@@ -119,7 +120,7 @@ int main() {
   VectorXd input;
   for (auto& expKey : experimentStrings) {
     YAML::Node expNode = nodeFromYAML(config, expKey);
-    //trainingCurves(expNode, 1000, 5, 10);
+    //trainingCurves(expNode, 1000, 10, 50);
     o = objFromYAML(expNode, objectiveS);
     teams.push_back(bestTeamForObjective(expNode, expKey, domain, o, fileDir));
     vector<size_t> ind = fromYAML<vector<size_t>>(expNode, "ind");
@@ -164,16 +165,17 @@ int main() {
 	       double ymax = fromYAML<double>(root, ymaxS);
 	       std::vector<double> world = {xmin, xmax, ymin, ymax};
 
-	       for (size_t eps = 0; eps < 5001; eps += 250) {
+	       for (size_t eps = 0; eps < 1; eps += 1000) {
 		 root[nEpsS] = eps;
     
 		 std::vector<double> means;
 		 std::vector<double> stddevs;
 		 std::vector<double> stderrs;
-    
+
+		 Alignments as(objs, 10, 0.4);
+		 as.addAlignments(1000);
 		 for (size_t trial = 0; trial < 5; trial++) {
-		   Alignments as(objs, 10, 0.4);
-		   as.addAlignments(1000);
+		  
 
 		   vector< Agent* > roverTeam;
 		   for (size_t i = 0; i < nRovs; i++) {
@@ -223,7 +225,7 @@ int main() {
 		   stderrs.push_back(statstderr(alignScores));
 		 }
 		 std::cout << "Trial scores - Eps " << eps << " " << mean(means) << " " << stddev(means) << std::endl;
-		 if (eps > 1999) eps += 750;
+		 //if (eps > 1999) eps += 750;
 	       }
 	    }
 	  }

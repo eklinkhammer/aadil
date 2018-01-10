@@ -29,92 +29,83 @@ SOFTWARE.
 ExpTarget::ExpTarget() : ExpTarget(4.0) {}
 ExpTarget::ExpTarget(double observationR) : observationRadius(observationR) {}
 
-// double ExpTarget::reward(Env* env) {
+double ExpTarget::reward(Env* env) {
 
-//   std::vector<Target> targets = env->getTargets();
-//   std::vector<Agent*> agents = env->getAgents();
+  double numObserved = 0;
+  std::vector<Target> targets = env->getTargets();
+  std::vector<Agent*> agents = env->getAgents();
 
-//   int numT = (int) targets.size();
-//   int rewardR = 1 << numT;
-//   int reward = 0;
-//   std::vector< std::vector<State> > history = env->getHistoryStates();
-//   for (size_t agent = 0; agent < agents.size(); agent++) {
-//     std::vector<State> agentHistory;
-//     int numObserved = 0;
-//     int agentReward = 1;
-//     for (const auto& ss : history) {
-//       agentHistory.push_back(ss[agent]);
-//     }
+  for (auto& target : targets) {
+    target.reset();
+    target.setCoupling(1);
+    target.setObservationRadius(observationRadius);
 
-//     for (auto& target : targets) {
-//       target.reset();
-//       target.setCoupling(1);
-//       target.setObservationRadius(observationRadius);
+    for (const auto& js : env->getHistoryStates()) {
+      for (const auto& s : js) {
+	target.addObservation(s);
+      }
+    }
 
-//       for (const auto& s : agentHistory) {
-// 	target.addObservation(s);
-//       }
+    target.updateScore();
+    if (target.IsObserved()) {
+      numObserved += 1.0;
+    }
+  }
 
-//       target.updateScore();
-//       if (target.IsObserved()) {
-// 	numObserved++;
-//       }
-//     }
-
-//     agentReward = agentReward << numObserved;
-//     agentReward--;
-//     double rewardD = (double) agentReward;
-    
-//     reward += rewardD;
-//   }
-
-//   return reward;
-// }
+  return numObserved / ( (double) targets.size());
+}
 
 std::vector<double> ExpTarget::rewardV(Env* env) {
   std::vector<Target> targets = env->getTargets();
   std::vector<Agent*> agents = env->getAgents();
 
-  std::vector<double> rewards;
-
-  int numT = (int) targets.size();
-  int rewardR = 1 << numT;
-  double R = (double) rewardR;
   
-  std::vector< std::vector<State> > history = env->getHistoryStates();
-  for (size_t agent = 0; agent < agents.size(); agent++) {
-    std::vector<State> agentHistory;
-    int numObserved = 0;
-    int agentReward = 1;
-    for (const auto& ss : history) {
-      agentHistory.push_back(ss[agent]);
-    }
-
-    for (auto& target : targets) {
-      target.reset();
-      target.setCoupling(1);
-      target.setObservationRadius(observationRadius);
-
-      for (const auto& s : agentHistory) {
-	target.addObservation(s);
-      }
-
-      target.updateScore();
-      
-      if (target.IsObserved()) {
-	numObserved++;
-      }
-    }
-				
-    agentReward = agentReward << numObserved;
-    agentReward--;
-
-
-    double rewardD = (double) agentReward / R;// / rewardR;
-    //std::cout << "AgentReward: " << agentReward << " MaxReward: " << rewardR << " Reward: " << rewardD << std::endl;
-    rewards.push_back(rewardD);
-  }
-
+  std::vector<double> rewards(agents.size(), reward(env));
   return rewards;
+
+  // int numT = (int) targets.size();
+  // int rewardR = 1 << numT;
+  // double R = (double) rewardR;
+  
+  // std::vector< std::vector<State> > history = env->getHistoryStates();
+  // for (size_t agent = 0; agent < agents.size(); agent++) {
+  //   std::vector<State> agentHistory;
+  //   int numObserved = 0;
+  //   int agentReward = 1;
+  //   for (const auto& ss : history) {
+  //     agentHistory.push_back(ss[agent]);
+  //   }
+
+  //   for (auto& target : targets) {
+  //     target.reset();
+  //     target.setCoupling(1);
+  //     target.setObservationRadius(observationRadius);
+
+  //     for (const auto& s : agentHistory) {
+  // 	target.addObservation(s);
+  //     }
+
+  //     target.updateScore();
+      
+  //     if (target.IsObserved()) {
+  // 	numObserved++;
+  //     }
+  //   }
+
+  //   for (auto& target : targets) {
+      
+  //   }
+				
+  //   agentReward = agentReward << numObserved;
+  //   agentReward--;
+
+
+  //   double rewardD = (double) agentReward / R;// / rewardR;
+  //   rewardD = ((double) numObserved) / ((double) targets.size());
+  //   //std::cout << "AgentReward: " << agentReward << " MaxReward: " << rewardR << " Reward: " << rewardD << std::endl;
+  //   rewards.push_back(rewardD);
+  // }
+
+  // return rewards;
 }
 

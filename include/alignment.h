@@ -40,7 +40,7 @@ class Alignment {
 	align_score = 1;
 	align_mag = reward2 / reward1;
       } else if (reward2 == 0) {
-	align_score = 3;
+	align_score = 5;
 	align_mag = reward1;
       } else {
 	align_score = 9;
@@ -48,24 +48,24 @@ class Alignment {
       }
     } else if (reward1 == 0) {
       if (reward2 > 0) {
-	align_score = 2;
+	align_score = 4;
 	align_mag = reward2;
       } else if (reward2 == 0) {
-	align_score = 4;
+	align_score = 3;
 	align_mag = 0;
       } else {
-	align_score = 8;
+	align_score = 7;
 	align_score = reward2;
       }
     } else {
       if (reward2 > 0) {
-	align_score = 7;
+	align_score = 8;
 	align_mag = reward2 / reward1;
       } else if (reward2 == 0) {
 	align_score = 6;
 	align_mag = reward1;
       } else {
-	align_score = 5;
+	align_score = 2;
 	align_mag = reward2 / reward1;
       }
     }

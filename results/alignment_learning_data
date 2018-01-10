@@ -1,0 +1,400 @@
+Getting the best team for exptarget
+Reading in neural network policies from expnets.nets
+Getting the best team for onepoi
+Reading in neural network policies from onepoi.nets
+Getting the best team for farpoi
+Reading in neural network policies from farpoi.nets
+Getting the best team for teamforming2
+Reading in neural network policies from teamforming2.nets
+Getting the best team for teamforming3
+Reading in neural network policies from teamforming3.nets
+Getting the best team for teams2
+Reading in neural network policies from teams2.nets
+Getting the best team for teams3
+Reading in neural network policies from teams3.nets
+Getting the best team for teams4
+Reading in neural network policies from teams4.nets
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.203835 0.146526 0.0146526
+Alignment scores for trial 0: 1000 0.233151 0.167443 0.0167443
+Alignment scores for trial 0: 2000 0.25466 0.167881 0.0167881
+Alignment scores for trial 0: 3000 0.123993 0.113238 0.0113238
+Alignment scores for trial 0: 4000 0.212148 0.142447 0.0142447
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.145448 0.12129 0.012129
+Alignment scores for trial 0: 1000 0.0807114 0.091234 0.0091234
+Alignment scores for trial 0: 2000 0.120939 0.133801 0.0133801
+Alignment scores for trial 0: 3000 0.154123 0.13015 0.013015
+Alignment scores for trial 0: 4000 0.125543 0.0891753 0.00891753
+World Size: 25 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.21954 0.115304 0.0115304
+Alignment scores for trial 0: 1000 0.225733 0.0937973 0.00937973
+Alignment scores for trial 0: 2000 0.203388 0.124358 0.0124358
+Alignment scores for trial 0: 3000 0.182056 0.137471 0.0137471
+Alignment scores for trial 0: 4000 0.191035 0.119245 0.0119245
+World Size: 25 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0664198 0.0841295 0.00841295
+Alignment scores for trial 0: 1000 0.085955 0.085826 0.0085826
+Alignment scores for trial 0: 2000 0.058375 0.0657771 0.00657771
+Alignment scores for trial 0: 3000 0.0572128 0.0576485 0.00576485
+Alignment scores for trial 0: 4000 0.0643588 0.0832443 0.00832443
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.260989 0.137534 0.0137534
+Alignment scores for trial 0: 1000 0.242357 0.170525 0.0170525
+Alignment scores for trial 0: 2000 0.243095 0.155441 0.0155441
+Alignment scores for trial 0: 3000 0.193268 0.151411 0.0151411
+Alignment scores for trial 0: 4000 0.222384 0.167518 0.0167518
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.115973 0.0831804 0.00831804
+Alignment scores for trial 0: 1000 0.145606 0.146669 0.0146669
+Alignment scores for trial 0: 2000 0.162352 0.109612 0.0109612
+Alignment scores for trial 0: 3000 0.163066 0.125602 0.0125602
+Alignment scores for trial 0: 4000 0.13536 0.115967 0.0115967
+World Size: 25 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.249173 0.11987 0.011987
+Alignment scores for trial 0: 1000 0.195616 0.125733 0.0125733
+Alignment scores for trial 0: 2000 0.230604 0.163539 0.0163539
+Alignment scores for trial 0: 3000 0.216623 0.111157 0.0111157
+Alignment scores for trial 0: 4000 0.187064 0.141144 0.0141144
+World Size: 25 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.101481 0.103631 0.0103631
+Alignment scores for trial 0: 1000 0.0821474 0.0919373 0.00919373
+Alignment scores for trial 0: 2000 0.0784742 0.0936363 0.00936363
+Alignment scores for trial 0: 3000 0.0881392 0.0659134 0.00659134
+Alignment scores for trial 0: 4000 0.0777108 0.0612179 0.00612179
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.185109 0.0819878 0.00819878
+Alignment scores for trial 0: 1000 0.202706 0.117933 0.0117933
+Alignment scores for trial 0: 2000 0.217326 0.112288 0.0112288
+Alignment scores for trial 0: 3000 0.207092 0.110712 0.0110712
+Alignment scores for trial 0: 4000 0.205913 0.116152 0.0116152
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.114616 0.0792368 0.00792368
+Alignment scores for trial 0: 1000 0.11513 0.075066 0.0075066
+Alignment scores for trial 0: 2000 0.131509 0.0972644 0.00972644
+Alignment scores for trial 0: 3000 0.134844 0.101349 0.0101349
+Alignment scores for trial 0: 4000 0.106303 0.105919 0.0105919
+World Size: 25 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.203485 0.0907031 0.00907031
+Alignment scores for trial 0: 1000 0.162391 0.063606 0.0063606
+Alignment scores for trial 0: 2000 0.191193 0.0843945 0.00843945
+Alignment scores for trial 0: 3000 0.211406 0.103155 0.0103155
+Alignment scores for trial 0: 4000 0.172798 0.085633 0.0085633
+World Size: 25 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0859617 0.0837629 0.00837629
+Alignment scores for trial 0: 1000 0.0566857 0.0683511 0.00683511
+Alignment scores for trial 0: 2000 0.0867891 0.064327 0.0064327
+Alignment scores for trial 0: 3000 0.0785206 0.0604439 0.00604439
+Alignment scores for trial 0: 4000 0.0544995 0.051152 0.0051152
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.231256 0.115899 0.0115899
+Alignment scores for trial 0: 1000 0.241115 0.119147 0.0119147
+Alignment scores for trial 0: 2000 0.274265 0.117197 0.0117197
+Alignment scores for trial 0: 3000 0.272127 0.137731 0.0137731
+Alignment scores for trial 0: 4000 0.266634 0.124466 0.0124466
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.150861 0.0976078 0.00976078
+Alignment scores for trial 0: 1000 0.144735 0.0841525 0.00841525
+Alignment scores for trial 0: 2000 0.15897 0.106839 0.0106839
+Alignment scores for trial 0: 3000 0.159015 0.101144 0.0101144
+Alignment scores for trial 0: 4000 0.171184 0.108417 0.0108417
+World Size: 25 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.206418 0.105291 0.0105291
+Alignment scores for trial 0: 1000 0.225185 0.101509 0.0101509
+Alignment scores for trial 0: 2000 0.226152 0.0961044 0.00961044
+Alignment scores for trial 0: 3000 0.22607 0.12311 0.012311
+Alignment scores for trial 0: 4000 0.22501 0.0935766 0.00935766
+World Size: 25 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0572116 0.0590211 0.00590211
+Alignment scores for trial 0: 1000 0.0783304 0.0691258 0.00691258
+Alignment scores for trial 0: 2000 0.0816792 0.0708148 0.00708148
+Alignment scores for trial 0: 3000 0.0874621 0.0795911 0.00795911
+Alignment scores for trial 0: 4000 0.0840489 0.0715628 0.00715628
+World Size: 40 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0527452 0.072132 0.0072132
+Alignment scores for trial 0: 1000 0.0448355 0.0943637 0.00943637
+Alignment scores for trial 0: 2000 0.0293719 0.0458369 0.00458369
+Alignment scores for trial 0: 3000 0.032231 0.0605744 0.00605744
+Alignment scores for trial 0: 4000 0.0262535 0.0435405 0.00435405
+World Size: 40 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0289988 0.0629782 0.00629782
+Alignment scores for trial 0: 1000 0 0 0
+Alignment scores for trial 0: 2000 0.0197332 0.0379324 0.00379324
+Alignment scores for trial 0: 3000 0.013376 0.0333371 0.00333371
+Alignment scores for trial 0: 4000 0.0252543 0.0529595 0.00529595
+World Size: 40 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.020934 0.0266924 0.00266924
+Alignment scores for trial 0: 1000 0.0439522 0.0602171 0.00602171
+Alignment scores for trial 0: 2000 0.0467099 0.0524411 0.00524411
+Alignment scores for trial 0: 3000 0.0467981 0.0952536 0.00952536
+Alignment scores for trial 0: 4000 0.0290315 0.0381537 0.00381537
+World Size: 40 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0 0 0
+Alignment scores for trial 0: 1000 0 0 0
+Alignment scores for trial 0: 2000 0.0046026 0.0182176 0.00182176
+Alignment scores for trial 0: 3000 0.00740894 0.0235612 0.00235612
+Alignment scores for trial 0: 4000 0 0 0
+World Size: 40 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0395934 0.0570162 0.00570162
+Alignment scores for trial 0: 1000 0.0862777 0.11677 0.011677
+Alignment scores for trial 0: 2000 0.0538901 0.0696517 0.00696517
+Alignment scores for trial 0: 3000 0.0404467 0.0641481 0.00641481
+Alignment scores for trial 0: 4000 0.056359 0.0799515 0.00799515
+World Size: 40 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0289216 0.0667174 0.00667174
+Alignment scores for trial 0: 1000 0.0124756 0.0266362 0.00266362
+Alignment scores for trial 0: 2000 0.0180454 0.0393696 0.00393696
+Alignment scores for trial 0: 3000 0.0152218 0.0334051 0.00334051
+Alignment scores for trial 0: 4000 0.0214254 0.0445641 0.00445641
+World Size: 40 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0339183 0.0519845 0.00519845
+Alignment scores for trial 0: 1000 0.059019 0.0839767 0.00839767
+Alignment scores for trial 0: 2000 0.0313656 0.0538424 0.00538424
+Alignment scores for trial 0: 3000 0.032815 0.0462759 0.00462759
+Alignment scores for trial 0: 4000 0.0508529 0.0760156 0.00760156
+World Size: 40 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.00107027 0.00608581 0.000608581
+Alignment scores for trial 0: 1000 0.00323933 0.0158694 0.00158694
+Alignment scores for trial 0: 2000 0.00440161 0.017899 0.0017899
+Alignment scores for trial 0: 3000 0.00150549 0.00737535 0.000737535
+Alignment scores for trial 0: 4000 0.0040751 0.0149076 0.00149076
+World Size: 40 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0525242 0.0545481 0.00545481
+Alignment scores for trial 0: 1000 0.0370036 0.0589263 0.00589263
+Alignment scores for trial 0: 2000 0.0507356 0.0435861 0.00435861
+Alignment scores for trial 0: 3000 0.0261506 0.0316898 0.00316898
+Alignment scores for trial 0: 4000 0.0494748 0.0495672 0.00495672
+World Size: 40 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0205497 0.0352338 0.00352338
+Alignment scores for trial 0: 1000 0.0124523 0.0227857 0.00227857
+Alignment scores for trial 0: 2000 0.0372986 0.053941 0.0053941
+Alignment scores for trial 0: 3000 0.020993 0.0370003 0.00370003
+Alignment scores for trial 0: 4000 0.01315 0.0251107 0.00251107
+World Size: 40 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0251603 0.0367585 0.00367585
+Alignment scores for trial 0: 1000 0.0363693 0.0562869 0.00562869
+Alignment scores for trial 0: 2000 0.0351552 0.0422243 0.00422243
+Alignment scores for trial 0: 3000 0.0284874 0.0331951 0.00331951
+Alignment scores for trial 0: 4000 0.0253607 0.0328471 0.00328471
+World Size: 40 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.00325625 0.0141937 0.00141937
+Alignment scores for trial 0: 1000 0.00906254 0.0289541 0.00289541
+Alignment scores for trial 0: 2000 0.000485702 0.00237944 0.000237944
+Alignment scores for trial 0: 3000 0.00737287 0.0176717 0.00176717
+Alignment scores for trial 0: 4000 0.00185557 0.00558979 0.000558979
+World Size: 40 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0524068 0.0574505 0.00574505
+Alignment scores for trial 0: 1000 0.0528497 0.0706868 0.00706868
+Alignment scores for trial 0: 2000 0.0496482 0.0512081 0.00512081
+Alignment scores for trial 0: 3000 0.0465079 0.0572187 0.00572187
+Alignment scores for trial 0: 4000 0.0643859 0.0646526 0.00646526
+World Size: 40 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0251555 0.0455527 0.00455527
+Alignment scores for trial 0: 1000 0.0198009 0.0309344 0.00309344
+Alignment scores for trial 0: 2000 0.0155034 0.0269419 0.00269419
+Alignment scores for trial 0: 3000 0.0302239 0.0430512 0.00430512
+Alignment scores for trial 0: 4000 0.0187254 0.0365286 0.00365286
+World Size: 40 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0462592 0.0512056 0.00512056
+Alignment scores for trial 0: 1000 0.0559468 0.0538423 0.00538423
+Alignment scores for trial 0: 2000 0.0466997 0.0533941 0.00533941
+Alignment scores for trial 0: 3000 0.0478771 0.0431738 0.00431738
+Alignment scores for trial 0: 4000 0.0278518 0.042211 0.0042211
+World Size: 40 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.00646579 0.0153254 0.00153254
+Alignment scores for trial 0: 1000 0.00707909 0.0202313 0.00202313
+Alignment scores for trial 0: 2000 0.00178334 0.00838599 0.000838599
+Alignment scores for trial 0: 3000 0.0043525 0.0134472 0.00134472
+Alignment scores for trial 0: 4000 0.00701509 0.0198595 0.00198595
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.184828 0.199482 0.0199482
+Alignment scores for trial 0: 1000 0.259142 0.131021 0.0131021
+Alignment scores for trial 0: 2000 0.180949 0.140395 0.0140395
+Alignment scores for trial 0: 3000 0.164106 0.138071 0.0138071
+Alignment scores for trial 0: 4000 0.239049 0.165849 0.0165849
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.11852 0.131949 0.0131949
+Alignment scores for trial 0: 1000 0.10106 0.0710578 0.00710578
+Alignment scores for trial 0: 2000 0.108914 0.118659 0.0118659
+Alignment scores for trial 0: 3000 0.0923719 0.0934125 0.00934125
+Alignment scores for trial 0: 4000 0.114027 0.106347 0.0106347
+World Size: 25 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.223669 0.14595 0.014595
+Alignment scores for trial 0: 1000 0.184718 0.118691 0.0118691
+Alignment scores for trial 0: 2000 0.200029 0.0946528 0.00946528
+Alignment scores for trial 0: 3000 0.223104 0.142631 0.0142631
+Alignment scores for trial 0: 4000 0.190803 0.131099 0.0131099
+World Size: 25 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0793806 0.0688163 0.00688163
+Alignment scores for trial 0: 1000 0.111828 0.115921 0.0115921
+Alignment scores for trial 0: 2000 0.0575343 0.0615368 0.00615368
+Alignment scores for trial 0: 3000 0.0692828 0.0869452 0.00869452
+Alignment scores for trial 0: 4000 0.0795507 0.096086 0.0096086
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.25739 0.144707 0.0144707
+Alignment scores for trial 0: 1000 0.258635 0.126511 0.0126511
+Alignment scores for trial 0: 2000 0.243719 0.15156 0.015156
+Alignment scores for trial 0: 3000 0.267225 0.12418 0.012418
+Alignment scores for trial 0: 4000 0.24185 0.124708 0.0124708
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.154617 0.104753 0.0104753
+Alignment scores for trial 0: 1000 0.125912 0.118655 0.0118655
+Alignment scores for trial 0: 2000 0.138742 0.126316 0.0126316
+Alignment scores for trial 0: 3000 0.129264 0.0948513 0.00948513
+Alignment scores for trial 0: 4000 0.123235 0.114528 0.0114528
+World Size: 25 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.228938 0.142943 0.0142943
+Alignment scores for trial 0: 1000 0.1938 0.114541 0.0114541
+Alignment scores for trial 0: 2000 0.214789 0.12952 0.012952
+Alignment scores for trial 0: 3000 0.298788 0.159965 0.0159965
+Alignment scores for trial 0: 4000 0.221446 0.11349 0.011349
+World Size: 25 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0692408 0.0618787 0.00618787
+Alignment scores for trial 0: 1000 0.0596181 0.070256 0.0070256
+Alignment scores for trial 0: 2000 0.0778757 0.0907494 0.00907494
+Alignment scores for trial 0: 3000 0.0901953 0.0669614 0.00669614
+Alignment scores for trial 0: 4000 0.0699405 0.0843117 0.00843117
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.19171 0.110599 0.0110599
+Alignment scores for trial 0: 1000 0.216919 0.116376 0.0116376
+Alignment scores for trial 0: 2000 0.220425 0.119312 0.0119312
+Alignment scores for trial 0: 3000 0.154435 0.0914587 0.00914587
+Alignment scores for trial 0: 4000 0.208445 0.0894996 0.00894996
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.122875 0.0802859 0.00802859
+Alignment scores for trial 0: 1000 0.114869 0.104664 0.0104664
+Alignment scores for trial 0: 2000 0.163859 0.115274 0.0115274
+Alignment scores for trial 0: 3000 0.133731 0.0896413 0.00896413
+Alignment scores for trial 0: 4000 0.146337 0.103626 0.0103626
+World Size: 25 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.164544 0.0873662 0.00873662
+Alignment scores for trial 0: 1000 0.190264 0.106318 0.0106318
+Alignment scores for trial 0: 2000 0.193345 0.077846 0.0077846
+Alignment scores for trial 0: 3000 0.196376 0.129035 0.0129035
+Alignment scores for trial 0: 4000 0.19848 0.111896 0.0111896
+World Size: 25 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0892101 0.0654158 0.00654158
+Alignment scores for trial 0: 1000 0.0597059 0.0539541 0.00539541
+Alignment scores for trial 0: 2000 0.0856912 0.0553519 0.00553519
+Alignment scores for trial 0: 3000 0.0849148 0.0755449 0.00755449
+Alignment scores for trial 0: 4000 0.0662561 0.0664564 0.00664564
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.280855 0.127023 0.0127023
+Alignment scores for trial 0: 1000 0.18535 0.10943 0.010943
+Alignment scores for trial 0: 2000 0.221164 0.131852 0.0131852
+Alignment scores for trial 0: 3000 0.238289 0.104803 0.0104803
+Alignment scores for trial 0: 4000 0.237768 0.129901 0.0129901
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.150013 0.0826027 0.00826027
+Alignment scores for trial 0: 1000 0.128587 0.0734787 0.00734787
+Alignment scores for trial 0: 2000 0.135388 0.0981832 0.00981832
+Alignment scores for trial 0: 3000 0.158231 0.102875 0.0102875
+Alignment scores for trial 0: 4000 0.16698 0.0967432 0.00967432
+World Size: 25 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.224164 0.0879787 0.00879787
+Alignment scores for trial 0: 1000 0.228677 0.0811777 0.00811777
+Alignment scores for trial 0: 2000 0.263964 0.0957175 0.00957175
+Alignment scores for trial 0: 3000 0.205125 0.118865 0.0118865
+Alignment scores for trial 0: 4000 0.25534 0.101359 0.0101359
+World Size: 25 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0952154 0.0613931 0.00613931
+Alignment scores for trial 0: 1000 0.0754614 0.0655745 0.00655745
+Alignment scores for trial 0: 2000 0.0920397 0.0695056 0.00695056
+Alignment scores for trial 0: 3000 0.0813389 0.0753523 0.00753523
+Alignment scores for trial 0: 4000 0.0878398 0.0630884 0.00630884
+World Size: 40 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0317829 0.0527294 0.00527294
+Alignment scores for trial 0: 1000 0.0698502 0.072083 0.0072083
+Alignment scores for trial 0: 2000 0.0431065 0.0731014 0.00731014
+Alignment scores for trial 0: 3000 0.0488845 0.0640577 0.00640577
+Alignment scores for trial 0: 4000 0.0340925 0.0570849 0.00570849
+World Size: 40 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0295268 0.0618037 0.00618037
+Alignment scores for trial 0: 1000 0.0111419 0.0302218 0.00302218
+Alignment scores for trial 0: 2000 0.0298261 0.0494886 0.00494886
+Alignment scores for trial 0: 3000 0.0129737 0.0274958 0.00274958
+Alignment scores for trial 0: 4000 0.0193431 0.0419302 0.00419302
+World Size: 40 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0194399 0.0370585 0.00370585
+Alignment scores for trial 0: 1000 0.03417 0.0562818 0.00562818
+Alignment scores for trial 0: 2000 0.0249965 0.0392797 0.00392797
+Alignment scores for trial 0: 3000 0.0387654 0.0666667 0.00666667
+Alignment scores for trial 0: 4000 0.0191583 0.0293422 0.00293422
+World Size: 40 Bias: 0 Steps: 30 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.00399863 0.013805 0.0013805
+Alignment scores for trial 0: 1000 0.0107996 0.0333853 0.00333853
+Alignment scores for trial 0: 2000 0.00297458 0.0099155 0.00099155
+Alignment scores for trial 0: 3000 0.00110258 0.00436413 0.000436413
+Alignment scores for trial 0: 4000 0.00299235 0.0146594 0.00146594
+World Size: 40 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0771117 0.0882072 0.00882072
+Alignment scores for trial 0: 1000 0.0396427 0.0593905 0.00593905
+Alignment scores for trial 0: 2000 0.0620187 0.0650822 0.00650822
+Alignment scores for trial 0: 3000 0.05041 0.0902666 0.00902666
+Alignment scores for trial 0: 4000 0.0404558 0.064597 0.0064597
+World Size: 40 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.00992406 0.027412 0.0027412
+Alignment scores for trial 0: 1000 0.0220948 0.0524429 0.00524429
+Alignment scores for trial 0: 2000 0.0196224 0.0587771 0.00587771
+Alignment scores for trial 0: 3000 0.0159672 0.0386649 0.00386649
+Alignment scores for trial 0: 4000 0.0128805 0.0485942 0.00485942
+World Size: 40 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0539889 0.0667025 0.00667025
+Alignment scores for trial 0: 1000 0.0377986 0.0540775 0.00540775
+Alignment scores for trial 0: 2000 0.0499555 0.0517265 0.00517265
+Alignment scores for trial 0: 3000 0.0362771 0.059545 0.0059545
+Alignment scores for trial 0: 4000 0.0311919 0.050716 0.0050716
+World Size: 40 Bias: 0 Steps: 45 POIs: 6 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.00976871 0.0343633 0.00343633
+Alignment scores for trial 0: 1000 0.011593 0.0270181 0.00270181
+Alignment scores for trial 0: 2000 0.00590502 0.0187359 0.00187359
+Alignment scores for trial 0: 3000 0.00250749 0.0110466 0.00110466
+Alignment scores for trial 0: 4000 0.00229149 0.00778016 0.000778016
+World Size: 40 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0621145 0.0692149 0.00692149
+Alignment scores for trial 0: 1000 0.0463899 0.0578924 0.00578924
+Alignment scores for trial 0: 2000 0.0359631 0.0516686 0.00516686
+Alignment scores for trial 0: 3000 0.0433069 0.051019 0.0051019
+Alignment scores for trial 0: 4000 0.0335619 0.0297775 0.00297775
+World Size: 40 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0159533 0.0281687 0.00281687
+Alignment scores for trial 0: 1000 0.0260256 0.0379168 0.00379168
+Alignment scores for trial 0: 2000 0.0202207 0.0327029 0.00327029
+Alignment scores for trial 0: 3000 0.0450421 0.0650067 0.00650067
+Alignment scores for trial 0: 4000 0.00939547 0.0188773 0.00188773
+World Size: 40 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0212407 0.0270026 0.00270026
+Alignment scores for trial 0: 1000 0.0335036 0.0408437 0.00408437
+Alignment scores for trial 0: 2000 0.034623 0.0423755 0.00423755
+Alignment scores for trial 0: 3000 0.0268009 0.0293163 0.00293163
+Alignment scores for trial 0: 4000 0.0384932 0.0423258 0.00423258
+World Size: 40 Bias: 0 Steps: 30 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.00185723 0.00909855 0.000909855
+Alignment scores for trial 0: 1000 0.0043518 0.0138506 0.00138506
+Alignment scores for trial 0: 2000 0.0022498 0.00578795 0.000578795
+Alignment scores for trial 0: 3000 0.00137932 0.00520408 0.000520408
+Alignment scores for trial 0: 4000 0.00247337 0.00891493 0.000891493
+World Size: 40 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0628979 0.0762843 0.00762843
+Alignment scores for trial 0: 1000 0.0706906 0.0713476 0.00713476
+Alignment scores for trial 0: 2000 0.0649688 0.0640498 0.00640498
+Alignment scores for trial 0: 3000 0.0512218 0.0471397 0.00471397
+Alignment scores for trial 0: 4000 0.0516464 0.0661458 0.00661458
+World Size: 40 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.0363089 0.0539997 0.00539997
+Alignment scores for trial 0: 1000 0.0358967 0.0501331 0.00501331
+Alignment scores for trial 0: 2000 0.022521 0.0312374 0.00312374
+Alignment scores for trial 0: 3000 0.025237 0.0428756 0.00428756
+Alignment scores for trial 0: 4000 0.0214267 0.0317744 0.00317744
+World Size: 40 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 3
+Alignment scores for trial 0: 0 0.0351155 0.0441628 0.00441628
+Alignment scores for trial 0: 1000 0.0340061 0.0414259 0.00414259
+Alignment scores for trial 0: 2000 0.0365863 0.0475044 0.00475044
+Alignment scores for trial 0: 3000 0.0272507 0.0347009 0.00347009
+Alignment scores for trial 0: 4000 0.0420776 0.0465393 0.00465393
+World Size: 40 Bias: 0 Steps: 45 POIs: 10 Learning Rate: 0.99 Coupling: 4
+Alignment scores for trial 0: 0 0.00649385 0.0160496 0.00160496
+Alignment scores for trial 0: 1000 0.00287024 0.00941261 0.000941261
+Alignment scores for trial 0: 2000 0.00623721 0.0159979 0.00159979
+Alignment scores for trial 0: 3000 0.00317563 0.0154903 0.00154903
+Alignment scores for trial 0: 4000 0.000713281 0.00405589 0.000405589

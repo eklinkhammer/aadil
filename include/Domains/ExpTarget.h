@@ -37,6 +37,7 @@ class ExpTarget : public Objective {
   ExpTarget();
   ExpTarget(double observationR);
 
+  virtual double reward(Env* env);
   virtual std::vector<double> rewardV(Env* env);
 
   virtual std::string getName() { return "Exp target with observation radius: " + std::to_string(observationRadius); };

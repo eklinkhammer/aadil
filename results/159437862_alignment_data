@@ -1,0 +1,345 @@
+Getting the best team for exptarget
+Reading in neural network policies from expnets.nets
+Getting the best team for onepoi
+Reading in neural network policies from onepoi.nets
+Getting the best team for farpoi
+Reading in neural network policies from farpoi.nets
+Getting the best team for teamforming2
+Reading in neural network policies from teamforming2.nets
+Getting the best team for teamforming3
+Reading in neural network policies from teamforming3.nets
+Getting the best team for teams2
+Reading in neural network policies from teams2.nets
+Getting the best team for teams3
+Reading in neural network policies from teams3.nets
+Getting the best team for teams4
+Reading in neural network policies from teams4.nets
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.228273 0.12704 0.012704
+Alignment scores for trial 1: 0 0.221808 0.142337 0.0142337
+Alignment scores for trial 2: 0 0.180723 0.120165 0.0120165
+Alignment scores for trial 3: 0 0.221621 0.135979 0.0135979
+Alignment scores for trial 4: 0 0.231751 0.144738 0.0144738
+Trial scores - Eps 0 0.216835 0.0184661
+Alignment scores for trial 0: 1000 0.190043 0.118023 0.0118023
+Alignment scores for trial 1: 1000 0.229957 0.154316 0.0154316
+Alignment scores for trial 2: 1000 0.219519 0.162865 0.0162865
+Alignment scores for trial 3: 1000 0.149631 0.125852 0.0125852
+Alignment scores for trial 4: 1000 0.252262 0.162247 0.0162247
+Trial scores - Eps 1000 0.208282 0.0355047
+Alignment scores for trial 0: 2000 0.230829 0.134167 0.0134167
+Alignment scores for trial 1: 2000 0.207829 0.136097 0.0136097
+Alignment scores for trial 2: 2000 0.206328 0.167922 0.0167922
+Alignment scores for trial 3: 2000 0.185748 0.138989 0.0138989
+Alignment scores for trial 4: 2000 0.197021 0.131381 0.0131381
+Trial scores - Eps 2000 0.205551 0.0148976
+Alignment scores for trial 0: 3000 0.228357 0.138844 0.0138844
+Alignment scores for trial 1: 3000 0.262054 0.139251 0.0139251
+Alignment scores for trial 2: 3000 0.253365 0.19203 0.019203
+Alignment scores for trial 3: 3000 0.234963 0.188799 0.0188799
+Alignment scores for trial 4: 3000 0.204602 0.177942 0.0177942
+Trial scores - Eps 3000 0.236668 0.0201169
+Alignment scores for trial 0: 4000 0.249874 0.145548 0.0145548
+Alignment scores for trial 1: 4000 0.180718 0.14017 0.014017
+Alignment scores for trial 2: 4000 0.153504 0.115125 0.0115125
+Alignment scores for trial 3: 4000 0.285656 0.137599 0.0137599
+Alignment scores for trial 4: 4000 0.26051 0.164021 0.0164021
+Trial scores - Eps 4000 0.226052 0.0502509
+World Size: 25 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.127564 0.0953195 0.00953195
+Alignment scores for trial 1: 0 0.122905 0.109103 0.0109103
+Alignment scores for trial 2: 0 0.135286 0.113604 0.0113604
+Alignment scores for trial 3: 0 0.120299 0.0880031 0.00880031
+Alignment scores for trial 4: 0 0.158952 0.125221 0.0125221
+Trial scores - Eps 0 0.133001 0.0139391
+Alignment scores for trial 0: 1000 0.12763 0.13344 0.013344
+Alignment scores for trial 1: 1000 0.151783 0.111182 0.0111182
+Alignment scores for trial 2: 1000 0.138793 0.125367 0.0125367
+Alignment scores for trial 3: 1000 0.145824 0.0850862 0.00850862
+Alignment scores for trial 4: 1000 0.14507 0.122234 0.0122234
+Trial scores - Eps 1000 0.14182 0.00820204
+Alignment scores for trial 0: 2000 0.143258 0.117603 0.0117603
+Alignment scores for trial 1: 2000 0.12207 0.1064 0.01064
+Alignment scores for trial 2: 2000 0.113649 0.099936 0.0099936
+Alignment scores for trial 3: 2000 0.122764 0.100998 0.0100998
+Alignment scores for trial 4: 2000 0.146505 0.129825 0.0129825
+Trial scores - Eps 2000 0.129649 0.0128854
+Alignment scores for trial 0: 3000 0.162107 0.121668 0.0121668
+Alignment scores for trial 1: 3000 0.0974007 0.0694463 0.00694463
+Alignment scores for trial 2: 3000 0.172946 0.12782 0.012782
+Alignment scores for trial 3: 3000 0.119316 0.096556 0.0096556
+Alignment scores for trial 4: 3000 0.161358 0.0938505 0.00938505
+Trial scores - Eps 3000 0.142625 0.0291148
+Alignment scores for trial 0: 4000 0.120535 0.117714 0.0117714
+Alignment scores for trial 1: 4000 0.103492 0.0782397 0.00782397
+Alignment scores for trial 2: 4000 0.131813 0.107813 0.0107813
+Alignment scores for trial 3: 4000 0.13689 0.119267 0.0119267
+Alignment scores for trial 4: 4000 0.142735 0.104378 0.0104378
+Trial scores - Eps 4000 0.127093 0.0138775
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.215603 0.100473 0.0100473
+Alignment scores for trial 1: 0 0.186781 0.109917 0.0109917
+Alignment scores for trial 2: 0 0.233635 0.0999631 0.00999631
+Alignment scores for trial 3: 0 0.240173 0.11009 0.011009
+Alignment scores for trial 4: 0 0.187296 0.109185 0.0109185
+Trial scores - Eps 0 0.212698 0.0224439
+Alignment scores for trial 0: 1000 0.247315 0.116201 0.0116201
+Alignment scores for trial 1: 1000 0.210448 0.102667 0.0102667
+Alignment scores for trial 2: 1000 0.195613 0.10948 0.010948
+Alignment scores for trial 3: 1000 0.261883 0.109145 0.0109145
+Alignment scores for trial 4: 1000 0.208801 0.0965848 0.00965848
+Trial scores - Eps 1000 0.224812 0.025282
+Alignment scores for trial 0: 2000 0.234367 0.133099 0.0133099
+Alignment scores for trial 1: 2000 0.226307 0.0885903 0.00885903
+Alignment scores for trial 2: 2000 0.206152 0.0960197 0.00960197
+Alignment scores for trial 3: 2000 0.200996 0.111728 0.0111728
+Alignment scores for trial 4: 2000 0.221788 0.112309 0.0112309
+Trial scores - Eps 2000 0.217922 0.0124956
+Alignment scores for trial 0: 3000 0.218031 0.100509 0.0100509
+Alignment scores for trial 1: 3000 0.210144 0.100003 0.0100003
+Alignment scores for trial 2: 3000 0.195676 0.0934849 0.00934849
+Alignment scores for trial 3: 3000 0.199457 0.0855267 0.00855267
+Alignment scores for trial 4: 3000 0.240603 0.124912 0.0124912
+Trial scores - Eps 3000 0.212782 0.0159917
+Alignment scores for trial 0: 4000 0.155334 0.0870933 0.00870933
+Alignment scores for trial 1: 4000 0.15437 0.0823846 0.00823846
+Alignment scores for trial 2: 4000 0.227168 0.120985 0.0120985
+Alignment scores for trial 3: 4000 0.243327 0.101721 0.0101721
+Alignment scores for trial 4: 4000 0.213213 0.0736484 0.00736484
+Trial scores - Eps 4000 0.198682 0.0370359
+World Size: 25 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.14713 0.0915938 0.00915938
+Alignment scores for trial 1: 0 0.150679 0.0867753 0.00867753
+Alignment scores for trial 2: 0 0.0952732 0.0646092 0.00646092
+Alignment scores for trial 3: 0 0.0993405 0.0609564 0.00609564
+Alignment scores for trial 4: 0 0.138716 0.0874645 0.00874645
+Trial scores - Eps 0 0.126228 0.0239658
+Alignment scores for trial 0: 1000 0.135258 0.0961181 0.00961181
+Alignment scores for trial 1: 1000 0.102337 0.073058 0.0073058
+Alignment scores for trial 2: 1000 0.1366 0.121115 0.0121115
+Alignment scores for trial 3: 1000 0.120828 0.106823 0.0106823
+Alignment scores for trial 4: 1000 0.101362 0.0513769 0.00513769
+Trial scores - Eps 1000 0.119277 0.0152694
+Alignment scores for trial 0: 2000 0.12389 0.0841665 0.00841665
+Alignment scores for trial 1: 2000 0.111169 0.0814338 0.00814338
+Alignment scores for trial 2: 2000 0.112513 0.0625854 0.00625854
+Alignment scores for trial 3: 2000 0.120443 0.0840749 0.00840749
+Alignment scores for trial 4: 2000 0.143583 0.0916472 0.00916472
+Trial scores - Eps 2000 0.12232 0.0116499
+Alignment scores for trial 0: 3000 0.12906 0.0974678 0.00974678
+Alignment scores for trial 1: 3000 0.124882 0.0919295 0.00919295
+Alignment scores for trial 2: 3000 0.154931 0.0883308 0.00883308
+Alignment scores for trial 3: 3000 0.144809 0.0907932 0.00907932
+Alignment scores for trial 4: 3000 0.104538 0.0664984 0.00664984
+Trial scores - Eps 3000 0.131644 0.0173365
+Alignment scores for trial 0: 4000 0.126512 0.0660098 0.00660098
+Alignment scores for trial 1: 4000 0.133696 0.0842385 0.00842385
+Alignment scores for trial 2: 4000 0.139803 0.0857614 0.00857614
+Alignment scores for trial 3: 4000 0.103298 0.0786971 0.00786971
+Alignment scores for trial 4: 4000 0.111795 0.0660549 0.00660549
+Trial scores - Eps 4000 0.123021 0.0135852
+World Size: 40 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0589342 0.0769961 0.00769961
+Alignment scores for trial 1: 0 0.102238 0.11154 0.011154
+Alignment scores for trial 2: 0 0.0207486 0.0513747 0.00513747
+Alignment scores for trial 3: 0 0.0404627 0.0614907 0.00614907
+Alignment scores for trial 4: 0 0.0320084 0.0573592 0.00573592
+Trial scores - Eps 0 0.0508784 0.0285484
+Alignment scores for trial 0: 1000 0.0564997 0.0654629 0.00654629
+Alignment scores for trial 1: 1000 0.0312297 0.0482634 0.00482634
+Alignment scores for trial 2: 1000 0.0728684 0.0999993 0.00999993
+Alignment scores for trial 3: 1000 0.0108698 0.0300084 0.00300084
+Alignment scores for trial 4: 1000 0.0424905 0.0583654 0.00583654
+Trial scores - Eps 1000 0.0427916 0.021191
+Alignment scores for trial 0: 2000 0.0399037 0.0595809 0.00595809
+Alignment scores for trial 1: 2000 0.0645404 0.0588606 0.00588606
+Alignment scores for trial 2: 2000 0.0281253 0.0455659 0.00455659
+Alignment scores for trial 3: 2000 0.0315188 0.037636 0.0037636
+Alignment scores for trial 4: 2000 0.0492662 0.0781102 0.00781102
+Trial scores - Eps 2000 0.0426709 0.0131558
+Alignment scores for trial 0: 3000 0.0454981 0.063066 0.0063066
+Alignment scores for trial 1: 3000 0.0392691 0.0544645 0.00544645
+Alignment scores for trial 2: 3000 0.0308172 0.0491075 0.00491075
+Alignment scores for trial 3: 3000 0.0300544 0.0408407 0.00408407
+Alignment scores for trial 4: 3000 0.0399083 0.0553943 0.00553943
+Trial scores - Eps 3000 0.0371094 0.00586911
+Alignment scores for trial 0: 4000 0.0570688 0.086534 0.0086534
+Alignment scores for trial 1: 4000 0.0227493 0.051725 0.0051725
+Alignment scores for trial 2: 4000 0.0283832 0.0502013 0.00502013
+Alignment scores for trial 3: 4000 0.0547066 0.0687573 0.00687573
+Alignment scores for trial 4: 4000 0.0556338 0.0651309 0.00651309
+Trial scores - Eps 4000 0.0437083 0.0149387
+World Size: 40 Bias: 1 Steps: 30 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0180145 0.0400594 0.00400594
+Alignment scores for trial 1: 0 0 0 0
+Alignment scores for trial 2: 0 0.0046211 0.0128972 0.00128972
+Alignment scores for trial 3: 0 0.0420692 0.0597642 0.00597642
+Alignment scores for trial 4: 0 0.0230657 0.0481004 0.00481004
+Trial scores - Eps 0 0.0175541 0.0148794
+Alignment scores for trial 0: 1000 0.0189436 0.0427955 0.00427955
+Alignment scores for trial 1: 1000 0.0219779 0.0371323 0.00371323
+Alignment scores for trial 2: 1000 0.0272045 0.0567161 0.00567161
+Alignment scores for trial 3: 1000 0.0229915 0.0467705 0.00467705
+Alignment scores for trial 4: 1000 0.028012 0.0543533 0.00543533
+Trial scores - Eps 1000 0.0238259 0.00337303
+Alignment scores for trial 0: 2000 0.00879118 0.0293215 0.00293215
+Alignment scores for trial 1: 2000 0.0297322 0.0543439 0.00543439
+Alignment scores for trial 2: 2000 0.0271519 0.0558355 0.00558355
+Alignment scores for trial 3: 2000 0.0219335 0.0455337 0.00455337
+Alignment scores for trial 4: 2000 0.00688567 0.0251218 0.00251218
+Trial scores - Eps 2000 0.0188989 0.00939325
+Alignment scores for trial 0: 3000 0.012837 0.0231103 0.00231103
+Alignment scores for trial 1: 3000 0.00515291 0.0147358 0.00147358
+Alignment scores for trial 2: 3000 0.0164808 0.0339454 0.00339454
+Alignment scores for trial 3: 3000 0.0228021 0.0455151 0.00455151
+Alignment scores for trial 4: 3000 0.00804986 0.0211563 0.00211563
+Trial scores - Eps 3000 0.0130645 0.00623352
+Alignment scores for trial 0: 4000 0.0134707 0.0286879 0.00286879
+Alignment scores for trial 1: 4000 0.0230716 0.0462781 0.00462781
+Alignment scores for trial 2: 4000 0.017792 0.0422018 0.00422018
+Alignment scores for trial 3: 4000 0.0185267 0.0417203 0.00417203
+Alignment scores for trial 4: 4000 0.0278214 0.0560175 0.00560175
+Trial scores - Eps 4000 0.0201365 0.00490293
+World Size: 40 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.0328856 0.0656389 0.00656389
+Alignment scores for trial 1: 0 0.0455232 0.069854 0.0069854
+Alignment scores for trial 2: 0 0.0345513 0.032179 0.0032179
+Alignment scores for trial 3: 0 0.0580183 0.0588461 0.00588461
+Alignment scores for trial 4: 0 0.0412212 0.0380893 0.00380893
+Trial scores - Eps 0 0.0424399 0.00902433
+Alignment scores for trial 0: 1000 0.0487691 0.0467369 0.00467369
+Alignment scores for trial 1: 1000 0.0519878 0.0586467 0.00586467
+Alignment scores for trial 2: 1000 0.0464231 0.0478578 0.00478578
+Alignment scores for trial 3: 1000 0.0467792 0.0524786 0.00524786
+Alignment scores for trial 4: 1000 0.0512996 0.0618044 0.00618044
+Trial scores - Eps 1000 0.0490518 0.00227277
+Alignment scores for trial 0: 2000 0.0441749 0.0560524 0.00560524
+Alignment scores for trial 1: 2000 0.0533809 0.0585728 0.00585728
+Alignment scores for trial 2: 2000 0.0476787 0.0596326 0.00596326
+Alignment scores for trial 3: 2000 0.0339056 0.0384012 0.00384012
+Alignment scores for trial 4: 2000 0.0624391 0.0725549 0.00725549
+Trial scores - Eps 2000 0.0483158 0.0094903
+Alignment scores for trial 0: 3000 0.0537718 0.0498822 0.00498822
+Alignment scores for trial 1: 3000 0.0408741 0.0479546 0.00479546
+Alignment scores for trial 2: 3000 0.0349861 0.046941 0.0046941
+Alignment scores for trial 3: 3000 0.030712 0.0386275 0.00386275
+Alignment scores for trial 4: 3000 0.0443624 0.0545902 0.00545902
+Trial scores - Eps 3000 0.0409413 0.0079553
+Alignment scores for trial 0: 4000 0.041327 0.0441064 0.00441064
+Alignment scores for trial 1: 4000 0.0486454 0.0459763 0.00459763
+Alignment scores for trial 2: 4000 0.0541907 0.0645109 0.00645109
+Alignment scores for trial 3: 4000 0.0539297 0.0475732 0.00475732
+Alignment scores for trial 4: 4000 0.0320843 0.0401243 0.00401243
+Trial scores - Eps 4000 0.0460354 0.00839576
+World Size: 40 Bias: 1 Steps: 30 POIs: 10 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.0159541 0.0275692 0.00275692
+Alignment scores for trial 1: 0 0.0278135 0.0387394 0.00387394
+Alignment scores for trial 2: 0 0.00830828 0.0204705 0.00204705
+Alignment scores for trial 3: 0 0.0245117 0.0332916 0.00332916
+Alignment scores for trial 4: 0 0.0266567 0.0452062 0.00452062
+Trial scores - Eps 0 0.0206489 0.00743878
+Alignment scores for trial 0: 1000 0.0157356 0.0293695 0.00293695
+Alignment scores for trial 1: 1000 0.0249506 0.0390601 0.00390601
+Alignment scores for trial 2: 1000 0.0243686 0.0334935 0.00334935
+Alignment scores for trial 3: 1000 0.0106286 0.0255011 0.00255011
+Alignment scores for trial 4: 1000 0.0202927 0.045937 0.0045937
+Trial scores - Eps 1000 0.0191952 0.00541199
+Alignment scores for trial 0: 2000 0.0282267 0.036939 0.0036939
+Alignment scores for trial 1: 2000 0.0220008 0.0377872 0.00377872
+Alignment scores for trial 2: 2000 0.0283263 0.0441375 0.00441375
+Alignment scores for trial 3: 2000 0.0169836 0.0247216 0.00247216
+Alignment scores for trial 4: 2000 0.0158419 0.0390456 0.00390456
+Trial scores - Eps 2000 0.0222759 0.00531976
+Alignment scores for trial 0: 3000 0.0272072 0.034896 0.0034896
+Alignment scores for trial 1: 3000 0.0171435 0.0304043 0.00304043
+Alignment scores for trial 2: 3000 0.0208713 0.0424886 0.00424886
+Alignment scores for trial 3: 3000 0.0241 0.0343092 0.00343092
+Alignment scores for trial 4: 3000 0.0148505 0.0288408 0.00288408
+Trial scores - Eps 3000 0.0208345 0.00448794
+Alignment scores for trial 0: 4000 0.0124403 0.0262013 0.00262013
+Alignment scores for trial 1: 4000 0.0262366 0.0447819 0.00447819
+Alignment scores for trial 2: 4000 0.0205603 0.0311748 0.00311748
+Alignment scores for trial 3: 4000 0.0103525 0.0217163 0.00217163
+Alignment scores for trial 4: 4000 0.0280184 0.0427505 0.00427505
+Trial scores - Eps 4000 0.0195216 0.0071075
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.28711 0.127361 0.0127361
+Alignment scores for trial 1: 0 0.244896 0.175973 0.0175973
+Alignment scores for trial 2: 0 0.257039 0.149205 0.0149205
+Alignment scores for trial 3: 0 0.282766 0.175988 0.0175988
+Alignment scores for trial 4: 0 0.272423 0.135163 0.0135163
+Trial scores - Eps 0 0.268847 0.0158313
+Alignment scores for trial 0: 1000 0.240471 0.123108 0.0123108
+Alignment scores for trial 1: 1000 0.232707 0.159154 0.0159154
+Alignment scores for trial 2: 1000 0.214356 0.150148 0.0150148
+Alignment scores for trial 3: 1000 0.283946 0.12984 0.012984
+Alignment scores for trial 4: 1000 0.291086 0.129702 0.0129702
+Trial scores - Eps 1000 0.252513 0.0298972
+Alignment scores for trial 0: 2000 0.264841 0.175324 0.0175324
+Alignment scores for trial 1: 2000 0.256239 0.14665 0.014665
+Alignment scores for trial 2: 2000 0.170488 0.115969 0.0115969
+Alignment scores for trial 3: 2000 0.218868 0.125977 0.0125977
+Alignment scores for trial 4: 2000 0.203697 0.113766 0.0113766
+Trial scores - Eps 2000 0.222827 0.0346483
+Alignment scores for trial 0: 3000 0.2605 0.170057 0.0170057
+Alignment scores for trial 1: 3000 0.209903 0.134315 0.0134315
+Alignment scores for trial 2: 3000 0.258037 0.143704 0.0143704
+Alignment scores for trial 3: 3000 0.247416 0.154581 0.0154581
+Alignment scores for trial 4: 3000 0.232217 0.145614 0.0145614
+Trial scores - Eps 3000 0.241614 0.0187296
+Alignment scores for trial 0: 4000 0.229663 0.161052 0.0161052
+Alignment scores for trial 1: 4000 0.28958 0.16824 0.016824
+Alignment scores for trial 2: 4000 0.187132 0.123654 0.0123654
+Alignment scores for trial 3: 4000 0.260646 0.163824 0.0163824
+Alignment scores for trial 4: 4000 0.269122 0.161738 0.0161738
+Trial scores - Eps 4000 0.247228 0.035702
+World Size: 25 Bias: 1 Steps: 45 POIs: 6 Learning Rate: 0.999 Coupling: 4
+Alignment scores for trial 0: 0 0.133202 0.107437 0.0107437
+Alignment scores for trial 1: 0 0.164041 0.129298 0.0129298
+Alignment scores for trial 2: 0 0.137708 0.100867 0.0100867
+Alignment scores for trial 3: 0 0.15545 0.100032 0.0100032
+Alignment scores for trial 4: 0 0.174679 0.109835 0.0109835
+Trial scores - Eps 0 0.153016 0.0156439
+Alignment scores for trial 0: 1000 0.145666 0.109801 0.0109801
+Alignment scores for trial 1: 1000 0.125639 0.106628 0.0106628
+Alignment scores for trial 2: 1000 0.13207 0.115141 0.0115141
+Alignment scores for trial 3: 1000 0.12801 0.0923735 0.00923735
+Alignment scores for trial 4: 1000 0.168689 0.114437 0.0114437
+Trial scores - Eps 1000 0.140015 0.0159251
+Alignment scores for trial 0: 2000 0.14127 0.104906 0.0104906
+Alignment scores for trial 1: 2000 0.118133 0.0959684 0.00959684
+Alignment scores for trial 2: 2000 0.144894 0.116209 0.0116209
+Alignment scores for trial 3: 2000 0.154275 0.111816 0.0111816
+Alignment scores for trial 4: 2000 0.185111 0.114905 0.0114905
+Trial scores - Eps 2000 0.148737 0.0217294
+Alignment scores for trial 0: 3000 0.148571 0.104124 0.0104124
+Alignment scores for trial 1: 3000 0.157648 0.104192 0.0104192
+Alignment scores for trial 2: 3000 0.116204 0.106352 0.0106352
+Alignment scores for trial 3: 3000 0.157883 0.124668 0.0124668
+Alignment scores for trial 4: 3000 0.162319 0.0978192 0.00978192
+Trial scores - Eps 3000 0.148525 0.0167674
+Alignment scores for trial 0: 4000 0.148455 0.108586 0.0108586
+Alignment scores for trial 1: 4000 0.174582 0.120518 0.0120518
+Alignment scores for trial 2: 4000 0.148682 0.105678 0.0105678
+Alignment scores for trial 3: 4000 0.150859 0.124162 0.0124162
+Alignment scores for trial 4: 4000 0.135789 0.120485 0.0120485
+Trial scores - Eps 4000 0.151673 0.0126261
+World Size: 25 Bias: 1 Steps: 45 POIs: 10 Learning Rate: 0.999 Coupling: 3
+Alignment scores for trial 0: 0 0.263487 0.122333 0.0122333
+Alignment scores for trial 1: 0 0.251205 0.135012 0.0135012
+Alignment scores for trial 2: 0 0.218955 0.110687 0.0110687
+Alignment scores for trial 3: 0 0.215525 0.12206 0.012206
+Alignment scores for trial 4: 0 0.235038 0.111801 0.0111801
+Trial scores - Eps 0 0.236842 0.018406
+Alignment scores for trial 0: 1000 0.288779 0.141934 0.0141934
+Alignment scores for trial 1: 1000 0.284522 0.103653 0.0103653
+Alignment scores for trial 2: 1000 0.271422 0.114606 0.0114606
+Alignment scores for trial 3: 1000 0.279104 0.117906 0.0117906
+Alignment scores for trial 4: 1000 0.259051 0.101869 0.0101869
+Trial scores - Eps 1000 0.276576 0.0105084
+Alignment scores for trial 0: 2000 0.279824 0.116684 0.0116684
+Alignment scores for trial 1: 2000 0.262107 0.144015 0.0144015
+Alignment scores for trial 2: 2000 0.264188 0.130951 0.0130951
+Alignment scores for trial 3: 2000 0.285418 0.113279 0.0113279
+Alignment scores for trial 4: 2000 0.253626 0.120323 0.0120323
+Trial scores - Eps 2000 0.269033 0.011779

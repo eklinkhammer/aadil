@@ -1,22 +1,15 @@
 # A list of all experiments to run
 # All entries in this list must be a top level node in 
 experiments:
-  - exptarget
+  #- exptarget
   - onepoi
-  - farpoi
-  #- coupled
-  #- rover
-  #- exploreone
-  #- exploretwo
-  - teamforming2
-  - teamforming3
-  #- teamforming4
-  - teams2
-  - teams3
-  - teams4
-  #- coupled
-  #- coupledNoBias
-  #- control
+  #- farpoi
+  #- teamforming2
+  #- teamforming3
+  #- teams2
+  #- teams3
+  #- teams4
+
 
 # Explanation of variables for a single experiment
 # train : 1 - will train the neural nets regardless of if pre-trained nets are present.
@@ -63,18 +56,18 @@ exptarget:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 40.0
-    ymax: 40.0
+    xmax: 20.0
+    ymax: 20.0
   ccea_pop: 15
   nRovs: 1
-  nPOIs: 10
+  nPOIs: 4
   coupling: 1
   nEps: 1000
   nSteps: 40
-  biasStart: 0
+  biasStart: 1
   staticOrRandom: 1
   type: P
-  output: 0
+  output: 1
   ind:
     - 4
     - 5
@@ -83,7 +76,7 @@ exptarget:
   objective:
     type: Exp
     coupling: 4
-    obsR: 2
+    obsR: 4
     
 teamforming2:
   train: false
@@ -278,11 +271,11 @@ onepoi:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 40.0
-    ymax: 40.0
+    xmax: 30.0
+    ymax: 30.0
   ccea_pop: 15
   nRovs: 1
-  nPOIs: 3
+  nPOIs: 2
   coupling: 1
   nEps: 1000
   nSteps: 25
@@ -314,7 +307,7 @@ farpoi:
   coupling: 1
   nEps: 1000
   nSteps: 25
-  biasStart: 1
+  biasStart: 0
   staticOrRandom: 1
   type: P
   output: 0
