@@ -53,6 +53,9 @@ SOFTWARE.
 #include "Statistics.h"
 #include "yaml_constants.h"
 
+
+std::vector<double> testDomain(MultiRover* domain, Objective* o, size_t reps);
+
 // Resets domain according to parameters in YAML Node
 // Note that a loop over YAML nodes can repeatedly call this function with
 //   the node to reset and train without having to edit constants file.

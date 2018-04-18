@@ -45,7 +45,7 @@ SOFTWARE.
 #include <cassert>
 
 typedef std::array<double, 8> Point;
-typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
+typedef ssrc::spatial::kd_tree<Point, Alignment > Tree;
 
 class Alignments {
  public:
@@ -56,7 +56,7 @@ class Alignments {
   void addAlignments(MultiRover* domain);
   void addAlignments(Env* env);
 
-  std::vector< Alignment > getAlignmentsNN(std::vector< double > input);
+  Alignment getAlignmentsNN(std::vector< double > input);
   
  private:
   std::vector< Objective* > objs;

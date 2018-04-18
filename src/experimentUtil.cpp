@@ -26,6 +26,29 @@ SOFTWARE.
 
 #include "experimentUtil.h"
 
+std::vector<double> testDomain(MultiRover* domain, Objective* o, size_t reps) {
+  std::vector<double> scores;
+  
+  std::vector< NeuralNet* > testNets = domain->getBestNNTeam(o);
+  std::vector< Agent* > agents = domain->getAgents();
+  std::vector< size_t > agentNetIndex(agents.size(),0);
+  
+  for (size_t agent; agent < agents.size(); agent++) {
+    NeuralNet* agentNet = agents[agent]->GetNEPopulation()->GetNNIndex(0);
+    agentNet->SetWeights(testNets[agent]->GetWeightsA(),
+			 testNets[agent]->GetWeightsB());
+  }
+
+  for (size_t r = 0; r < reps; r++) {
+    domain->InitialiseEpoch();
+    double score = domain->runSim(domain->createSim(domain->getNPop()),
+				  agentNetIndex, o);
+    scores.push_back(score);
+    domain->ResetEpochEvals();
+  }
+
+  return scores;
+}
 void trainDomainEps(MultiRover* domain, YAML::Node exp, Objective* o, size_t eps) {
   int output = intFromYAML(exp, outputS);
   bool toOutput = (output == 1);

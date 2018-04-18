@@ -31,41 +31,52 @@ SOFTWARE.
 #include <vector>
 #include <iostream>
 
+
+/**
+   New alignment is defined as a property of not only a point, but a direction.
+
+   1 - strongly aligned
+   2 - weakly aligned
+   3 - Not anti-aligned
+   4 - anti-aligned
+ **/
 class Alignment {
  public:
- Alignment() : Alignment(1, -DBL_MAX) {}; // lowest possible alignment
-  Alignment(double reward1, double reward2) {
+ Alignment(int r, int r2) : Alignment( (double) r, (double) r2) {};
+ Alignment() : Alignment(1, -DBL_MAX, 0, 0) {}; // lowest possible alignment
+ Alignment(double reward1, double reward2) : Alignment(reward1, reward2, 0, 0) {};
+ Alignment(double reward1, double reward2, double ux, double uy) : vecx(ux), vecy(uy) {
     if (reward1 > 0) {
       if (reward2 > 0) {
 	align_score = 1;
 	align_mag = reward2 / reward1;
       } else if (reward2 == 0) {
-	align_score = 5;
+	align_score = 3;
 	align_mag = reward1;
       } else {
-	align_score = 9;
+	align_score = 5;
 	align_mag = reward2 / reward1;
       }
     } else if (reward1 == 0) {
       if (reward2 > 0) {
-	align_score = 4;
+	align_score = 2;
 	align_mag = reward2;
       } else if (reward2 == 0) {
-	align_score = 3;
+	align_score = 4;
 	align_mag = 0;
       } else {
-	align_score = 7;
+	align_score = 6;
 	align_score = reward2;
       }
     } else {
       if (reward2 > 0) {
-	align_score = 8;
+	align_score = 7;
 	align_mag = reward2 / reward1;
       } else if (reward2 == 0) {
-	align_score = 6;
+	align_score = 8;
 	align_mag = reward1;
       } else {
-	align_score = 2;
+	align_score = 9;
 	align_mag = reward2 / reward1;
       }
     }
@@ -73,6 +84,12 @@ class Alignment {
 
   int alignScore() const { return align_score; }
   double alignMag() const { return align_mag; }
+
+  double getVecX() const { return vecx; }
+  double getVecY() const { return vecy; }
+
+  void setVecX(double ux) { vecx = ux; }
+  void setVecY(double uy) { vecx = uy; }
   
   Alignment mappend(Alignment other) {
     if (other.alignScore() < align_score) {
@@ -105,6 +122,9 @@ class Alignment {
  private:
   int align_score;
   double align_mag;
+
+  double vecx;
+  double vecy;
 };
 
 #endif //alignment_H_

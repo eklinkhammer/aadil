@@ -3,12 +3,12 @@
 experiments:
   #- exptarget
   - onepoi
-  #- farpoi
-  #- teamforming2
-  #- teamforming3
-  #- teams2
-  #- teams3
-  #- teams4
+  - farpoi
+  - teamforming2
+  - teamforming3
+  - teams2
+  - teams3
+  - teams4
 
 
 # Explanation of variables for a single experiment
@@ -24,18 +24,18 @@ control:
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 25.0
-    ymax: 25.0
+    xmax: 30.0
+    ymax: 30.0
   ccea_pop: 15
   nRovs: 18
   nPOIs: 6
-  coupling: 1
+  coupling: 3
   nEps: 1000
   nSteps: 30
-  biasStart: 0
+  biasStart: 1
   staticOrRandom: 1
   type: R
-  output: 0
+  output: 1
   ind:
     - 0
     - 1
@@ -48,7 +48,7 @@ control:
   objective:
     type: G
     coupling: 3
-    obsR: 4
+    obsR: 6
 
 exptarget:
   train: false

@@ -33,59 +33,18 @@ State AlignmentAgent::getNextState(size_t i, vector<State> jointState) const {
 }
 State AlignmentAgent::getNextStateWork(size_t i, vector<State> jointState) const {
   std::vector<double> key = getVectorState(jointState);  
-  std::vector< Alignment > alignments = alignmentMap->getAlignmentsNN(key);
-  if (alignments.size() < 1) {
-    return getCurrentState();
-  }
+  Alignment alignment = alignmentMap->getAlignmentsNN(key);
 
-  // if (printOutput) {
-  //   std::cout << "Beginning output for alignment movement." << std::endl;
-  //   std::cout << "Input state (as vector): < ";
-  //   for (const auto& i : key) {
-  //     std::cout << i << " ";
-  //   }
-  //   std::cout << ">" << std::endl;
+  // Alignment has global frame dx and dy, and I don't like rotations
 
-  //   std::cout << "Alignment values for objectives: " << std::endl;
-  //   for (const auto& a : alignments) {
-  //     std::cout << a;
-  //   }
-  // }
+  MatrixXd Global2Body = RotationMatrix(-getCurrentPsi());
+  Vector2d globalAlign;
+  globalAlign.setZero(2,1);
+  globalAlign(0) = alignment.getVecX();
+  globalAlign(1) = alignment.getVecY();
+
   
-  Alignment max;
-  size_t bestAlign = 0;
-  for (size_t align_i = 0; align_i < alignments.size(); align_i++) {
-    if (alignments[align_i].alignScore() < max.alignScore() ||
-	(alignments[align_i].alignScore() == max.alignScore() &&
-	 alignments[align_i].alignMag() > max.alignMag())) {
-      max = alignments[align_i];
-      bestAlign = align_i;
-    }
-  }
-
-  // for (const auto& i : netsX) {
-  //   std::cout << i << std::endl;
-  // }
-
-  NeuralNet* policy = netsX[bestAlign];
-  std::vector<size_t> inds = index[bestAlign];
-
-  vector<Vector2d> justPos;
-  for (const auto& s : jointState) {
-    justPos.push_back(s.pos());
-  }
-
-  VectorXd inp = ComputeNNInput(justPos);
-  VectorXd newInp;
-  newInp.setZero(inds.size(),1); // set to size inds
-
-  int index_input = 0;
-  for (size_t i : inds) {
-    newInp(index_input) = inp(i);
-    index_input++;
-  }
-
-  VectorXd out = policy->EvaluateNN(newInp).normalized();
+  VectorXd out = Global2Body * globalAlign;
 
   // Transform to global frame
   Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
