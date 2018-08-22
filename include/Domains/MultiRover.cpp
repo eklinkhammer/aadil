@@ -189,7 +189,6 @@ vector< Agent* > MultiRover::duplicate(vector< Agent* > agents, size_t n) {
 double MultiRover::runSim(Env* env, vector< size_t > teamIndex, Objective* o) {
   for (size_t t = 0; t < nSteps; t++) {
     vector< State > jointState = env->step(teamIndex);
-
     if (outputTrajs) {
       printJointState(jointState);
     }
@@ -198,9 +197,18 @@ double MultiRover::runSim(Env* env, vector< size_t > teamIndex, Objective* o) {
   return o->reward(env);
 }
 
+void MultiRover::init() {
+  for (size_t a = 0; a < initialXYs.size(); a++) {
+    State s(initialXYs[a], 0);
+    roverTeam[a]->initialiseNewLearningEpoch(s, POIs);
+  }
+}
 Env* MultiRover::createSim(size_t teamSize) {
 
-  //std::cout << "Create sim" << std::endl;
+  // std::cout << "MultiRover::createSim" << std::endl;
+  // for (auto& i : roverTeam) {
+  //   std::cout << i->getCurrentState() <<std::endl;
+  // }
   Env* env = new Env(world, roverTeam, POIs, teamSize);
 
   //std::cout << "Create sim 2" << std::endl;
@@ -219,6 +227,37 @@ Env* MultiRover::createSim(size_t teamSize) {
   return env;
 }
 
+double MultiRover::reward(Objective* o) {
+  vector< State > currentState = getCurrentJointState();
+  vector < vector<State> > states = {currentState};
+
+  return reward(o, states);
+}
+
+double MultiRover::reward(Objective* o, vector< vector < State > > jointStates) {
+  Env* env = new Env(world, roverTeam, POIs, getNPop());
+
+  if (jointStates.size() < 1) {
+    return 0;
+  }
+
+  env->init(jointStates[0]);
+
+  for (size_t js = 1; js < jointStates.size(); js++) {
+    env->applyStep(jointStates[js]);
+  }
+
+  return o->reward(env);
+}
+
+vector< State > MultiRover::getCurrentJointState() {
+  vector< State > currentState;
+  for (auto& rover : roverTeam) {
+    currentState.push_back(rover->getCurrentState());
+  }
+
+  return currentState;
+}
 vector< NeuralNet* > MultiRover::getBestNNTeam(Objective* o) {
   vector< vector<size_t> > teams = RandomiseTeams(nPop);
 
@@ -283,11 +322,9 @@ double MultiRover::SimulateEpoch(bool train, Objective* o) {
       toggleAgentOutput(true);
     }
 
-    //std::cout << "Simulate Epoch1" << std::endl;
     eval = runSim(env, netEachAgentUses, o);
     env->reset();
     maxEval = max(eval, maxEval);
-    //std::cout << "Simulate Epoch2" << std::endl;
     // Assign fitness (G)
 
     vector<double> rewards = o->rewardV(env);

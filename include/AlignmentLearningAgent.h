@@ -45,7 +45,7 @@ class AlignmentLearningAgent : public AlignmentAgent {
 			double r, double lr)
    : AlignmentAgent(ns, as, inds, nPop), currentLearning(r), learningRate(lr) {};
 
-  inline virtual State getNextState(size_t i, vector<State> jointState) const;
+  virtual State getNextState(size_t i, vector<State> jointState) const;
   
   virtual void updateAgent() { currentLearning *= learningRate; };
  private:

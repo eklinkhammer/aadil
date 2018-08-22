@@ -37,6 +37,7 @@ SOFTWARE.
 #include <sys/stat.h>
 
 #include "AlignmentAgent.h"
+#include "Agents/RandomAgent.h"
 
 #include "Domains/D.h"
 #include "Domains/G.h"
@@ -53,6 +54,32 @@ SOFTWARE.
 #include "Statistics.h"
 #include "yaml_constants.h"
 
+#include "AlignmentLearningAgent.h"
+#include "AlignmentGuidedAgent.h"
+
+std::vector<double> alignmentLearning(MultiRover* domain, Alignments* as,
+				      std::vector<std::vector<size_t>> inds,
+				      std::vector<std::vector<NeuralNet*>>
+				      teams, size_t trials, Objective* r,
+				      std::vector<size_t> agentSelect);
+
+std::vector<double> alignmentGuidedAction(MultiRover* domain, Alignments* as,
+					  std::vector<std::vector<size_t>> inds,
+					  std::vector<std::vector<NeuralNet*>>
+					  teams, size_t trials, Objective* r,
+					  std::vector<size_t> agentSelect);
+
+std::vector<double> directAlignmentUse(MultiRover* domain, YAML::Node expNode,
+				       Objective* r, size_t samples, double
+				       param, std::vector<Objective*> objs,
+				       size_t reps);
+
+std::vector<double> alignmentGuidedPolicy(MultiRover* domain, Alignments* as,
+					  std::vector<std::vector<size_t>> inds,
+					  std::vector<std::vector<NeuralNet*>>
+					  allNets, size_t numObj,
+					  size_t trials, Objective* r,
+					  std::vector<size_t> agentSelect);
 
 std::vector<double> testDomain(MultiRover* domain, Objective* o, size_t reps);
 

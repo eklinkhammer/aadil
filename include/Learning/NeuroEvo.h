@@ -7,15 +7,20 @@
 #include <vector>
 #include <Eigen/Eigen>
 #include "NeuralNet.h"
+#include <string>
 
 using std::vector ;
 using std::sort ;
 using namespace Eigen ;
 
 class NeuroEvo{
-  public:
-    NeuroEvo(size_t, size_t, size_t, size_t) ; // nIn, nOut, nHidden, popSize
-    ~NeuroEvo() ;
+ public:
+ NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize)
+   : NeuroEvo(nIn, nOut, nHidden, pSize, "BinaryTournament", 0.5) {};
+  
+  NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize,
+	   std::string survivalFunction, double percElite);
+  ~NeuroEvo() ;
     
     void MutatePopulation() ;
     void EvolvePopulation(vector<double>) ;
@@ -36,7 +41,10 @@ class NeuroEvo{
     
     void (NeuroEvo::*SurvivalFunction)() ;
     void BinaryTournament() ;
+    // void RankSelection();
     void RetainBestHalf() ;
     static bool CompareEvaluations(NeuralNet *, NeuralNet *) ;
+
+    double percentElite;
 } ;
 #endif // NEUR0_EVO_H_

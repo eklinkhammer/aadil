@@ -1,15 +1,26 @@
 # A list of all experiments to run
 # All entries in this list must be a top level node in 
 experiments:
+  - dense
+  #- sparse
+  #- dense2
+  #- morepoi
+  #- morerover
+  #- large
+  # - coupled
   #- exptarget
+
+subobjectives:
   - onepoi
-  - farpoi
   - teamforming2
   - teamforming3
   - teams2
   - teams3
   - teams4
-
+  - onepoi2
+  #- exptarget
+  #- farpoi
+  #- farpoi2
 
 # Explanation of variables for a single experiment
 # train : 1 - will train the neural nets regardless of if pre-trained nets are present.
@@ -18,15 +29,48 @@ experiments:
 #                      stored regardless of reading policy.
 # biasStart: 1 - Agents will start in center noc-tant. POIs are not in center noc-tant.
 #            0 - Agents are randomly placed in all of grid
-control:
-  train: false
-  netfile: control.nets
+
+sparse:
+  train: true
+  netfile: na
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
-  ccea_pop: 15
+    xmax: 50.0
+    ymax: 50.0
+  ccea_pop: 40
+  nRovs: 5
+  nPOIs: 5
+  coupling: 3
+  nEps: 1000
+  nSteps: 45
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 3
+    obsR: 6
+    
+dense:
+  train: true
+  netfile: na
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 25.0
+    ymax: 25.0
+  ccea_pop: 40
   nRovs: 18
   nPOIs: 6
   coupling: 3
@@ -35,7 +79,7 @@ control:
   biasStart: 1
   staticOrRandom: 1
   type: R
-  output: 1
+  output: 0
   ind:
     - 0
     - 1
@@ -50,6 +94,222 @@ control:
     coupling: 3
     obsR: 6
 
+large:
+  train: true
+  netfile: na
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 50.0
+    ymax: 50.0
+  ccea_pop: 20
+  nRovs: 51
+  nPOIs: 17
+  coupling: 3
+  nEps: 1000
+  nSteps: 45
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 3
+    obsR: 4
+
+morepoi:
+  train: true
+  netfile: na
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 50.0
+    ymax: 50.0
+  ccea_pop: 40
+  nRovs: 10
+  nPOIs: 30
+  coupling: 3
+  nEps: 1000
+  nSteps: 45
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 3
+    obsR: 6
+
+morerover:
+  train: true
+  netfile: na
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 50.0
+    ymax: 50.0
+  ccea_pop: 40
+  nRovs: 30
+  nPOIs: 10
+  coupling: 3
+  nEps: 1000
+  nSteps: 45
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 3
+    obsR: 6
+
+sparse:
+  train: true
+  netfile: na
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 50.0
+    ymax: 50.0
+  ccea_pop: 40
+  nRovs: 5
+  nPOIs: 5
+  coupling: 3
+  nEps: 1000
+  nSteps: 45
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 3
+    obsR: 6
+
+dense2:
+  train: true
+  netfile: na
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 40
+  nRovs: 18
+  nPOIs: 6
+  coupling: 3
+  nEps: 1000
+  nSteps: 30
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 3
+    obsR: 6
+      
+control:
+  train: false
+  netfile: control.nets
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 15.0
+    ymax: 15.0
+  ccea_pop: 100
+  nRovs: 1
+  nPOIs: 1
+  coupling: 1
+  nEps: 2000
+  nSteps: 25
+  biasStart: 1
+  staticOrRandom: 1
+  type: R
+  output: 0
+  ind:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: G
+    coupling: 1
+    obsR: 4
+  agents:
+    - x : 1
+      y : 1
+    - x : 2
+      y : 2
+    - x : 28
+      y : 30
+    - x : 28
+      y : 29
+    - x : 2
+      y : 10
+    - x : 2
+      y : 18
+  targets:
+    - x : 3
+      y : 3
+    - x : 28
+      y : 28
+    - x : 28
+      y : 2
+    - x : 27
+      y : 3
+    - x : 28
+      y : 14
+
 exptarget:
   train: false
   netfile: expnets.nets
@@ -58,7 +318,7 @@ exptarget:
     ymin: 0.0
     xmax: 20.0
     ymax: 20.0
-  ccea_pop: 15
+  ccea_pop: 40
   nRovs: 1
   nPOIs: 4
   coupling: 1
@@ -67,7 +327,7 @@ exptarget:
   biasStart: 1
   staticOrRandom: 1
   type: P
-  output: 1
+  output: 0
   ind:
     - 4
     - 5
@@ -86,7 +346,7 @@ teamforming2:
     ymin: 0.0
     xmax: 40.0
     ymax: 40.0
-  ccea_pop: 15
+  ccea_pop: 40
   nRovs: 2
   nPOIs: 0
   coupling: 1
@@ -134,34 +394,6 @@ teamforming3:
     coupling: 2
     obsR: 4
 
-teamforming4:
-  train: false
-  netfile: teamforming4.nets
-  world:
-    xmin: 0.0
-    ymin: 0.0
-    xmax: 40.0
-    ymax: 40.0
-  ccea_pop: 15
-  nRovs: 4
-  nPOIs: 0
-  coupling: 1
-  nEps: 200
-  nSteps: 35
-  biasStart: 0
-  staticOrRandom: 1
-  type: A
-  ind:
-    - 0
-    - 1
-    - 2
-    - 3
-  output: 0
-  objective:
-    type: T
-    coupling: 3
-    obsR: 4
-
 teams2:
   train: false
   netfile: teams2.nets
@@ -170,7 +402,7 @@ teams2:
     ymin: 0.0
     xmax: 40.0
     ymax: 40.0
-  ccea_pop: 15
+  ccea_pop: 40
   nRovs: 6
   nPOIs: 0
   coupling: 1
@@ -273,7 +505,7 @@ onepoi:
     ymin: 0.0
     xmax: 30.0
     ymax: 30.0
-  ccea_pop: 15
+  ccea_pop: 40
   nRovs: 1
   nPOIs: 2
   coupling: 1
@@ -293,6 +525,34 @@ onepoi:
     coupling: 1
     obsR: 4
 
+onepoi2:
+  train: false
+  netfile: onepoi2.nets
+  world:
+    xmin: 0.0
+    ymin: 0.0
+    xmax: 30.0
+    ymax: 30.0
+  ccea_pop: 40
+  nRovs: 1
+  nPOIs: 3
+  coupling: 1
+  nEps: 1000
+  nSteps: 25
+  biasStart: 1
+  staticOrRandom: 1
+  type: P
+  output: 0
+  ind:
+    - 4
+    - 5
+    - 6
+    - 7
+  objective:
+    type: OnePoi
+    coupling: 1
+    obsR: 4
+
 farpoi:
   train: false
   netfile: farpoi.nets
@@ -301,7 +561,7 @@ farpoi:
     ymin: 0.0
     xmax: 40.0
     ymax: 40.0
-  ccea_pop: 15
+  ccea_pop: 40
   nRovs: 1
   nPOIs: 3
   coupling: 1
@@ -321,113 +581,30 @@ farpoi:
     coupling: 1
     obsR: 20
 
-coupled:
-  train: true
-  netfile: coupled.nets
+farpoi2:
+  train: false
+  netfile: farpoi2.nets
   world:
     xmin: 0.0
     ymin: 0.0
-    xmax: 20.0
-    ymax: 20.0
+    xmax: 40.0
+    ymax: 40.0
   ccea_pop: 15
-  nRovs: 2
+  nRovs: 1
   nPOIs: 2
   coupling: 1
   nEps: 1000
   nSteps: 25
-  biasStart: 1
+  biasStart: 0
   staticOrRandom: 1
-  type: R
+  type: P
   output: 0
   ind:
-    - 0
-    - 1
-    - 2
-    - 3
     - 4
     - 5
     - 6
     - 7
   objective:
-    type: D
-    coupling: 2
-    obsR: 6
-
-coupledNoBias:
-  train: true
-  netfile: coupledNoBias.nets
-  world:
-    xmin: 0.0
-    ymin: 0.0
-    xmax: 20.0
-    ymax: 20.0
-  ccea_pop: 15
-  nRovs: 2
-  nPOIs: 2
-  coupling: 1
-  nEps: 1000
-  nSteps: 30
-  biasStart: 0
-  staticOrRandom: 1
-  type: R
-  output: 0
-  ind:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-  objective:
-    type: D
-    coupling: 2
-    obsR: 6
-
-# Coupling for POI only is fixed at 1
-
-exploretwo:
-  world:
-    xmin: 0.0
-    ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
-  ccea_pop: 15
-  nRovs: 6
-  nPOIs: 0
-  coupling: 2
-  nEps: 1
-  nSteps: 1
-  biasStart: 0
-  staticOrRandom: 1
-  type: E
-  output: 1
-  ind:
-    - 0
-    - 1
-    - 2
-    - 3
-
-exploreone:
-  world:
-    xmin: 0.0
-    ymin: 0.0
-    xmax: 30.0
-    ymax: 30.0
-  ccea_pop: 15
-  nRovs: 6
-  nPOIs: 0
-  coupling: 1
-  nEps: 100
-  nSteps: 20
-  biasStart: 0
-  staticOrRandom: 1
-  type: E
-  output: 1
-  ind:
-    - 0
-    - 1
-    - 2
-    - 3
-    
+    type: OnePoi
+    coupling: 1
+    obsR: 20

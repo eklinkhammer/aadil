@@ -84,7 +84,7 @@ Objective* objFromYAML(YAML::Node node, string key) {
   double observationR = doubleFromYAML(objNode, obsRS);
 
   if (objLabel.compare(globalS) == 0) {
-    return new G(coupling, observationR, 1);
+    return new G(coupling, observationR, 0.5);
   } else if (objLabel.compare(teamS) == 0) {
     //std::cout << teamS << std::endl;
     return new TeamForming(coupling, observationR, 1);
@@ -94,7 +94,8 @@ Objective* objFromYAML(YAML::Node node, string key) {
     return new D(coupling, observationR, 1);
   } else if (objLabel.compare("Exp") == 0) {
     return new ExpTarget(observationR);
+  } else if (objLabel.compare("OnePoi") == 0) {
+    return new OnePoi(observationR, 1);
   }
-
   return NULL;
 }

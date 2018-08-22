@@ -2,12 +2,24 @@
 #include "NeuroEvo.h"
 
 // Constructor: Initialises all NN in population, given NN layer sizes and population size, also sets SurvivalFunction
-NeuroEvo::NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize): numIn(nIn), numOut(nOut), numHidden(nHidden), populationSize(pSize) {
+NeuroEvo::NeuroEvo(size_t nIn, size_t nOut, size_t nHidden, size_t pSize,
+		   std::string survivalFunc, double percElite)
+  : numIn(nIn), numOut(nOut), numHidden(nHidden), populationSize(pSize),
+    percentElite(percElite) {
+  
   for (size_t i = 0; i < populationSize; i++) {
-    populationNN.push_back(new NeuralNet(numIn, numOut, numHidden)) ;
+    populationNN.push_back(new NeuralNet(numIn, numOut, numHidden));
   }
-  SurvivalFunction = &NeuroEvo::BinaryTournament ; // how to decide which NNs to retain after each round of evolution
-}
+  
+  if (survivalFunc.compare("BinaryTournament") == 0) {
+    SurvivalFunction = &NeuroEvo::BinaryTournament;
+  } else if (survivalFunc.compare("") == 0) {
+    
+  } else {
+    
+  }
+  
+    }
 
 // Destructor: Deletes all NN objects from population
 NeuroEvo::~NeuroEvo(){
@@ -63,6 +75,38 @@ void NeuroEvo::BinaryTournament(){
     populationNN.erase(populationNN.begin()+toErase[j]) ;
   }
 }
+
+// With replacement
+// void NeuroEvo::RankSelection() {
+//   std::srand(std::time(0));
+  
+//   // Sum all scores
+//   double score_sum = 0.0;
+//   for (auto& network : populationNN) {
+//     score_sum += network->GetEvaluation();
+//   }
+
+//   vector<size_t> toKeep;
+  
+//   for (size_t ii = 0; ii < populationSize; ii++) {
+//     double r = static_cast<double> (rand()) / static_cast<double> (RAND_MAX);
+
+//     double random_score = r * score_sum;
+
+//     double current_sum = 0.0;
+//     size_t selected_net_index;
+//     for (size_t net_i = 0; net_i < populationNN.size(); net_i++) {
+//       current_sum += populationNN[net_i];
+//       if (random_score < current_sum) {
+// 	selected_net_index = net_i;
+// 	break;
+//       }
+//     }
+
+//     toKeep.push_back(selected_net_index);
+//   }
+  
+// }
 
 // Comparitor function to sort NNs according to evaluation signal (must have strict weak ordering)
 bool NeuroEvo::CompareEvaluations(NeuralNet* NN0, NeuralNet* NN1){

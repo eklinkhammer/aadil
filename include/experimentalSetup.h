@@ -40,6 +40,7 @@ SOFTWARE.
 #include "Domains/TeamObjective.h"
 #include "Domains/D.h"
 #include "Domains/ExpTarget.h"
+#include "Domains/OnePoi.h"
 #include "yaml_constants.h"
 
 using std::vector;

@@ -1,7 +1,5 @@
 /*******************************************************************************
-alignments.h
-
-Given objectives, computes alignment values between them.
+Single poi (reward based on each agent's observation)
 
 Authors: Eric Klinkhammer
 
@@ -24,51 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENTS_H_
-#define ALIGNMENTS_H_
+#include "OnePoi.h"
 
-#include "alignment.h"
-#include "Domains/Env.h"
-#include "Domains/Objective.h"
-#include "Domains/MultiRover.h"
+// Default values support heterogenous POIs
+OnePoi::OnePoi() : OnePoi(-1, -1) {}
+OnePoi::OnePoi(double observationR, double minR)
+  : Objective(), observationRadius(observationR), minRadius(minR) {}
 
-#include "Agents/Rover.h"
+vector<double> OnePoi::rewardV(Env* env) {
+  vector< Target > targets = env->getTargets();
+  vector< Agent* > agents = env->getAgents();
+  vector< double > rewards;
 
-#include <vector>
-#include <random>
+  double reward = 0.0;
+  double maxR = 0.0;
 
-#include "ssrc/spatial/kd_tree.h"
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
-#include <algorithm>
-#include <cassert>
+  for (size_t agent = 0; agent < agents.size(); agent++) {
+    for (auto& target : targets) {
+      target.setCoupling(1);
+      target.setObservationRadius(observationRadius);
 
-typedef std::array<double, 8> Point;
-typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
+      target.ResetTarget();
 
-class Alignments {
- public:
-  Alignments(std::vector< Objective* >, int numberSamples, double b);
+      for (const auto& ss : env->getHistoryStates()) {
+	target.ObserveTarget(ss[agent].pos());
+	target.resetNearestObs();
+      }
 
-  void addAlignments(int);
-  void addAlignments();
-  void addAlignments(MultiRover* domain);
-  void addAlignments(Env* env);
-  std::vector<Alignment> getAlignments(Env* env, size_t agentIndex);
-  std::vector<Alignment> getAlignments(MultiRover* domain, size_t agentIndex);
+      maxR += target.GetValue();
+      reward += target.rewardAtCoupling(0);
+    }
 
-  Alignment getAlignmentsNN(std::vector< double > input);
-  std::vector<Alignment> getAllAlignments(std::vector<double> input);
-  
- private:
-  std::vector< Objective* > objs;
+    rewards.push_back(reward / maxR);
+  }
 
-  int numSamples;
-  double biasT;
-
-  Tree tree;
-};
-
-
-#endif // ALIGNMENTS_H_
+  return rewards;
+}

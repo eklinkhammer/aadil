@@ -1,7 +1,7 @@
 /*******************************************************************************
-alignments.h
+OnePoi.h
 
-Given objectives, computes alignment values between them.
+Rover domain classic reward.
 
 Authors: Eric Klinkhammer
 
@@ -24,51 +24,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENTS_H_
-#define ALIGNMENTS_H_
+#ifndef OnePoi_H_
+#define OnePoi_H_
 
-#include "alignment.h"
-#include "Domains/Env.h"
-#include "Domains/Objective.h"
-#include "Domains/MultiRover.h"
-
-#include "Agents/Rover.h"
-
+#include "Objective.h"
 #include <vector>
-#include <random>
-
-#include "ssrc/spatial/kd_tree.h"
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
-#include <algorithm>
-#include <cassert>
 
-typedef std::array<double, 8> Point;
-typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
+using std::vector;
 
-class Alignments {
+class OnePoi : public Objective {
  public:
-  Alignments(std::vector< Objective* >, int numberSamples, double b);
-
-  void addAlignments(int);
-  void addAlignments();
-  void addAlignments(MultiRover* domain);
-  void addAlignments(Env* env);
-  std::vector<Alignment> getAlignments(Env* env, size_t agentIndex);
-  std::vector<Alignment> getAlignments(MultiRover* domain, size_t agentIndex);
-
-  Alignment getAlignmentsNN(std::vector< double > input);
-  std::vector<Alignment> getAllAlignments(std::vector<double> input);
+  OnePoi();
+  OnePoi(double observationR, double minR);
   
+  virtual vector<double> rewardV(Env* env);
+
+  virtual std::string getName() { return "OnePoi with obsR: " + std::to_string(observationRadius); };
  private:
-  std::vector< Objective* > objs;
-
-  int numSamples;
-  double biasT;
-
-  Tree tree;
+  double observationRadius;
+  double minRadius;
 };
 
-
-#endif // ALIGNMENTS_H_
+#endif//OnePoi_H_

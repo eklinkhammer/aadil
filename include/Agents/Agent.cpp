@@ -221,7 +221,12 @@ State Agent::getDeltaState(VectorXd out) const {
 
 State Agent::getNewCurrent(VectorXd out) const {
   State deltaS = getDeltaState(out);
-  Vector2d currentXY = getCurrentXY() + deltaS.pos();
+  Vector2d deltaPos = deltaS.pos();
+  double mag = sqrt(deltaPos(0)*deltaPos(0) + deltaPos(1)*deltaPos(1));
+  deltaPos(0) = deltaPos(0) / mag;
+  deltaPos(1) = deltaPos(1) / mag;
+  //std::cout << deltaPos(0) << " " << deltaPos(1) << " " << sqrt(deltaPos(0)*deltaPos(0) + deltaPos(1)*deltaPos(1)) << std::endl;
+  Vector2d currentXY = getCurrentXY() + deltaPos;
   double currentPsi = getCurrentPsi() + deltaS.psi();
   currentPsi = pi_2_pi(currentPsi);
   

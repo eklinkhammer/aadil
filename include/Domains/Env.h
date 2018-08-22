@@ -79,6 +79,7 @@ class Env {
   void setTargetLocations(vector< Target > locs);
 
   void randomStep();
+  void randomStepSingleAgent();
  private:
   size_t teamSize;
   vector< double > world;

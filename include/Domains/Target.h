@@ -56,7 +56,6 @@ class Target{
   // obsR: The distance within an observer must be to be counted.
   // obs: Whether the Target has been observed.
   Target(Vector2d xy, double value, int couple, double obsR, bool obs);  
-  ~Target() {}
 
   
   virtual Vector2d GetLocation() const { return loc; }

@@ -86,6 +86,7 @@ void trainingCurves(YAML::Node exp, size_t maxEps, size_t trials, size_t tests) 
     std::cout << " Eps: " << eps
 	      << " Mean: " << mean(scores)
 	      << " stddev: " << stddev(scores)
+	      << " stderr: " << statstderr(scores)
 	      << std::endl;
   }
   delete domain;
@@ -227,7 +228,7 @@ vector< NeuralNet* > bestTeamForObjective(YAML::Node expNode, std::string expKey
       vector< NeuralNet* > trialNets = domain->getBestNNTeam(o);
       vector<size_t> agents(domain->getNRovers(), 0);
       vector< Agent* > as = domain->getAgents();
-
+      
       for (size_t a = 0; a < as.size(); a++) {
 	NeuralNet* agentZ = as[a]->GetNEPopulation()->GetNNIndex(0);
 	agentZ->SetWeights(trialNets[a]->GetWeightsA(),
@@ -296,7 +297,7 @@ void trainDomain(MultiRover* domain, YAML::Node root, std::string key, std::stri
 
   int staticOrRandom = intFromYAML(root, staticOrRandomS);
   bool random = staticOrRandom == 1;
-  
+
   trainDomain(domain, nEps, toOutput, 20, type, topDir, key, random, o);
 }
 
@@ -342,3 +343,154 @@ void inspectAgent(MultiRover* domain, VectorXd input) {
       //}
     //}
 }
+
+/**
+   Each agent uses the cluster sample method to select alignment, and then
+     uses said alignment's action.
+ **/
+std::vector<double> alignmentGuidedAction(MultiRover* domain, Alignments* as,
+					  std::vector<std::vector<size_t>> inds,
+					  std::vector<std::vector<NeuralNet*>>
+					  teams, size_t trials, Objective* r,
+					  std::vector<size_t> agentSelect) {
+  std::vector<double> results;
+  vector< Agent* > roverTeam;
+  
+  for (size_t i = 0; i < domain->getNRovers(); i++) {
+    vector<NeuralNet*> netsAgent;
+    for (size_t j = 0; j < teams.size(); j++) {
+      int netI = teams[j].size() > i ? i : 0;
+      netsAgent.push_back(teams[j][netI]);
+    }
+    roverTeam.push_back(new AlignmentLearningAgent(netsAgent, as, inds, domain->getNPop(), 1.0, 1.0));
+  }
+  domain->setTeam(roverTeam);
+
+  for (size_t rep = 0; rep < trials; rep++) {
+    domain->InitialiseEpoch();
+    results.push_back(domain->runSim(domain->createSim(domain->getNPop()),
+				     agentSelect, r));
+    //std::cout << results[rep] << std::endl;
+    domain->ResetEpochEvals();
+  }
+
+  return results;
+}
+
+/**
+   Each agent uses the cluster sample method to select alignment, and then
+     uses said alignment's action. The agent then learns over time.
+ **/
+std::vector<double> alignmentLearning(MultiRover* domain, Alignments* as,
+				      std::vector<std::vector<size_t>> inds,
+				      std::vector<std::vector<NeuralNet*>>
+				      teams, size_t trials, Objective* r,
+				      std::vector<size_t> agentSelect) {
+  std::vector<double> results;
+  vector< Agent* > roverTeam;
+  
+  for (size_t i = 0; i < domain->getNRovers(); i++) {
+    vector<NeuralNet*> netsAgent;
+    for (size_t j = 0; j < teams.size(); j++) {
+      int netI = teams[j].size() > i ? i : 0;
+      netsAgent.push_back(teams[j][netI]);
+    }
+    roverTeam.push_back(new AlignmentLearningAgent(netsAgent, as, inds, domain->getNPop(), 1.0, 1.0));
+  }
+  domain->setTeam(roverTeam);
+
+  trainDomain(domain, 1000, false, 20, "ABC", "", "ABC", true, r);
+  results = testDomain(domain, r, trials);
+
+  return results;
+}
+
+/**
+   Each agent uses the cluster sample method to select alignment, and then
+     uses said alignment to select a policy.
+ **/
+std::vector<double> alignmentGuidedPolicy(MultiRover* domain, Alignments* as,
+					  std::vector<std::vector<size_t>> inds,
+					  std::vector<std::vector<NeuralNet*>>
+					  allNets, size_t numObj,
+					  size_t trials, Objective* r,
+					  std::vector<size_t> agentSelect) {
+
+  std::vector<double> results;
+  std::vector<Agent*> roverTeam;
+  //std::cout << "Debug 1" << std::endl;
+  for (size_t i = 0; i < domain->getNRovers(); i++) {
+    vector<NeuralNet*> nets;
+    //std::cout << "Debug 2" << std::endl;
+    for (size_t n = 0; n < numObj; n++) {
+      size_t netI = allNets[n].size() > i ? i : 0;
+      nets.push_back(allNets[n][netI]);
+    }
+    roverTeam.push_back(new AlignmentGuidedAgent(nets, as, inds));
+  }
+
+  //std::cout << "Debug 1" << std::endl;
+  domain->setTeam(roverTeam);
+  //std::cout << "Debug 1" << std::endl;
+  for (size_t rep = 0; rep < trials; rep++) {
+    domain->InitialiseEpoch();
+    results.push_back(domain->runSim(domain->createSim(domain->getNPop()),
+				     agentSelect, r));
+    //std::cout << results[rep] << std::endl;
+    domain->ResetEpochEvals();
+  }
+  //  results = testDomain(domain, r, trials);
+  //std::cout << "Debug 1" << std::endl;
+  return results;
+}
+
+/**
+ directAlignmentUse
+
+ Each agent explicitly calculates alignment.
+ **/
+std::vector<double> directAlignmentUse(MultiRover* domain, YAML::Node expNode,
+				       Objective* r,
+				       size_t samples, double param,
+				       std::vector<Objective*> objs, size_t reps) {
+  Alignments alignments(objs, samples, param);
+
+  std::vector<double> results;
+
+  for (size_t trial = 0; trial < reps; trial++) {
+    domain = getDomain(expNode);
+    domain->InitialiseEpoch();
+    domain->init();
+
+    std::vector< std::vector< State >> history;
+    history.push_back(domain->getInitialStates());
+    
+    std::vector<Agent*> agentTeam = domain->getAgents();
+
+    //std::cout << "directAlignmentUse";
+    //std::flush(std::cout);
+    for (size_t step = 0; step < domain->getNSteps(); step++) {
+      for (size_t agentI = 0; agentI < domain->getNRovers(); agentI++) {
+	Alignment chosenAlignment;
+	std::vector<Alignment> alignVec = alignments.getAlignments(domain, agentI);
+	chosenAlignment = chosenAlignment.mconcat(alignVec);
+
+	Vector2d currentPos = agentTeam[agentI]->getCurrentState().pos();
+	Vector2d delta(chosenAlignment.getVecX(), chosenAlignment.getVecY());
+
+	State s(currentPos + delta, 0);
+	agentTeam[agentI]->move(s);
+      }
+
+      history.push_back(domain->getCurrentJointState());
+      //std::cout << *domain << std::endl;
+      //std::cout << domain->reward(r) << std::endl;
+      //std::cout << domain->reward(r, history) << std::endl;
+    }
+
+    results.push_back(domain->reward(r, history));
+  }
+
+  return results;
+}
+

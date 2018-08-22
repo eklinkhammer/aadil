@@ -1,7 +1,7 @@
 /*******************************************************************************
-alignments.h
+AlignmentGuidedAgent.h
 
-Given objectives, computes alignment values between them.
+Rover that selects from policies based on alignment values.
 
 Authors: Eric Klinkhammer
 
@@ -24,51 +24,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENTS_H_
-#define ALIGNMENTS_H_
+#ifndef ALIGNMENT_GUIDED_AGENT_H
+#define ALIGNMENT_GUIDED_AGENT_H
 
-#include "alignment.h"
-#include "Domains/Env.h"
-#include "Domains/Objective.h"
-#include "Domains/MultiRover.h"
+#include "Agents/NeuralRover.h"
+#include "alignments.h"
 
-#include "Agents/Rover.h"
-
-#include <vector>
-#include <random>
-
-#include "ssrc/spatial/kd_tree.h"
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
-#include <algorithm>
-#include <cassert>
-
-typedef std::array<double, 8> Point;
-typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
-
-class Alignments {
+class AlignmentGuidedAgent : public NeuralRover {
  public:
-  Alignments(std::vector< Objective* >, int numberSamples, double b);
+  AlignmentGuidedAgent(vector<NeuralNet*> ns, Alignments* as,
+		       vector<vector<size_t>> inds)
+    : NeuralRover(1, 0, Fitness::G, ns, inds, 1), alignmentMap(as) {};
 
-  void addAlignments(int);
-  void addAlignments();
-  void addAlignments(MultiRover* domain);
-  void addAlignments(Env* env);
-  std::vector<Alignment> getAlignments(Env* env, size_t agentIndex);
-  std::vector<Alignment> getAlignments(MultiRover* domain, size_t agentIndex);
-
-  Alignment getAlignmentsNN(std::vector< double > input);
-  std::vector<Alignment> getAllAlignments(std::vector<double> input);
+  virtual size_t selectIndexOfNetworks(vector<State> jointState) const;
   
  private:
-  std::vector< Objective* > objs;
-
-  int numSamples;
-  double biasT;
-
-  Tree tree;
+  Alignments* alignmentMap;
 };
 
-
-#endif // ALIGNMENTS_H_
+#endif // ALIGNMENT_GUIDED_AGENT_H

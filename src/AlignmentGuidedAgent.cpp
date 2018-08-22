@@ -1,7 +1,7 @@
 /*******************************************************************************
-alignments.h
+AlignmentGuidedAgent.cpp
 
-Given objectives, computes alignment values between them.
+See header file for documentation.
 
 Authors: Eric Klinkhammer
 
@@ -24,51 +24,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENTS_H_
-#define ALIGNMENTS_H_
+#include "AlignmentGuidedAgent.h"
 
-#include "alignment.h"
-#include "Domains/Env.h"
-#include "Domains/Objective.h"
-#include "Domains/MultiRover.h"
+size_t AlignmentGuidedAgent::selectIndexOfNetworks(vector<State> jointState) const {
+  std::vector<double> key = getVectorState(jointState);
+  std::vector<Alignment> alignments = alignmentMap->getAllAlignments(key);
+  Alignment best;
+  size_t index;
+  for (size_t align = 0; align < alignments.size(); align++) {
+    Alignment alignment = alignments[align];
+    if (best.alignScore() > alignment.alignScore()) {
+      index = align;
+      best = alignment;
+    } else if (best.alignScore() == alignment.alignScore() &&
+	       best.alignMag() < alignment.alignMag()) {
+      index = align;
+      best = alignment;
+    }
+  }
 
-#include "Agents/Rover.h"
+  //  std::cout << "Index_chosen: " << index << std::endl;
 
-#include <vector>
-#include <random>
-
-#include "ssrc/spatial/kd_tree.h"
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
-#include <algorithm>
-#include <cassert>
-
-typedef std::array<double, 8> Point;
-typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
-
-class Alignments {
- public:
-  Alignments(std::vector< Objective* >, int numberSamples, double b);
-
-  void addAlignments(int);
-  void addAlignments();
-  void addAlignments(MultiRover* domain);
-  void addAlignments(Env* env);
-  std::vector<Alignment> getAlignments(Env* env, size_t agentIndex);
-  std::vector<Alignment> getAlignments(MultiRover* domain, size_t agentIndex);
-
-  Alignment getAlignmentsNN(std::vector< double > input);
-  std::vector<Alignment> getAllAlignments(std::vector<double> input);
-  
- private:
-  std::vector< Objective* > objs;
-
-  int numSamples;
-  double biasT;
-
-  Tree tree;
-};
-
-
-#endif // ALIGNMENTS_H_
+  return index;
+}

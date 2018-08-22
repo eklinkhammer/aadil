@@ -44,7 +44,6 @@ vector<State> Env::nextStep(vector< size_t > teamIndex) const {
   return jointState;
 }
 
-
 void Env::applyStep(vector<State> jointStates) {
   for (size_t i = 0; i < agents.size(); i++) {
     agents[i]->move(jointStates[i]);
@@ -170,6 +169,20 @@ void Env::randomStep() {
   vector<State> perturbedStates;
   for (const auto& s : currentStates) {
     perturbedStates.push_back(perturbState(s));
+  }
+
+  applyStep(perturbedStates);
+}
+
+void Env::randomStepSingleAgent() {
+  vector<State> perturbedStates; // only one changes
+  for (const auto& s : currentStates) {
+    perturbedStates.push_back(perturbState(s));
+  }
+
+  if (perturbedStates.size() > 0) {
+    State perturbed = perturbState(perturbedStates[0]);
+    perturbedStates[0] = perturbed;
   }
 
   applyStep(perturbedStates);

@@ -30,7 +30,7 @@ SOFTWARE.
 #include <float.h>
 #include <vector>
 #include <iostream>
-
+#include <string>
 
 /**
    New alignment is defined as a property of not only a point, but a direction.
@@ -43,9 +43,9 @@ SOFTWARE.
 class Alignment {
  public:
  Alignment(int r, int r2) : Alignment( (double) r, (double) r2) {};
- Alignment() : Alignment(1, -DBL_MAX, 0, 0) {}; // lowest possible alignment
- Alignment(double reward1, double reward2) : Alignment(reward1, reward2, 0, 0) {};
- Alignment(double reward1, double reward2, double ux, double uy) : vecx(ux), vecy(uy) {
+ Alignment() : Alignment(1, -DBL_MAX, 0, 0, "mempty") {}; // lowest possible alignment
+ Alignment(double reward1, double reward2) : Alignment(reward1, reward2, 0, 0, "") {};
+ Alignment(double reward1, double reward2, double ux, double uy, std::string name) : vecx(ux), vecy(uy), obj(name) {
     if (reward1 > 0) {
       if (reward2 > 0) {
 	align_score = 1;
@@ -96,7 +96,7 @@ class Alignment {
       return other;
     }
 
-    if (other.alignMag() > align_mag) {
+    if (other.alignScore() == align_score && other.alignMag() > align_mag) {
       return other;
     }
 
@@ -114,8 +114,9 @@ class Alignment {
     return best;
   }
 
+
   friend std::ostream& operator<<(std::ostream &strm, const Alignment &a) {
-    strm << a.align_score << " " << a.align_mag << std::endl;
+    strm << a.align_score << " " << a.align_mag << " " << a.obj << " " << a.vecx << ", " << a.vecy;
     return strm;
   }
   
@@ -125,6 +126,7 @@ class Alignment {
 
   double vecx;
   double vecy;
+  std::string obj;
 };
 
 #endif //alignment_H_

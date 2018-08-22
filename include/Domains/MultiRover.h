@@ -74,6 +74,8 @@ class MultiRover{
          the team combinations of RandomiseTeams.
      **/
     vector< NeuralNet* > getBestNNTeam(Objective*);
+
+    void init();
     void initRovers();
     
     void InitialiseEpoch();
@@ -88,6 +90,9 @@ class MultiRover{
     double runSim(Env* env, vector< size_t > teamIndex, Objective* o);
 
     Env* createSim(size_t teamSize);
+
+    double reward(Objective* o);
+    double reward(Objective* o, vector< vector < State > > jointStates);
     
     void EvolvePolicies(bool init = false) ;
     void ResetEpochEvals();
@@ -135,7 +140,7 @@ class MultiRover{
     void setWorld(vector<double> w) { world = w; }
     void setVerbose(bool toggle)    { verbose = toggle; }
     void setBias(bool bias)         { biasStart = bias; }
-    
+    void setTeam(vector<Agent*> as) { roverTeam = as; }
     size_t         getNSteps()   { return nSteps; }
     size_t         getNPop()     { return nPop; }
     size_t         getNPOIs()    { return nPOIs; }
@@ -158,6 +163,7 @@ class MultiRover{
     vector< Agent* > duplicate(vector< Agent* >, size_t);
 
     vector< State > getInitialStates();
+    vector< State > getCurrentJointState();
   private:
     // Objective Functions
     double objectiveRoverObservePOI();

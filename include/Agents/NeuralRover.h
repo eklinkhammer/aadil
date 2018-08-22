@@ -50,6 +50,9 @@ class NeuralRover : public Rover {
   vector<NeuralNet*> netsX;
   vector< vector<size_t> > index;
   virtual Agent* copyAgent() const;
+  virtual size_t selectIndexOfNetworks(vector<State> jointState) const;
+ private:
+  vector<Vector2d> forSelection; // variable args
 };
 
 #endif // NEURAL_ROVER_H

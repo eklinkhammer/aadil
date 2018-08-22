@@ -38,10 +38,6 @@ double G::reward(Env* env) {
   double reward = 0.0;
   double maxR = 0.0;
   
-  //std::cout << "Number of agents: " << env->getHistoryStates()[0].size() << std::endl;
-  //std::cout << "Number of pois: " << targets.size() << std::endl;
-  // std::cout << "G Operator " << targets.size() << std::endl;
-
   for (auto& target : targets) {
     if (coupling != -1) {
       target.setCoupling(coupling);
@@ -62,5 +58,5 @@ double G::reward(Env* env) {
     maxR += target.GetValue();
   }
 
-  return reward / maxR;
+  return reward;// / maxR;
 }

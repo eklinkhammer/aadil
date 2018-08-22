@@ -29,6 +29,10 @@ SOFTWARE.
 NeuralRover::NeuralRover(size_t n, size_t nPop, Fitness f, vector<NeuralNet*> ns, vector<vector<size_t> > indices, size_t nOut)
   : Rover(n, nPop, 8, 16, nOut, f), netsX(ns), index(indices) {}
 
+size_t NeuralRover::selectIndexOfNetworks(vector<State> jointState) const {
+  return 0;
+}
+
 State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
   vector<Vector2d> justPos;
   for (const auto& s : jointState) {
@@ -36,17 +40,7 @@ State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
   }
 
   VectorXd inp = ComputeNNInput(justPos);
-  NeuroEvo* AgentNE = GetNEPopulation();
-  
-  VectorXd out = AgentNE->GetNNIndex(i)->EvaluateNN(inp).normalized();
-
-
-  int max_index = 0;
-  for (int i = 0; i < out.size(); i++) {
-    if (out(i) > out(max_index)) {
-      max_index = i;
-    }
-  }
+  size_t max_index = selectIndexOfNetworks(jointState);
 
   if (printOutput) {
     //outputFile << max_index << std::endl;
@@ -63,7 +57,7 @@ State NeuralRover::getNextState(size_t i, vector<State> jointState) const {
     index_input++;
   }
 
-  out = netsX[max_index]->EvaluateNN(newInp).normalized();
+  VectorXd out = netsX[max_index]->EvaluateNN(newInp).normalized();
 
   
   // Transform to global frame

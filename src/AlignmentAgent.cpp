@@ -35,6 +35,7 @@ State AlignmentAgent::getNextStateWork(size_t i, vector<State> jointState) const
   std::vector<double> key = getVectorState(jointState);  
   Alignment alignment = alignmentMap->getAlignmentsNN(key);
 
+  // std::cout << "ZZDSF" << alignment << std::endl;
   // Alignment has global frame dx and dy, and I don't like rotations
 
   MatrixXd Global2Body = RotationMatrix(-getCurrentPsi());
@@ -49,6 +50,10 @@ State AlignmentAgent::getNextStateWork(size_t i, vector<State> jointState) const
   // Transform to global frame
   Matrix2d Body2Global = RotationMatrix(getCurrentPsi());
   Vector2d deltaXY = Body2Global*out;
+  double mag = sqrt(deltaXY(0)*deltaXY(0) + deltaXY(1)*deltaXY(1));
+  deltaXY(0) = deltaXY(0) / mag;
+  deltaXY(1) = deltaXY(1) / mag;
+  
   double deltaPsi = atan2(out(1),out(0));
   
   // Move

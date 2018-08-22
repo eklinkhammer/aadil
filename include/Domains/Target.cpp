@@ -91,7 +91,7 @@ void Target::ObserveTarget(Vector2d xy) {
   if (d > obsRadius) { return; }
   
   int furthestValidObsIndex = -1;
-  double furthestValidObs = DBL_MIN;
+  double furthestValidObs = -1;
   for (size_t i = 0; i < nearestObsVector.size(); i++) {
     if (furthestValidObs <= nearestObsVector[i]) {
       furthestValidObs = nearestObsVector[i];
@@ -101,6 +101,9 @@ void Target::ObserveTarget(Vector2d xy) {
 
 
   if (d > furthestValidObs) { return; }
+  //  std::cout << "d: " << d << std::endl;
+  //std::cout << "furthestValidObs: " << furthestValidObs << std::endl;
+  //std::cout << furthestValidObsIndex << std::endl;
   nearestObsVector[furthestValidObsIndex] = d;
 
   int numberValid = 0;

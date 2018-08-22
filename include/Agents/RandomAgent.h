@@ -1,7 +1,7 @@
 /*******************************************************************************
-alignments.h
+RandomAgent.h
 
-Given objectives, computes alignment values between them.
+RandomAgent class header. Random agent takes uniformly random actions.
 
 Authors: Eric Klinkhammer
 
@@ -24,51 +24,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef ALIGNMENTS_H_
-#define ALIGNMENTS_H_
+#ifndef RANDOM_AGENT_H_
+#define RANDOM_AGENT_H_
 
-#include "alignment.h"
-#include "Domains/Env.h"
-#include "Domains/Objective.h"
-#include "Domains/MultiRover.h"
-
-#include "Agents/Rover.h"
-
-#include <vector>
+#include "Agent.h"
 #include <random>
 
-#include "ssrc/spatial/kd_tree.h"
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
-#include <algorithm>
-#include <cassert>
-
-typedef std::array<double, 8> Point;
-typedef ssrc::spatial::kd_tree<Point, std::vector<Alignment> > Tree;
-
-class Alignments {
+class RandomAgent : public Agent {
  public:
-  Alignments(std::vector< Objective* >, int numberSamples, double b);
-
-  void addAlignments(int);
-  void addAlignments();
-  void addAlignments(MultiRover* domain);
-  void addAlignments(Env* env);
-  std::vector<Alignment> getAlignments(Env* env, size_t agentIndex);
-  std::vector<Alignment> getAlignments(MultiRover* domain, size_t agentIndex);
-
-  Alignment getAlignmentsNN(std::vector< double > input);
-  std::vector<Alignment> getAllAlignments(std::vector<double> input);
+ RandomAgent() : Agent(1, 1, 1, 1, 1, Fitness::G) {};
   
- private:
-  std::vector< Objective* > objs;
-
-  int numSamples;
-  double biasT;
-
-  Tree tree;
+  virtual State getNextState(size_t, vector<State>) const;
+  virtual State getNextState(size_t, VectorXd) const;
+  State getNextState() const;
+  virtual VectorXd ComputeNNInput(vector<Vector2d> jointState) const;
+  virtual void DifferenceEvaluationFunction(vector<Vector2d>, double) {};
+  virtual Agent* copyAgent() const;
 };
 
-
-#endif // ALIGNMENTS_H_
+#endif // AGENT_H_
